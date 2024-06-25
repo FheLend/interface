@@ -1,12 +1,9 @@
 "use client";
 
 import React, { ReactNode } from "react";
-import { config, projectId } from "@/config";
-
+import { config, projectId } from "@/config/web3modal";
 import { createWeb3Modal } from "@web3modal/wagmi/react";
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 import { State, WagmiProvider } from "wagmi";
 
 // Setup queryClient
@@ -20,6 +17,11 @@ createWeb3Modal({
   projectId,
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
   enableOnramp: true, // Optional - false as default
+  themeVariables: {
+    "--w3m-color-mix": "#1F3D53",
+    "--w3m-accent": "#3277AA",
+    "--w3m-color-mix-strength": 40,
+  },
 });
 
 export default function Web3ModalProvider({

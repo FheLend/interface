@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { cookieToInitialState } from "wagmi";
-import { config } from "@/config";
+import { config } from "@/config/web3modal";
 import Web3ModalProvider from "@/context/web3modal";
 import { headers } from "next/headers";
 import Navbar from "./components/navbar";
