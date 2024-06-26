@@ -1,4 +1,4 @@
-import { extendTheme } from "@chakra-ui/react";
+import { extendTheme, transition } from "@chakra-ui/react";
 
 export const theme = extendTheme({
   colors: {
@@ -20,6 +20,35 @@ export const theme = extendTheme({
       body: {
         bg: "primary.900",
         color: "#F3F6F9",
+      },
+    },
+  },
+  components: {
+    Button: {
+      baseStyle: {
+        fontWeight: "normal",
+        borderRadius: "xl",
+        transition: "0.3s",
+      },
+      variants: {
+        outline: {
+          fontSize: "sm",
+          borderColor: "#79D7CF",
+          bgColor: "primary.800",
+          color: "#79D7CF",
+          _hover: {
+            bgColor: "primary.500",
+          },
+        },
+        solid: {
+          fontSize: "sm",
+          borderColor: "#79D7CF",
+          bgColor: "#79D7CF",
+          color: "primary.900",
+          _hover: {
+            bgColor: "#8dd3cd",
+          },
+        },
       },
     },
   },

@@ -1,19 +1,15 @@
 "use client";
 
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Center, Flex } from "@chakra-ui/react";
 import Image from "next/image";
 import logo from "@/images/felend.svg";
-import ConnectButton from "./connectButton";
+import ConnectButton from "./connect-button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { name: "Dashboard", href: "/" },
-  {
-    name: "Market",
-    href: "/market",
-  },
-  { name: "Document", href: "/document" },
+  { name: "Dashboard", href: "/", comingSoon: false },
+  { name: "Document", href: "/document", comingSoon: true },
 ];
 
 function Navbar() {
@@ -21,19 +17,26 @@ function Navbar() {
 
   return (
     <Flex px="10" py="5" alignItems="center">
-      <Box as={Image} src={logo} alt="logo" mr="5" />
+      <Box as={Link} href="/" mr="5">
+        <Image src={logo} alt="logo" />
+      </Box>
 
       {links.map((link) => {
         return (
-          <Box
+          <Center
             as={Link}
             key={link.name}
             href={link.href}
-            opacity={pathname === link.href ? 0.9 : 0.6}
+            opacity={pathname === link.href ? 1 : 0.6}
             mx="3"
           >
             {link.name}
-          </Box>
+            {link.comingSoon && (
+              <Box fontSize="xs" ml="1">
+                (coming soon)
+              </Box>
+            )}
+          </Center>
         );
       })}
       <Box ml="auto">
