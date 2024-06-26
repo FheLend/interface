@@ -6,6 +6,7 @@ import Web3ModalProvider from "@/context/web3modal";
 import { headers } from "next/headers";
 import Navbar from "./components/navbar";
 import { Provider as ChakraProvider } from "./context/chakra-ui";
+import { Container } from "@chakra-ui/react";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -29,7 +30,7 @@ export default function RootLayout({
         <Web3ModalProvider initialState={initialState}>
           <ChakraProvider>
             <Navbar />
-            {children}
+            <Container maxW="container.xl">{children}</Container>
           </ChakraProvider>
         </Web3ModalProvider>
       </body>
