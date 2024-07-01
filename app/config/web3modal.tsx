@@ -5,8 +5,7 @@ import { mainnet } from "wagmi/chains";
 import { defineChain } from "viem";
 
 // Get projectId from https://cloud.walletconnect.com
-export const projectId = "e806705b066bca1ee41f75d79cc0c607";
-// export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID
+export const projectId = process.env.NEXT_PUBLIC_WEB3_MODAL;
 
 if (!projectId) throw new Error("Project ID is not defined");
 
