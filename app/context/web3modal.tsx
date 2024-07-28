@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ReactNode } from "react";
-import { config, projectId } from "@/config/web3modal";
+import { config, fhenix, projectId } from "@/config/web3modal";
 import { createWeb3Modal } from "@web3modal/wagmi/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { State, WagmiProvider } from "wagmi";
@@ -21,6 +21,9 @@ createWeb3Modal({
     "--w3m-color-mix": "#1F3D53",
     "--w3m-accent": "#3277AA",
     "--w3m-color-mix-strength": 40,
+  },
+  tokens: {
+    [fhenix.id]: { address: "0x45d6e627CB563da9f14BaB25B3F64FaFbA9943Ca" },
   },
 });
 
