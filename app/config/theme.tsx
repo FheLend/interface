@@ -33,6 +33,7 @@ export const theme = extendTheme({
       variants: {
         outline: {
           fontSize: "sm",
+          minWidth: "100px",
           borderColor: "#79D7CF",
           bgColor: "primary.800",
           color: "#79D7CF",
@@ -42,6 +43,7 @@ export const theme = extendTheme({
         },
         solid: {
           fontSize: "sm",
+          minWidth: "100px",
           borderColor: "#79D7CF",
           bgColor: "#79D7CF",
           color: "primary.900",

@@ -3,38 +3,57 @@
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormHelperText,
   FormLabel,
   Input,
+  Link,
 } from "@chakra-ui/react";
 import tokenAbi from "@/constants/abi/token.json";
-import { useAccount, useWriteContract } from "wagmi";
+import { useAccount, useChainId, useChains, useWriteContract } from "wagmi";
 import ConnectButton from "@/components/connect-button";
+import { TOKEN_TEST } from "@/constants/contracts";
+import { useMemo } from "react";
+import { ellipsis } from "@/utils/helper";
+import { useWatchPendingTransactions } from "wagmi";
+import { get } from "lodash";
+import { useBalance } from "wagmi";
 
 export default function Faucet() {
+  const chainId = useChainId();
+  const chains = useChains();
   const { address, isConnected } = useAccount();
-  const { writeContract, status, data } = useWriteContract();
+  const { writeContract, status, data, error } = useWriteContract();
+  const chainInfo = useMemo(
+    () => chains.find((chain) => chain.id === chainId),
+    [chains, chainId]
+  );
+
+  const { data: balance } = useBalance({ address, token: TOKEN_TEST });
 
   function mint() {
     writeContract({
       abi: tokenAbi,
-      address: "0x45d6e627CB563da9f14BaB25B3F64FaFbA9943Ca",
+      address: TOKEN_TEST,
       functionName: "mint",
       args: [],
     });
   }
 
   return (
-    <Box w="500px" maxW="100%" mt="10">
+    <>
       <Box fontSize="2xl">Faucet</Box>
 
-      <FormControl mt="5">
-        <FormLabel opacity="0.7">
-          Your wallet address to mint USDT (testing token)
-        </FormLabel>
-        <Input value={address} disabled />
-        <FormHelperText mb="4">
+      <FormControl mt="5" w="500px" maxW="100%">
+        <Flex justifyContent="space-between">
+          <FormLabel opacity="0.7">Your wallet address</FormLabel>
+          <Box>
+            {balance?.formatted} {balance?.symbol}
+          </Box>
+        </Flex>
+        <Input value={address ?? ""} readOnly />
+        <FormHelperText mb="4" color="whiteAlpha.700">
           Each wallet allows minting 100 tokens per time
         </FormHelperText>
       </FormControl>
@@ -51,7 +70,22 @@ export default function Faucet() {
       ) : (
         <ConnectButton />
       )}
-      {data && <Box mt="4">TxHash: {data}</Box>}
-    </Box>
+      <Box mt="2" fontSize="sm" color="red.300">
+        {get(error, "shortMessage")}
+      </Box>
+      {data && (
+        <Box mt="4">
+          TxHash:{" "}
+          <Link
+            href={`${chainInfo?.blockExplorers?.default.url}/tx/${data}`}
+            isExternal
+            color="primary.100"
+            textDecor="underline"
+          >
+            {ellipsis(data, 10, 8)}
+          </Link>
+        </Box>
+      )}
+    </>
   );
 }

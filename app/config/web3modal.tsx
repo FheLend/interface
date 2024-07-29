@@ -1,7 +1,6 @@
 import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
 
 import { cookieStorage, createStorage } from "wagmi";
-import { mainnet } from "wagmi/chains";
 import { defineChain } from "viem";
 
 // Get projectId from https://cloud.walletconnect.com
@@ -30,7 +29,7 @@ export const fhenix = defineChain({
 });
 
 // Create wagmiConfig
-const chains = [fhenix, mainnet] as const;
+const chains = [fhenix] as const;
 export const config = defaultWagmiConfig({
   chains,
   projectId,

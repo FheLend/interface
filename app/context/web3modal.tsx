@@ -22,9 +22,6 @@ createWeb3Modal({
     "--w3m-accent": "#3277AA",
     "--w3m-color-mix-strength": 40,
   },
-  tokens: {
-    [fhenix.id]: { address: "0x45d6e627CB563da9f14BaB25B3F64FaFbA9943Ca" },
-  },
 });
 
 export default function Web3ModalProvider({
