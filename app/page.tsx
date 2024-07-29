@@ -1,5 +1,3 @@
-"use client";
-
 import { Box, Button, Center, Flex, Spacer } from "@chakra-ui/react";
 import { Card, Tag } from "./components/common";
 import {
@@ -13,51 +11,10 @@ import {
 } from "@chakra-ui/table";
 import Image from "next/image";
 import logo from "@/images/token-demo.png";
-import { useEffect } from "react";
-import { publicClient, walletClient } from "./config/viem";
-import lendingpoolAbi from "./constants/abi/lendingpool.json";
-import tokenAbi from "./constants/abi/token.json";
-import { useReadContract, useAccount, useWriteContract } from "wagmi";
 
 export default function Home() {
-  const { data } = useReadContract({
-    abi: lendingpoolAbi,
-    address: "0x8416421b7d73Dc5D283deDA365D2797381c31E2e",
-    functionName: "getTokenDistributor",
-  });
-  const { address, ...rest } = useAccount();
-  console.log(data, address, rest);
-  const { writeContract } = useWriteContract();
-
-  function mint() {
-    const data = writeContract({
-      abi: tokenAbi,
-      address: "0x45d6e627CB563da9f14BaB25B3F64FaFbA9943Ca",
-      functionName: "mint",
-      args: [],
-    });
-    console.log(data);
-  }
-
-  // async function mint2() {
-  //   try {
-  //     const { request } = await publicClient.simulateContract({
-  //       account: address,
-  //       address: "0x45d6e627CB563da9f14BaB25B3F64FaFbA9943Ca",
-  //       abi: tokenAbi,
-  //       functionName: "mint",
-  //     });
-  //     console.log(request);
-  //     const x = await walletClient.writeContract(request);
-  //     console.log(x);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
   return (
     <Box mt="10">
-      <Button onClick={mint}>Mint</Button>
       <Flex>
         <Box fontSize="2xl">Dashboard</Box>
         <Spacer />
