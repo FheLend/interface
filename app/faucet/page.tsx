@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import tokenAbi from "@/constants/abi/token.json";
 import { useAccount, useChainId, useChains, useWriteContract } from "wagmi";
-import ConnectButton from "@/components/connect-button";
+import ConnectButton from "@/common/connect-button";
 import { TOKEN_TEST } from "@/constants/contracts";
 import { useMemo } from "react";
 import { ellipsis } from "@/utils/helper";

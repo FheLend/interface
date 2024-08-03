@@ -10,10 +10,10 @@ import {
   Input,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
-import lendingpoolAbi from "@/constants/abi/lendingpool.json";
+import lendingpoolAbi from "@/constants/abi/lendingPoolAddress.json";
 import tokenAbi from "@/constants/abi/token.json";
 import { useReadContract, useAccount, useWriteContract } from "wagmi";
-import ConnectButton from "@/components/connect-button";
+import ConnectButton from "@/common/connect-button";
 import { Field, Form, Formik } from "formik";
 import { isAddress } from "viem";
 
@@ -24,7 +24,7 @@ export default function Dummy() {
     functionName: "getTokenDistributor",
   });
   const { address, isConnected, ...rest } = useAccount();
-  console.log(data, address, rest);
+
   const { writeContract } = useWriteContract();
 
   function mint(address: string) {

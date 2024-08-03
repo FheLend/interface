@@ -1,18 +1,19 @@
+"use client";
+
 import { Box, Button, Center, Flex, Spacer } from "@chakra-ui/react";
-import { Card, Tag } from "./components/common";
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-} from "@chakra-ui/table";
-import Image from "next/image";
-import logo from "@/images/token-demo.png";
+import { Card, Tag } from "./common/common";
+import poolAbi from "@/constants/abi/pool.json";
+import { useReadContract } from "wagmi";
+import Pools from "./components/pools";
+import { first, isEmpty } from "lodash";
 
 export default function Home() {
+  const { data: reserves } = useReadContract({
+    abi: poolAbi,
+    address: "0xb00C2be32C16cE0C50f98b73502f01b2840790a7",
+    functionName: "getReserves",
+  });
+
   return (
     <Box mt="10">
       <Flex>
@@ -24,54 +25,18 @@ export default function Home() {
       </Flex>
 
       <Card
-        title="Your Supplies"
+        title="Pools"
         mt="7"
-        sub={
-          <Center fontSize="sm" color="whiteAlpha.600">
-            Collateral:
-            <Box fontSize="lg" color="whiteAlpha.900" ml="2">
-              $6,765
-            </Box>
-          </Center>
-        }
+        // sub={
+        //   <Center fontSize="sm" color="whiteAlpha.600">
+        //     Collateral:
+        //     <Box fontSize="lg" color="whiteAlpha.900" ml="2">
+        //       $6,765
+        //     </Box>
+        //   </Center>
+        // }
       >
-        <TableContainer>
-          <Table variant="unstyled">
-            <Thead>
-              <Tr
-                color="whiteAlpha.600"
-                _first={{
-                  th: { textTransform: "capitalize", fontWeight: "normal" },
-                }}
-              >
-                <Th>Assets</Th>
-                <Th isNumeric>Balance</Th>
-                <Th isNumeric>APY</Th>
-                <Th isNumeric>Max TLV</Th>
-                <Th></Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {Array.from({ length: 5 }).map((_, index) => (
-                <Tr key={index}>
-                  <Td>
-                    <Flex alignItems="center">
-                      <Image src={logo} alt="token" />
-                      <Box ml="2">USDT</Box>
-                    </Flex>
-                  </Td>
-                  <Td isNumeric>6,754</Td>
-                  <Td isNumeric>25.4</Td>
-                  <Td isNumeric>50%</Td>
-                  <Td w="200px">
-                    <Button variant="outline">Withdraw</Button>
-                    <Button ml="3">Supply</Button>
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
+        {!isEmpty(reserves) && <Pools poolAddresses={reserves as string[]} />}
       </Card>
     </Box>
   );
