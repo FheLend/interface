@@ -5,14 +5,34 @@ import { Tr, Td } from "@chakra-ui/table";
 import Image from "next/image";
 import logo from "@/images/token-demo.png";
 import poolAbi from "@/constants/abi/pool.json";
-import { useClient, useConfig, useReadContract, useWriteContract } from "wagmi";
+import {
+  useClient,
+  useConfig,
+  useReadContract,
+  useWriteContract,
+  useAccount,
+  Connector,
+} from "wagmi";
 import { FhenixClient } from "fhenixjs";
 import { getClient } from "wagmi/actions";
 import { config } from "@/config/web3modal";
-
-// fhenixClient.current = new FhenixClient({ provider: fhenixProvider.current });
+import { useEffect, useRef } from "react";
+import { BrowserProvider, Eip1193Provider, JsonRpcProvider } from "ethers";
 
 export default function Pool({ poolAddress }: { poolAddress: string }) {
+  const { connector } = useAccount();
+  const fhenixClient = useRef<FhenixClient>();
+
+  useEffect(() => {
+    if (connector) {
+      connector.getProvider().then((provider) => {
+        fhenixClient.current = new FhenixClient({
+          provider: new BrowserProvider(provider as Eip1193Provider) as any,
+        });
+      });
+    }
+  }, [connector]);
+
   const { data: reserveData } = useReadContract({
     abi: poolAbi,
     address: "0xDE603943466310b6c6CcC54dfeD5264F1cfd5A28",
@@ -20,11 +40,8 @@ export default function Pool({ poolAddress }: { poolAddress: string }) {
     args: [poolAddress],
   });
   const { writeContract, ...rest } = useWriteContract();
-  //   const client = useClient();
-  //   const config = useConfig();
 
-  const x = getClient(config);
-  console.log(x);
+  console.log(connector);
   return (
     <Tr>
       <Td>
