@@ -1,6 +1,7 @@
 import { extendTheme, transition } from "@chakra-ui/react";
 
 export const theme = extendTheme({
+  initialColorMode: "dark",
   colors: {
     primary: {
       100: "#3277AA",
@@ -51,6 +52,12 @@ export const theme = extendTheme({
             bgColor: "#8dd3cd",
           },
         },
+      },
+    },
+    Modal: {
+      baseStyle: {
+        overlay: {},
+        dialog: { color: "whiteAlpha.800", bg: "primary.800" },
       },
     },
   },

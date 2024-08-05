@@ -3,7 +3,7 @@
 import { Box, Center, Flex } from "@chakra-ui/react";
 import Image from "next/image";
 import logo from "@/images/felend.svg";
-import ConnectButton from "../common/connect-button";
+import ConnectButton from "../../common/connect-button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 

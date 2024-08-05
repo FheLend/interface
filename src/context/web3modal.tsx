@@ -21,6 +21,7 @@ createWeb3Modal({
     "--w3m-color-mix": "#1F3D53",
     "--w3m-accent": "#3277AA",
     "--w3m-color-mix-strength": 40,
+    "--w3m-z-index": 1500,
   },
 });
 

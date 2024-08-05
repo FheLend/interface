@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Button, Center, Flex, Spacer } from "@chakra-ui/react";
-import { Card, Tag } from "./common/common";
+import { Card, Tag } from "../common/common";
 import poolAbi from "@/constants/abi/pool.json";
 import { useReadContract } from "wagmi";
 import Pools from "./components/pools";

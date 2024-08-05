@@ -5,7 +5,7 @@ import { config } from "@/config/web3modal";
 import Web3ModalProvider from "@/context/web3modal";
 import { headers } from "next/headers";
 import Navbar from "./components/navbar";
-import { Provider as ChakraProvider } from "./context/chakra-ui";
+import { Provider as ChakraProvider } from "../context/chakra-ui";
 import { Container } from "@chakra-ui/react";
 
 const poppins = Poppins({

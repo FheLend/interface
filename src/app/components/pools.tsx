@@ -23,9 +23,8 @@ export default function Pools({ poolAddresses }: { poolAddresses: string[] }) {
             }}
           >
             <Th>Assets</Th>
-            <Th isNumeric>Balance</Th>
+            <Th isNumeric>TVL</Th>
             <Th isNumeric>APY</Th>
-            <Th isNumeric>Max TLV</Th>
             <Th></Th>
           </Tr>
         </Thead>
