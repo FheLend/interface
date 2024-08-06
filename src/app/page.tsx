@@ -6,11 +6,12 @@ import poolAbi from "@/constants/abi/pool.json";
 import { useReadContract } from "wagmi";
 import Pools from "./components/pools";
 import { first, isEmpty } from "lodash";
+import { POOL_CORE } from "@/constants/contracts";
 
 export default function Home() {
   const { data: reserves } = useReadContract({
     abi: poolAbi,
-    address: "0xb00C2be32C16cE0C50f98b73502f01b2840790a7",
+    address: POOL_CORE,
     functionName: "getReserves",
   });
 

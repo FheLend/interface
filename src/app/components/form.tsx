@@ -1,4 +1,4 @@
-import { POOL } from "@/constants/contracts";
+import { POOL, POOL_CORE, TOKEN_TEST } from "@/constants/contracts";
 import {
   Modal,
   ModalOverlay,
@@ -11,8 +11,8 @@ import { BrowserProvider, ethers } from "ethers";
 import { Eip1193Provider } from "ethers";
 import { JsonRpcProvider } from "ethers";
 import { FhenixClient } from "fhenixjs";
-import { useEffect, useRef } from "react";
-import { useAccount } from "wagmi";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useAccount, useBalance } from "wagmi";
 import poolAbi from "@/constants/abi/pool.json";
 import {
   useDisclosure,
@@ -20,26 +20,45 @@ import {
   Box,
   FormControl,
   FormErrorMessage,
-  FormHelperText,
   FormLabel,
   Input,
   Spacer,
   Center,
+  Flex,
 } from "@chakra-ui/react";
-import lendingpoolAbi from "@/constants/abi/lendingPoolAddress.json";
-import tokenAbi from "@/constants/abi/token.json";
 import ConnectButton from "@/common/connect-button";
 import { Field, Form, Formik } from "formik";
-import { isAddress } from "viem";
+import { fhenixChainId } from "@/config/web3modal";
+import { useAllowance, useApprove } from "@/hooks/useApproval";
+import { formatUnits } from "viem";
+import { ApproveButton } from "@/common/approveBtn";
+import { filterNumberInput } from "@/utils/helper";
+import Image from "next/image";
+import loading from "@/images/icons/loading.svg";
+import { TextAutoEllipsis } from "@/common/common";
 
 export default function DepositForm({ poolAddress }: { poolAddress: string }) {
+  const [amount, setAmount] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { address, isConnected, connector } = useAccount();
+  const { chainId, isConnected, connector, address } = useAccount();
   const fhenixProvider = useRef<JsonRpcProvider | BrowserProvider>();
   const fhenixClient = useRef<FhenixClient>();
 
+  const {
+    data: balanceData,
+    isFetching: isFetchingBalance,
+    refetch: refetchBalance,
+  } = useBalance({ address, token: TOKEN_TEST });
+
+  const {
+    isFetching: isFetchingAllowance,
+    data,
+    isError,
+    refetchAllowance,
+  } = useAllowance(TOKEN_TEST, address, POOL_CORE);
+
   useEffect(() => {
-    if (connector) {
+    if (connector && chainId === fhenixChainId) {
       connector.getProvider().then((provider) => {
         fhenixProvider.current = new BrowserProvider(
           provider as Eip1193Provider
@@ -49,11 +68,16 @@ export default function DepositForm({ poolAddress }: { poolAddress: string }) {
         });
       });
     }
-  }, [connector]);
+  }, [connector, chainId]);
 
-  async function deposit(values: number) {
+  const allowance = isError
+    ? undefined
+    : formatUnits((data || 0) as bigint, 18); // TODO: need to fetch the token decimals
+  const needToBeApproved = allowance !== undefined && +amount > +allowance;
+
+  async function deposit() {
     if (!fhenixClient.current || !fhenixProvider.current) return;
-    let encrypted = await fhenixClient.current.encrypt_uint32(values);
+    let encrypted = await fhenixClient.current.encrypt_uint32(+amount);
 
     const signer = await fhenixProvider.current.getSigner();
 
@@ -66,16 +90,15 @@ export default function DepositForm({ poolAddress }: { poolAddress: string }) {
     return await tx.wait();
   }
 
-  function validateAmount(value: number) {
-    let error;
-    console.log(value);
-    if (!value) {
-      error = "Amount is required";
-    } else if (value <= 0) {
-      error = "Invalid amount";
-    }
-    return error;
-  }
+  const handleChangeInput = useCallback(
+    (event: any) => {
+      const isValid = filterNumberInput(event, event.target.value, amount);
+
+      if (!isValid) return;
+      setAmount(event.target.value);
+    },
+    [amount]
+  );
 
   return (
     <>
@@ -87,65 +110,70 @@ export default function DepositForm({ poolAddress }: { poolAddress: string }) {
           <ModalHeader>Supply</ModalHeader>
           <ModalCloseButton />
           <ModalBody mb="10">
-            <Formik
-              initialValues={{ amount: "" }}
-              onSubmit={(values, actions) => {
-                deposit(+values.amount).finally(() => {
-                  actions.setSubmitting(false);
-                });
-              }}
-            >
-              {(props) => (
-                <Form>
-                  <Field name="amount" validate={validateAmount}>
-                    {({ field, form }: any) => (
-                      <FormControl
-                        mt="5"
-                        isInvalid={form.errors.amount && form.touched.amount}
-                      >
-                        <FormLabel opacity="0.7">Amount</FormLabel>
-                        <Input type="number" placeholder="0" {...field} />
-                        <FormErrorMessage>
-                          {form.errors.amount}
-                        </FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
+            <FormControl mt="5">
+              <FormLabel opacity="0.7">Amount</FormLabel>
+              <Input
+                type="number"
+                placeholder="0"
+                onChange={handleChangeInput}
+              />
 
-                  <Center
-                    mt="4"
-                    justifyContent="space-between"
-                    fontSize="small"
+              {address && (
+                <Flex mt="3" fontSize="small" justify="flex-end">
+                  <Flex
+                    onClick={() => setAmount(balanceData?.formatted || "")}
+                    cursor="pointer"
                   >
-                    <Box color="whiteAlpha.500">Supply APY</Box>
-                    <Box>--</Box>
-                  </Center>
-                  <Center
-                    mt="1"
-                    justifyContent="space-between"
-                    fontSize="small"
-                  >
-                    <Box color="whiteAlpha.500">Network fee</Box>
-                    <Box>--</Box>
-                  </Center>
-
-                  <Center mt="5">
-                    {isConnected ? (
-                      <Button
-                        // onClick={mint}
-                        isLoading={props.isSubmitting}
-                        loadingText="Confirming"
-                        type="submit"
-                      >
-                        Supply
-                      </Button>
-                    ) : (
-                      <ConnectButton />
-                    )}
-                  </Center>
-                </Form>
+                    <Box opacity="0.7">Balance:</Box>
+                    <Flex fontWeight="semibold" ml="1">
+                      {isFetchingBalance ? (
+                        <Image src={loading} alt="loading-icon" />
+                      ) : (
+                        <TextAutoEllipsis ml="1">
+                          {" "}
+                          {balanceData?.formatted}
+                        </TextAutoEllipsis>
+                      )}
+                      <Box ml="1">USDT</Box>
+                    </Flex>
+                  </Flex>
+                </Flex>
               )}
-            </Formik>
+              <FormErrorMessage>{}</FormErrorMessage>
+            </FormControl>
+
+            <Center mt="4" justifyContent="space-between" fontSize="small">
+              <Box color="whiteAlpha.500">Supply APY</Box>
+              <Box>--</Box>
+            </Center>
+            <Center mt="1" justifyContent="space-between" fontSize="small">
+              <Box color="whiteAlpha.500">Network fee</Box>
+              <Box>--</Box>
+            </Center>
+
+            <Center mt="5">
+              {isConnected ? (
+                <>
+                  {needToBeApproved ? (
+                    <ApproveButton
+                      amount={amount}
+                      isFetchingAllowance={isFetchingAllowance}
+                      refetchAllowance={refetchAllowance}
+                    />
+                  ) : (
+                    <Button
+                      onClick={deposit}
+                      loadingText="Confirming"
+                      type="submit"
+                    >
+                      Supply
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <ConnectButton />
+              )}
+            </Center>
           </ModalBody>
         </ModalContent>
       </Modal>

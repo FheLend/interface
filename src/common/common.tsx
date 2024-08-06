@@ -22,13 +22,34 @@ export function Card({
   ...props
 }: { title: string | JSX.Element; sub?: string | JSX.Element } & BoxProps) {
   return (
-    <Box bgColor="primary.800" px="10" py="8" color="whiteAlpha.800" borderRadius="2xl" {...props}>
+    <Box
+      bgColor="primary.800"
+      px="10"
+      py="8"
+      color="whiteAlpha.800"
+      borderRadius="2xl"
+      {...props}
+    >
       <Flex alignItems="center" fontSize="lg" fontWeight="medium">
         {title}
         <Spacer />
         {sub}
       </Flex>
       <Divider opacity="0.1" mt="4" mb="5" />
+      {props.children}
+    </Box>
+  );
+}
+
+export function TextAutoEllipsis(props: BoxProps) {
+  return (
+    <Box
+      maxW="110px"
+      textOverflow="ellipsis"
+      whiteSpace="nowrap"
+      overflow="hidden"
+      {...props}
+    >
       {props.children}
     </Box>
   );

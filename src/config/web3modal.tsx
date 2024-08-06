@@ -15,12 +15,14 @@ const metadata = {
   icons: ["https://avatars.githubusercontent.com/u/37784886"],
 };
 
+export const fhenixChainId = 8008135;
+export const fhenixRpcUrl = "https://api.helium.fhenix.zone";
 export const fhenix = defineChain({
-  id: 8008135,
+  id: fhenixChainId,
   name: "Fhenix Helium",
   nativeCurrency: { name: "Fhenix Helium", symbol: "tFHE", decimals: 18 },
   rpcUrls: {
-    default: { http: ["https://api.helium.fhenix.zone"] },
+    default: { http: [fhenixRpcUrl] },
   },
   blockExplorers: {
     default: { name: "Fhenixscan", url: "https://explorer.helium.fhenix.zone" },
