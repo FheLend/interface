@@ -37,7 +37,9 @@ export default function Home() {
         //   </Center>
         // }
       >
-        {!isEmpty(reserves) && <Pools poolAddresses={reserves as string[]} />}
+        {!isEmpty(reserves) && (
+          <Pools poolAddresses={reserves as `0x${string}`[]} />
+        )}
       </Card>
     </Box>
   );

@@ -22,12 +22,10 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
-  Spacer,
   Center,
   Flex,
 } from "@chakra-ui/react";
 import ConnectButton from "@/common/connect-button";
-import { Field, Form, Formik } from "formik";
 import { fhenixChainId } from "@/config/web3modal";
 import { useAllowance, useApprove } from "@/hooks/useApproval";
 import { formatUnits } from "viem";
@@ -36,13 +34,19 @@ import { filterNumberInput } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
+import { SupplyButton } from "./supplyBtn";
 
-export default function DepositForm({ poolAddress }: { poolAddress: string }) {
+export default function Supply({
+  poolAddress,
+  render,
+}: {
+  poolAddress: `0x${string}`;
+  render: (onOpen: () => void) => JSX.Element;
+}) {
+  const initialRef = useRef(null);
   const [amount, setAmount] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { chainId, isConnected, connector, address } = useAccount();
-  const fhenixProvider = useRef<JsonRpcProvider | BrowserProvider>();
-  const fhenixClient = useRef<FhenixClient>();
+  const { isConnected, address } = useAccount();
 
   const {
     data: balanceData,
@@ -57,38 +61,10 @@ export default function DepositForm({ poolAddress }: { poolAddress: string }) {
     refetchAllowance,
   } = useAllowance(TOKEN_TEST, address, POOL_CORE);
 
-  useEffect(() => {
-    if (connector && chainId === fhenixChainId) {
-      connector.getProvider().then((provider) => {
-        fhenixProvider.current = new BrowserProvider(
-          provider as Eip1193Provider
-        );
-        fhenixClient.current = new FhenixClient({
-          provider: fhenixProvider.current as any,
-        });
-      });
-    }
-  }, [connector, chainId]);
-
   const allowance = isError
     ? undefined
     : formatUnits((data || 0) as bigint, 18); // TODO: need to fetch the token decimals
   const needToBeApproved = allowance !== undefined && +amount > +allowance;
-
-  async function deposit() {
-    if (!fhenixClient.current || !fhenixProvider.current) return;
-    let encrypted = await fhenixClient.current.encrypt_uint32(+amount);
-
-    const signer = await fhenixProvider.current.getSigner();
-
-    const contract = new ethers.Contract(POOL, poolAbi, signer);
-    // @todo: Load proper types for the contract.
-    const contractWithSigner = contract.connect(signer);
-    //@ts-ignore
-    const tx = await contractWithSigner.deposit(poolAddress, encrypted, 1n);
-    console.log(tx);
-    return await tx.wait();
-  }
 
   const handleChangeInput = useCallback(
     (event: any) => {
@@ -102,9 +78,14 @@ export default function DepositForm({ poolAddress }: { poolAddress: string }) {
 
   return (
     <>
-      <Button onClick={onOpen}>Supply</Button>
+      {render(onOpen)}
 
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        initialFocusRef={initialRef}
+        isCentered
+      >
         <ModalOverlay zIndex={1} />
         <ModalContent zIndex={1}>
           <ModalHeader>Supply</ModalHeader>
@@ -113,17 +94,24 @@ export default function DepositForm({ poolAddress }: { poolAddress: string }) {
             <FormControl mt="5">
               <FormLabel opacity="0.7">Amount</FormLabel>
               <Input
+                ref={initialRef}
                 type="number"
                 placeholder="0"
+                value={amount}
                 onChange={handleChangeInput}
               />
 
               {address && (
                 <Flex mt="3" fontSize="small" justify="flex-end">
                   <Flex
-                    onClick={() => setAmount(balanceData?.formatted || "")}
+                    onClick={() => {
+                      console.log(balanceData);
+                      setAmount(balanceData?.formatted || "");
+                    }}
                     cursor="pointer"
                   >
+                        <Image src={loading} alt="loading-icon" />
+
                     <Box opacity="0.7">Balance:</Box>
                     <Flex fontWeight="semibold" ml="1">
                       {isFetchingBalance ? (
@@ -154,20 +142,18 @@ export default function DepositForm({ poolAddress }: { poolAddress: string }) {
             <Center mt="5">
               {isConnected ? (
                 <>
-                  {needToBeApproved ? (
-                    <ApproveButton
-                      amount={amount}
-                      isFetchingAllowance={isFetchingAllowance}
-                      refetchAllowance={refetchAllowance}
-                    />
+                  {+amount > 0 ? (
+                    needToBeApproved ? (
+                      <ApproveButton
+                        amount={amount}
+                        isFetchingAllowance={isFetchingAllowance}
+                        refetchAllowance={refetchAllowance}
+                      />
+                    ) : (
+                      <SupplyButton amount={amount} poolAddress={poolAddress} />
+                    )
                   ) : (
-                    <Button
-                      onClick={deposit}
-                      loadingText="Confirming"
-                      type="submit"
-                    >
-                      Supply
-                    </Button>
+                    <Button isDisabled>Enter an amount</Button>
                   )}
                 </>
               ) : (

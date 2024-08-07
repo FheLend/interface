@@ -11,7 +11,11 @@ import {
 } from "@chakra-ui/table";
 import Pool from "./pool";
 
-export default function Pools({ poolAddresses }: { poolAddresses: string[] }) {
+export default function Pools({
+  poolAddresses,
+}: {
+  poolAddresses: `0x${string}`[];
+}) {
   return (
     <TableContainer>
       <Table variant="unstyled">

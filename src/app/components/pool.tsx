@@ -25,16 +25,15 @@ import {
 } from "ethers";
 import { EncryptionTypes } from "fhenixjs";
 import { POOL } from "@/constants/contracts";
-import DepositForm from "./form";
+import Supply from "./supply";
 
-export default function Pool({ poolAddress }: { poolAddress: string }) {
+export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const { data: reserveData } = useReadContract({
     abi: poolAbi,
     address: POOL,
     functionName: "getReserveData",
     args: [poolAddress],
   });
-  console.log(reserveData);
 
   return (
     <Tr>
@@ -47,7 +46,10 @@ export default function Pool({ poolAddress }: { poolAddress: string }) {
       <Td isNumeric>--</Td>
       <Td isNumeric>--</Td>
       <Td w="200px">
-        <DepositForm poolAddress={poolAddress} />
+        <Supply
+          poolAddress={poolAddress}
+          render={(onOpen) => <Button onClick={onOpen}>Supply</Button>}
+        />
         <Button variant="outline" ml="3" isDisabled>
           Withdraw
         </Button>

@@ -13,9 +13,11 @@ export function ApproveButton({
   refetchAllowance: () => void;
 }) {
   const { isLoading, isSuccess, approve } = useApprove(TOKEN_TEST, POOL_CORE);
+  console.log(isSuccess);
 
   useEffect(() => {
     if (isSuccess) {
+      console.log("okok");
       refetchAllowance();
     }
   }, [refetchAllowance, isSuccess]);
