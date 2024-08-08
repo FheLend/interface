@@ -3,7 +3,7 @@ import { Button } from "@chakra-ui/react";
 import { ethers, JsonRpcProvider } from "ethers";
 import { BrowserProvider } from "ethers";
 import { FhenixClient } from "fhenixjs";
-import { useAccount } from "wagmi";
+import { useAccount, useSimulateContract, useWriteContract } from "wagmi";
 import { fhenixChainId } from "@/config/web3modal";
 import { Eip1193Provider } from "ethers";
 import { POOL } from "@/constants/contracts";
@@ -11,6 +11,7 @@ import poolAbi from "@/constants/abi/pool.json";
 
 export function SupplyButton({
   amount,
+  poolAddress,
   isFetchingAllowance,
   refetchAllowance,
   refetchStakedBalance,
@@ -40,14 +41,21 @@ export function SupplyButton({
     }
   }, [connector, chainId]);
 
+  // const { writeContract, data, error, status } = useWriteContract();
+  // console.log(data, error, status);
   async function deposit() {
     if (!fhenixClient.current || !fhenixProvider.current) return;
     let encrypted = await fhenixClient.current.encrypt_uint32(+amount);
+    // writeContract({
+    //   abi: poolAbi,
+    //   address: POOL,
+    //   functionName: "deposit",
+    //   args: [poolAddress, encrypted, "0x1"],
+    // });
 
     const signer = await fhenixProvider.current.getSigner();
 
     const contract = new ethers.Contract(POOL, poolAbi, signer);
-    // @todo: Load proper types for the contract.
     const contractWithSigner = contract.connect(signer);
     //@ts-ignore
     const tx = await contractWithSigner.deposit(poolAddress, encrypted, 1n);
@@ -55,5 +63,5 @@ export function SupplyButton({
     return await tx.wait();
   }
 
-  return <Button onClick={deposit}>Stake</Button>;
+  return <Button onClick={deposit}>Supply</Button>;
 }

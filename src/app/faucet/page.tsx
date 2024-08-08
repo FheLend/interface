@@ -63,7 +63,7 @@ export default function Faucet() {
           onClick={mint}
           isLoading={status === "pending"}
           type="submit"
-          loadingText="waitting"
+          loadingText="Confirming..."
         >
           Mint
         </Button>

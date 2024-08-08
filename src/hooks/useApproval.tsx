@@ -28,7 +28,7 @@ export function useAllowance(
 
 export function useApprove(tokenAddress: `0x${string}`, spender: string) {
   const amount = ethers.MaxUint256;
-  const { writeContract, data, error } = useWriteContract();
+  const { writeContract, data, error, status } = useWriteContract();
 
   function approve() {
     writeContract({
@@ -41,11 +41,18 @@ export function useApprove(tokenAddress: `0x${string}`, spender: string) {
 
   const {
     data: txReceipt,
-    isLoading,
+    isLoading: isTxLoading,
     isSuccess,
     error: txError,
   } = useWaitForTransactionReceipt({
     hash: data,
   });
-  return { txReceipt, isLoading, isSuccess, approve, error: error || txError };
+  return {
+    txReceipt,
+    isTxLoading,
+    isLoading: status === "pending",
+    isSuccess,
+    approve,
+    error: error || txError,
+  };
 }

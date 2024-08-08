@@ -12,23 +12,25 @@ export function ApproveButton({
   isFetchingAllowance: boolean;
   refetchAllowance: () => void;
 }) {
-  const { isLoading, isSuccess, approve } = useApprove(TOKEN_TEST, POOL_CORE);
-  console.log(isSuccess);
+  const { isLoading, isTxLoading, isSuccess, approve } = useApprove(
+    TOKEN_TEST,
+    POOL_CORE
+  );
 
   useEffect(() => {
     if (isSuccess) {
-      console.log("okok");
       refetchAllowance();
     }
   }, [refetchAllowance, isSuccess]);
 
   const buttonLoadingText = useMemo(() => {
     if (isLoading) return "Confirming...";
+    if (isTxLoading) return "Waiting for tx...";
     if (isFetchingAllowance) return "Fetching allowance...";
     return "Approve";
-  }, [isLoading, isFetchingAllowance]);
+  }, [isLoading, isTxLoading, isFetchingAllowance]);
 
-  const approvalLoading = isLoading || isFetchingAllowance;
+  const approvalLoading = isLoading || isFetchingAllowance || isTxLoading;
 
   return (
     <Button

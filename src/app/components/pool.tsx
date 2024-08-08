@@ -1,33 +1,17 @@
 "use client";
 
-import { Box, Button, Center, Flex, Spacer } from "@chakra-ui/react";
+import { Box, Button, Flex, useDisclosure } from "@chakra-ui/react";
 import { Tr, Td } from "@chakra-ui/table";
 import Image from "next/image";
 import logo from "@/images/token-demo.png";
 import poolAbi from "@/constants/abi/pool.json";
-import {
-  useClient,
-  useConfig,
-  useReadContract,
-  useWriteContract,
-  useAccount,
-  Connector,
-} from "wagmi";
-import { FhenixClient } from "fhenixjs";
-import { getClient } from "wagmi/actions";
-import { config } from "@/config/web3modal";
-import { useEffect, useRef } from "react";
-import {
-  BrowserProvider,
-  Eip1193Provider,
-  ethers,
-  JsonRpcProvider,
-} from "ethers";
-import { EncryptionTypes } from "fhenixjs";
+import { useReadContract } from "wagmi";
 import { POOL } from "@/constants/contracts";
-import Supply from "./supply";
+import SupplyModal from "./supplyModal";
 
 export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const { data: reserveData } = useReadContract({
     abi: poolAbi,
     address: POOL,
@@ -46,10 +30,9 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
       <Td isNumeric>--</Td>
       <Td isNumeric>--</Td>
       <Td w="200px">
-        <Supply
-          poolAddress={poolAddress}
-          render={(onOpen) => <Button onClick={onOpen}>Supply</Button>}
-        />
+        <Button onClick={onOpen}>Supply</Button>
+        {isOpen && <SupplyModal poolAddress={poolAddress} onClose={onClose} />}
+
         <Button variant="outline" ml="3" isDisabled>
           Withdraw
         </Button>
