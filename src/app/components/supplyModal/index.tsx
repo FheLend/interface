@@ -7,15 +7,9 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/modal";
-import { BrowserProvider, ethers } from "ethers";
-import { Eip1193Provider } from "ethers";
-import { JsonRpcProvider } from "ethers";
-import { FhenixClient } from "fhenixjs";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useAccount, useBalance } from "wagmi";
-import poolAbi from "@/constants/abi/pool.json";
 import {
-  useDisclosure,
   Button,
   Box,
   FormControl,
@@ -26,8 +20,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import ConnectButton from "@/common/connect-button";
-import { fhenixChainId } from "@/config/web3modal";
-import { useAllowance, useApprove } from "@/hooks/useApproval";
+import { useAllowance } from "@/hooks/useApproval";
 import { formatUnits } from "viem";
 import { ApproveButton } from "@/common/approveBtn";
 import { filterNumberInput } from "@/utils/helper";
@@ -136,11 +129,6 @@ export default function SupplyModal({
           <Center mt="5">
             {isConnected ? (
               <>
-                <ApproveButton
-                  amount={amount}
-                  isFetchingAllowance={isFetchingAllowance}
-                  refetchAllowance={refetchAllowance}
-                />
                 {+amount > 0 ? (
                   needToBeApproved ? (
                     <ApproveButton
