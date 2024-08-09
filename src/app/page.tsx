@@ -3,15 +3,16 @@
 import { Box, Button, Center, Flex, Spacer } from "@chakra-ui/react";
 import { Card, Tag } from "../common/common";
 import poolAbi from "@/constants/abi/pool.json";
-import { useReadContract } from "wagmi";
+import { useChainId, useReadContract } from "wagmi";
 import Pools from "./components/pools";
 import { first, isEmpty } from "lodash";
 import { POOL_CORE } from "@/constants/contracts";
 
 export default function Home() {
+  const chainId = useChainId();
   const { data: reserves } = useReadContract({
     abi: poolAbi,
-    address: POOL_CORE,
+    address: POOL_CORE[chainId],
     functionName: "getReserves",
   });
 
@@ -21,8 +22,8 @@ export default function Home() {
         <Box fontSize="2xl">Dashboard</Box>
         <Spacer />
 
-        <Tag title="Net worth" sub="$22,222" />
-        <Tag title="Net APY" sub="17.6%" ml="3" />
+        {/* <Tag title="Net worth" sub="$22,222" />
+        <Tag title="Net APY" sub="17.6%" ml="3" /> */}
       </Flex>
 
       <Card

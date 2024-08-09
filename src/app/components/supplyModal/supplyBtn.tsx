@@ -1,35 +1,42 @@
-import { useEffect, useMemo, useRef } from "react";
-import { Button } from "@chakra-ui/react";
-import { ethers, JsonRpcProvider } from "ethers";
+import { useEffect, useRef, useState } from "react";
+import { Box, Button } from "@chakra-ui/react";
+import { ContractTransactionResponse, ethers, JsonRpcProvider } from "ethers";
 import { BrowserProvider } from "ethers";
 import { FhenixClient } from "fhenixjs";
-import { useAccount, useSimulateContract, useWriteContract } from "wagmi";
-import { fhenixChainId } from "@/config/web3modal";
+import { useAccount, useChainId } from "wagmi";
 import { Eip1193Provider } from "ethers";
-import { POOL } from "@/constants/contracts";
+import {
+  FHENIX_CHAIN_ID,
+  FHENIX_CHAIN_ID_LOCAL,
+  POOL,
+} from "@/constants/contracts";
 import poolAbi from "@/constants/abi/pool.json";
+import { get } from "lodash";
 
 export function SupplyButton({
   amount,
   poolAddress,
-  isFetchingAllowance,
   refetchAllowance,
-  refetchStakedBalance,
   refetchBalance,
 }: {
   amount: string;
   poolAddress: `0x${string}`;
-  isFetchingAllowance?: boolean;
-  refetchAllowance?: () => void;
-  refetchStakedBalance?: () => void;
-  refetchBalance?: () => void;
+  refetchAllowance: () => void;
+  refetchBalance: () => void;
 }) {
-  const { chainId, isConnected, connector, address } = useAccount();
+  const chainId = useChainId();
+  const { connector } = useAccount();
   const fhenixProvider = useRef<JsonRpcProvider | BrowserProvider>();
   const fhenixClient = useRef<FhenixClient>();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>();
+  const [loadingText, setLoadingText] = useState<string>();
 
   useEffect(() => {
-    if (connector && chainId === fhenixChainId) {
+    if (
+      connector &&
+      (chainId === FHENIX_CHAIN_ID || chainId === FHENIX_CHAIN_ID_LOCAL)
+    ) {
       connector.getProvider().then((provider) => {
         fhenixProvider.current = new BrowserProvider(
           provider as Eip1193Provider
@@ -41,27 +48,49 @@ export function SupplyButton({
     }
   }, [connector, chainId]);
 
-  // const { writeContract, data, error, status } = useWriteContract();
-  // console.log(data, error, status);
   async function deposit() {
-    if (!fhenixClient.current || !fhenixProvider.current) return;
-    let encrypted = await fhenixClient.current.encrypt_uint32(+amount);
-    // writeContract({
-    //   abi: poolAbi,
-    //   address: POOL,
-    //   functionName: "deposit",
-    //   args: [poolAddress, encrypted, "0x1"],
-    // });
+    try {
+      if (!fhenixClient.current || !fhenixProvider.current) return;
+      setLoading(true);
+      let encrypted = await fhenixClient.current.encrypt_uint32(+amount);
+      const signer = await fhenixProvider.current.getSigner();
 
-    const signer = await fhenixProvider.current.getSigner();
+      const contract = new ethers.Contract(POOL[chainId], poolAbi, signer);
+      const contractWithSigner = contract.connect(signer);
 
-    const contract = new ethers.Contract(POOL, poolAbi, signer);
-    const contractWithSigner = contract.connect(signer);
-    //@ts-ignore
-    const tx = await contractWithSigner.deposit(poolAddress, encrypted, 1n);
-    console.log(tx);
-    return await tx.wait();
+      setLoadingText("Confirming...");
+      //@ts-ignore
+      const tx: ContractTransactionResponse = await contractWithSigner.deposit(
+        poolAddress,
+        encrypted,
+        1n
+      );
+      setLoadingText("Waiting for tx...");
+      await tx.wait(); // return ContractTransactionReceipt
+      setLoading(false);
+      refetchAllowance();
+      refetchBalance();
+    } catch (error) {
+      setLoading(false);
+      setError(get(error, "message"));
+    }
   }
 
-  return <Button onClick={deposit}>Supply</Button>;
+  return (
+    <>
+      <Button
+        onClick={deposit}
+        isLoading={loading}
+        loadingText={loadingText}
+        isDisabled={loading}
+      >
+        Supply
+      </Button>
+      {error && (
+        <Box mt="2" fontSize="sm" color="red.300">
+          {get(error, "shortMessage")}
+        </Box>
+      )}
+    </>
+  );
 }

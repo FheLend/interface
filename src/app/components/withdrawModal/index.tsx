@@ -27,9 +27,8 @@ import { filterNumberInput } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
-import { SupplyButton } from "./supplyBtn";
 
-export default function SupplyModal({
+export default function WithdrawModal({
   poolAddress,
   onClose,
 }: {
@@ -46,18 +45,6 @@ export default function SupplyModal({
     isFetching: isFetchingBalance,
     refetch: refetchBalance,
   } = useBalance({ address, token: TOKEN_TEST[chainId] });
-
-  const {
-    isFetching: isFetchingAllowance,
-    data,
-    isError,
-    refetchAllowance,
-  } = useAllowance(TOKEN_TEST[chainId], address, POOL_CORE[chainId]);
-
-  const allowance = isError
-    ? undefined
-    : formatUnits((data || 0) as bigint, 18); // TODO: need to fetch the token decimals
-  const needToBeApproved = allowance !== undefined && +amount > +allowance;
 
   const handleChangeInput = useCallback(
     (event: any) => {
@@ -78,7 +65,7 @@ export default function SupplyModal({
     >
       <ModalOverlay zIndex={1} />
       <ModalContent zIndex={1}>
-        <ModalHeader>Supply</ModalHeader>
+        <ModalHeader>Withdraw</ModalHeader>
         <ModalCloseButton />
         <ModalBody mb="10">
           <FormControl mt="5">
@@ -128,29 +115,10 @@ export default function SupplyModal({
           </Center>
 
           <Center mt="5">
-            {isConnected ? (
-              <>
-                {+amount > 0 ? (
-                  needToBeApproved ? (
-                    <ApproveButton
-                      amount={amount}
-                      isFetchingAllowance={isFetchingAllowance}
-                      refetchAllowance={refetchAllowance}
-                    />
-                  ) : (
-                    <SupplyButton
-                      amount={amount}
-                      poolAddress={poolAddress}
-                      refetchAllowance={refetchAllowance}
-                      refetchBalance={refetchBalance}
-                    />
-                  )
-                ) : (
-                  <Button isDisabled>Enter an amount</Button>
-                )}
-              </>
+            {+amount > 0 ? (
+              <Button>Withdraw</Button>
             ) : (
-              <ConnectButton />
+              <Button isDisabled>Enter an amount</Button>
             )}
           </Center>
         </ModalBody>

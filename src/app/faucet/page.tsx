@@ -19,6 +19,7 @@ import { ellipsis } from "@/utils/helper";
 import { useWatchPendingTransactions } from "wagmi";
 import { get } from "lodash";
 import { useBalance } from "wagmi";
+import { TextAutoEllipsis } from "@/common/common";
 
 export default function Faucet() {
   const chainId = useChainId();
@@ -30,12 +31,12 @@ export default function Faucet() {
     [chains, chainId]
   );
 
-  const { data: balance } = useBalance({ address, token: TOKEN_TEST });
+  const { data: balance } = useBalance({ address, token: TOKEN_TEST[chainId] });
 
   function mint() {
     writeContract({
       abi: tokenAbi,
-      address: TOKEN_TEST,
+      address: TOKEN_TEST[chainId],
       functionName: "mint",
       args: [],
     });
@@ -48,9 +49,9 @@ export default function Faucet() {
       <FormControl mt="5" w="500px" maxW="100%">
         <Flex justifyContent="space-between">
           <FormLabel opacity="0.7">Your wallet address</FormLabel>
-          <Box>
+          <TextAutoEllipsis>
             {balance?.formatted} {balance?.symbol}
-          </Box>
+          </TextAutoEllipsis>
         </Flex>
         <Input value={address ?? ""} readOnly />
         <FormHelperText mb="4" color="whiteAlpha.700">

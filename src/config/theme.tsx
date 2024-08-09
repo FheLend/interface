@@ -50,6 +50,12 @@ export const theme = extendTheme({
           color: "primary.900",
           _hover: {
             bgColor: "#8dd3cd",
+            _disabled: {
+              bgColor: "#68a39e",
+            },
+          },
+          _active: {
+            bgColor: "#8dd3cd",
           },
         },
       },

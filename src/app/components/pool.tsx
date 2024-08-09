@@ -5,19 +5,32 @@ import { Tr, Td } from "@chakra-ui/table";
 import Image from "next/image";
 import logo from "@/images/token-demo.png";
 import poolAbi from "@/constants/abi/pool.json";
-import { useReadContract } from "wagmi";
+import { useChainId, useReadContract } from "wagmi";
 import { POOL } from "@/constants/contracts";
 import SupplyModal from "./supplyModal";
+import { get } from "lodash";
+import WithdrawModal from "./withdrawModal";
 
 export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const chainId = useChainId();
+  const {
+    isOpen: isOpenSupply,
+    onOpen: openSupply,
+    onClose: closeSupply,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenWithdraw,
+    onOpen: openWithdraw,
+    onClose: closeWithdraw,
+  } = useDisclosure();
 
   const { data: reserveData } = useReadContract({
     abi: poolAbi,
-    address: POOL,
+    address: POOL[chainId],
     functionName: "getReserveData",
     args: [poolAddress],
   });
+  console.log(reserveData);
 
   return (
     <Tr>
@@ -27,15 +40,19 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
           <Box ml="2">USDT</Box>
         </Flex>
       </Td>
-      <Td isNumeric>--</Td>
+      <Td isNumeric>{get(reserveData, "[0]", 0).toString()}</Td>
       <Td isNumeric>--</Td>
       <Td w="200px">
-        <Button onClick={onOpen}>Supply</Button>
-        {isOpen && <SupplyModal poolAddress={poolAddress} onClose={onClose} />}
-
-        <Button variant="outline" ml="3" isDisabled>
+        <Button onClick={openSupply}>Supply</Button>
+        {isOpenSupply && (
+          <SupplyModal poolAddress={poolAddress} onClose={closeSupply} />
+        )}
+        <Button onClick={openWithdraw} variant="outline" ml="3">
           Withdraw
         </Button>
+        {isOpenWithdraw && (
+          <WithdrawModal poolAddress={poolAddress} onClose={closeWithdraw} />
+        )}
       </Td>
     </Tr>
   );
