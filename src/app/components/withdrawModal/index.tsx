@@ -1,4 +1,3 @@
-import { POOL, POOL_CORE, TOKEN_TEST } from "@/constants/contracts";
 import {
   Modal,
   ModalOverlay,
@@ -13,26 +12,25 @@ import {
   Button,
   Box,
   FormControl,
-  FormErrorMessage,
   FormLabel,
   Input,
   Center,
   Flex,
 } from "@chakra-ui/react";
-import ConnectButton from "@/common/connect-button";
-import { useAllowance } from "@/hooks/useApproval";
-import { formatUnits } from "viem";
-import { ApproveButton } from "@/common/approveBtn";
+import { formatUnits, parseUnits } from "viem";
 import { filterNumberInput } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
+import { WithdrawButton } from "./withdrawBtn";
 
 export default function WithdrawModal({
   poolAddress,
+  aTokenAddress,
   onClose,
 }: {
   poolAddress: `0x${string}`;
+  aTokenAddress: `0x${string}`;
   onClose: () => void;
 }) {
   const chainId = useChainId();
@@ -44,7 +42,8 @@ export default function WithdrawModal({
     data: balanceData,
     isFetching: isFetchingBalance,
     refetch: refetchBalance,
-  } = useBalance({ address, token: TOKEN_TEST[chainId] });
+  } = useBalance({ address, token: aTokenAddress });
+  console.log(balanceData);
 
   const handleChangeInput = useCallback(
     (event: any) => {
@@ -82,41 +81,36 @@ export default function WithdrawModal({
               <Flex mt="3" fontSize="small" justify="flex-end">
                 <Flex
                   onClick={() => {
-                    console.log(balanceData);
                     setAmount(balanceData?.formatted || "");
                   }}
                   cursor="pointer"
                 >
-                  <Box opacity="0.7">Balance:</Box>
+                  <Box opacity="0.7">Deposited: </Box>
                   <Flex fontWeight="semibold" ml="1">
                     {isFetchingBalance ? (
                       <Image src={loading} alt="loading-icon" />
                     ) : (
                       <TextAutoEllipsis ml="1">
-                        {" "}
                         {balanceData?.formatted}
                       </TextAutoEllipsis>
                     )}
-                    <Box ml="1">USDT</Box>
+                    <Box ml="1">{balanceData?.symbol}</Box>
                   </Flex>
                 </Flex>
               </Flex>
             )}
-            <FormErrorMessage>{}</FormErrorMessage>
           </FormControl>
 
-          <Center mt="4" justifyContent="space-between" fontSize="small">
-            <Box color="whiteAlpha.500">Supply APY</Box>
-            <Box>--</Box>
-          </Center>
-          <Center mt="1" justifyContent="space-between" fontSize="small">
-            <Box color="whiteAlpha.500">Network fee</Box>
-            <Box>--</Box>
-          </Center>
-
-          <Center mt="5">
+          <Center mt="5" flexDir="column">
             {+amount > 0 ? (
-              <Button>Withdraw</Button>
+              <WithdrawButton
+                amount={parseUnits(
+                  amount,
+                  balanceData?.decimals || 18
+                ).toString()}
+                aTokenAddress={aTokenAddress}
+                refetchBalance={refetchBalance}
+              />
             ) : (
               <Button isDisabled>Enter an amount</Button>
             )}

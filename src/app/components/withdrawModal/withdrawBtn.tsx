@@ -10,18 +10,16 @@ import {
   FHENIX_CHAIN_ID_LOCAL,
   POOL,
 } from "@/constants/contracts";
-import poolAbi from "@/constants/abi/pool.json";
+import aTokenAbi from "@/constants/abi/aToken.json";
 import { get } from "lodash";
 
-export function SupplyButton({
+export function WithdrawButton({
   amount,
-  poolAddress,
-  refetchAllowance,
+  aTokenAddress,
   refetchBalance,
 }: {
   amount: string;
-  poolAddress: `0x${string}`;
-  refetchAllowance: () => void;
+  aTokenAddress: `0x${string}`;
   refetchBalance: () => void;
 }) {
   const chainId = useChainId();
@@ -48,7 +46,7 @@ export function SupplyButton({
     }
   }, [connector, chainId]);
 
-  async function deposit() {
+  async function withdraw() {
     try {
       if (!fhenixClient.current || !fhenixProvider.current) return;
       setLoading(true);
@@ -56,20 +54,17 @@ export function SupplyButton({
       let encrypted = await fhenixClient.current.encrypt_uint32(+amount);
       const signer = await fhenixProvider.current.getSigner();
 
-      const contract = new ethers.Contract(POOL[chainId], poolAbi, signer);
+      const contract = new ethers.Contract(aTokenAddress, aTokenAbi, signer);
       const contractWithSigner = contract.connect(signer);
 
       setLoadingText("Confirming...");
       //@ts-ignore
-      const tx: ContractTransactionResponse = await contractWithSigner.deposit(
-        poolAddress,
-        encrypted,
-        1n
+      const tx: ContractTransactionResponse = await contractWithSigner.redeem(
+        encrypted
       );
       setLoadingText("Waiting for tx...");
       await tx.wait(); // return ContractTransactionReceipt
       setLoading(false);
-      refetchAllowance();
       refetchBalance();
     } catch (error) {
       console.log(error);
@@ -81,12 +76,12 @@ export function SupplyButton({
   return (
     <>
       <Button
-        onClick={deposit}
+        onClick={withdraw}
         isLoading={loading}
         loadingText={loadingText}
         isDisabled={loading}
       >
-        Supply
+        Withdraw
       </Button>
       {error && (
         <Box mt="2" fontSize="small" color="red.300">

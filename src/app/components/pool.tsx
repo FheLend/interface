@@ -5,7 +5,7 @@ import { Tr, Td } from "@chakra-ui/table";
 import Image from "next/image";
 import logo from "@/images/token-demo.png";
 import poolAbi from "@/constants/abi/pool.json";
-import { useChainId, useReadContract } from "wagmi";
+import { useAccount, useChainId, useReadContract } from "wagmi";
 import { POOL } from "@/constants/contracts";
 import SupplyModal from "./supplyModal";
 import { get } from "lodash";
@@ -13,6 +13,8 @@ import WithdrawModal from "./withdrawModal";
 
 export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const chainId = useChainId();
+  const { address } = useAccount();
+
   const {
     isOpen: isOpenSupply,
     onOpen: openSupply,
@@ -47,11 +49,17 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
         {isOpenSupply && (
           <SupplyModal poolAddress={poolAddress} onClose={closeSupply} />
         )}
-        <Button onClick={openWithdraw} variant="outline" ml="3">
-          Withdraw
-        </Button>
+        {address && (
+          <Button onClick={openWithdraw} variant="outline" ml="3">
+            Withdraw
+          </Button>
+        )}
         {isOpenWithdraw && (
-          <WithdrawModal poolAddress={poolAddress} onClose={closeWithdraw} />
+          <WithdrawModal
+            poolAddress={poolAddress}
+            aTokenAddress={get(reserveData, "[11]", "") as `0x${string}`}
+            onClose={closeWithdraw}
+          />
         )}
       </Td>
     </Tr>

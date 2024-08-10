@@ -48,6 +48,7 @@ export function TextAutoEllipsis(props: BoxProps) {
       textOverflow="ellipsis"
       whiteSpace="nowrap"
       overflow="hidden"
+      title={props.children}
       {...props}
     >
       {props.children}

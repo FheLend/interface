@@ -21,13 +21,14 @@ import {
 } from "@chakra-ui/react";
 import ConnectButton from "@/common/connect-button";
 import { useAllowance } from "@/hooks/useApproval";
-import { formatUnits } from "viem";
+import { formatGwei, formatUnits, parseUnits, weiUnits } from "viem";
 import { ApproveButton } from "@/common/approveBtn";
 import { filterNumberInput } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
 import { SupplyButton } from "./supplyBtn";
+import { toBeArray, toBigInt } from "ethers";
 
 export default function SupplyModal({
   poolAddress,
@@ -69,6 +70,7 @@ export default function SupplyModal({
     [amount]
   );
 
+  console.log(weiUnits);
   return (
     <Modal
       isOpen={true}
@@ -100,17 +102,16 @@ export default function SupplyModal({
                   }}
                   cursor="pointer"
                 >
-                  <Box opacity="0.7">Balance:</Box>
+                  <Box opacity="0.7">Balance: </Box>
                   <Flex fontWeight="semibold" ml="1">
                     {isFetchingBalance ? (
                       <Image src={loading} alt="loading-icon" />
                     ) : (
                       <TextAutoEllipsis ml="1">
-                        {" "}
                         {balanceData?.formatted}
                       </TextAutoEllipsis>
                     )}
-                    <Box ml="1">USDT</Box>
+                    <Box ml="1">{balanceData?.symbol}</Box>
                   </Flex>
                 </Flex>
               </Flex>
@@ -127,7 +128,7 @@ export default function SupplyModal({
             <Box>--</Box>
           </Center>
 
-          <Center mt="5">
+          <Center mt="5" flexDir="column">
             {isConnected ? (
               <>
                 {+amount > 0 ? (
@@ -139,7 +140,10 @@ export default function SupplyModal({
                     />
                   ) : (
                     <SupplyButton
-                      amount={amount}
+                      amount={parseUnits(
+                        amount,
+                        balanceData?.decimals || 18
+                      ).toString()}
                       poolAddress={poolAddress}
                       refetchAllowance={refetchAllowance}
                       refetchBalance={refetchBalance}
