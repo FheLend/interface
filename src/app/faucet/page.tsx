@@ -49,9 +49,10 @@ export default function Faucet() {
       <FormControl mt="5" w="500px" maxW="100%">
         <Flex justifyContent="space-between">
           <FormLabel opacity="0.7">Your wallet address</FormLabel>
-          <TextAutoEllipsis>
-            {balance?.formatted} {balance?.symbol}
-          </TextAutoEllipsis>
+          <Flex>
+            <TextAutoEllipsis>{balance?.formatted}</TextAutoEllipsis>{" "}
+            {balance?.symbol}
+          </Flex>
         </Flex>
         <Input value={address ?? ""} readOnly />
         <FormHelperText mb="4" color="whiteAlpha.700">

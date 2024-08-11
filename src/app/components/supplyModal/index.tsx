@@ -1,4 +1,4 @@
-import { POOL_CORE, TOKEN_TEST } from "@/constants/contracts";
+import { POOL_CORE } from "@/constants/contracts";
 import {
   Modal,
   ModalOverlay,
@@ -19,9 +19,7 @@ import {
   Center,
   Flex,
 } from "@chakra-ui/react";
-import ConnectButton from "@/common/connect-button";
 import { useAllowance } from "@/hooks/useApproval";
-import { formatUnits } from "viem";
 import { ApproveButton } from "@/common/approveBtn";
 import { filterNumberInput } from "@/utils/helper";
 import Image from "next/image";
@@ -39,20 +37,20 @@ export default function SupplyModal({
   const chainId = useChainId();
   const initialRef = useRef(null);
   const [amount, setAmount] = useState("");
-  const { isConnected, address } = useAccount();
+  const { address } = useAccount();
 
   const {
     data: balanceData,
     isFetching: isFetchingBalance,
     refetch: refetchBalance,
-  } = useBalance({ address, token: TOKEN_TEST[chainId] });
+  } = useBalance({ address, token: poolAddress });
 
   const {
     isFetching: isFetchingAllowance,
     data,
     isError,
     refetchAllowance,
-  } = useAllowance(TOKEN_TEST[chainId], address, POOL_CORE[chainId]);
+  } = useAllowance(poolAddress, address, POOL_CORE[chainId]);
 
   const allowance = isError ? undefined : ((data || 0) as BigInt).toString(); // TODO: need decimals
   const needToBeApproved = allowance !== undefined && +amount > +allowance;
@@ -125,29 +123,23 @@ export default function SupplyModal({
           </Center>
 
           <Center mt="5" flexDir="column">
-            {isConnected ? (
-              <>
-                {+amount > 0 ? (
-                  needToBeApproved ? (
-                    <ApproveButton
-                      amount={amount}
-                      isFetchingAllowance={isFetchingAllowance}
-                      refetchAllowance={refetchAllowance}
-                    />
-                  ) : (
-                    <SupplyButton
-                      amount={amount}
-                      poolAddress={poolAddress}
-                      refetchAllowance={refetchAllowance}
-                      refetchBalance={refetchBalance}
-                    />
-                  )
-                ) : (
-                  <Button isDisabled>Enter an amount</Button>
-                )}
-              </>
+            {+amount > 0 ? (
+              needToBeApproved ? (
+                <ApproveButton
+                  amount={amount}
+                  isFetchingAllowance={isFetchingAllowance}
+                  refetchAllowance={refetchAllowance}
+                />
+              ) : (
+                <SupplyButton
+                  amount={amount}
+                  poolAddress={poolAddress}
+                  refetchAllowance={refetchAllowance}
+                  refetchBalance={refetchBalance}
+                />
+              )
             ) : (
-              <ConnectButton />
+              <Button isDisabled>Enter an amount</Button>
             )}
           </Center>
         </ModalBody>

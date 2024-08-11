@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Table,
   Thead,
@@ -27,7 +25,7 @@ export default function Pools({
             }}
           >
             <Th>Assets</Th>
-            <Th isNumeric>TVL (wei)</Th>
+            <Th isNumeric>TVL</Th>
             <Th isNumeric>APY</Th>
             <Th></Th>
           </Tr>

@@ -1,3 +1,4 @@
+import { POOL, POOL_CORE, TOKEN_TEST } from "@/constants/contracts";
 import {
   Modal,
   ModalOverlay,
@@ -7,30 +8,35 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/modal";
 import { useCallback, useRef, useState } from "react";
-import { useAccount, useBalance, useChainId } from "wagmi";
+import { useAccount, useBalance, useChainId, useReadContract } from "wagmi";
 import {
   Button,
   Box,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
   Center,
   Flex,
 } from "@chakra-ui/react";
-import { formatUnits, parseUnits } from "viem";
+import { useAllowance } from "@/hooks/useApproval";
+import { ApproveButton } from "@/common/approveBtn";
 import { filterNumberInput } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
-import { WithdrawButton } from "./withdrawBtn";
+import { BorrowButton } from "./borrowBtn";
+import poolAbi from "@/constants/abi/pool.json";
+import { get } from "lodash";
 
-export default function WithdrawModal({
-  aTokenAddress,
+export default function BorrowModal({
+  poolAddress,
   onClose,
 }: {
-  aTokenAddress: `0x${string}`;
+  poolAddress: `0x${string}`;
   onClose: () => void;
 }) {
+  const chainId = useChainId();
   const initialRef = useRef(null);
   const [amount, setAmount] = useState("");
   const { address } = useAccount();
@@ -39,7 +45,15 @@ export default function WithdrawModal({
     data: balanceData,
     isFetching: isFetchingBalance,
     refetch: refetchBalance,
-  } = useBalance({ address, token: aTokenAddress });
+  } = useBalance({ address, token: TOKEN_TEST[chainId] });
+
+  const { data: userReserveData, isLoading } = useReadContract({
+    abi: poolAbi,
+    address: POOL[chainId],
+    functionName: "getUserReserveData",
+    args: [poolAddress, address],
+  });
+  const borrowedBalance = get(userReserveData, "[1]", 0);
 
   const handleChangeInput = useCallback(
     (event: any) => {
@@ -60,7 +74,7 @@ export default function WithdrawModal({
     >
       <ModalOverlay zIndex={1} />
       <ModalContent zIndex={1}>
-        <ModalHeader>Withdraw</ModalHeader>
+        <ModalHeader>Borrow</ModalHeader>
         <ModalCloseButton />
         <ModalBody mb="10">
           <FormControl mt="5">
@@ -76,17 +90,17 @@ export default function WithdrawModal({
             <Flex mt="3" fontSize="small" justify="flex-end">
               <Flex
                 onClick={() => {
-                  setAmount(balanceData?.value.toString() || "");
+                  setAmount(borrowedBalance.toString());
                 }}
                 cursor="pointer"
               >
-                <Box opacity="0.7">Deposited: </Box>
+                <Box opacity="0.7">Borrowed: </Box>
                 <Flex fontWeight="semibold" ml="1">
-                  {isFetchingBalance ? (
+                  {isLoading ? (
                     <Image src={loading} alt="loading-icon" />
                   ) : (
                     <TextAutoEllipsis ml="1">
-                      {balanceData?.value.toLocaleString()}
+                      {borrowedBalance.toLocaleString()}
                     </TextAutoEllipsis>
                   )}
                   <Box ml="1">{balanceData?.symbol}</Box>
@@ -97,9 +111,9 @@ export default function WithdrawModal({
 
           <Center mt="5" flexDir="column">
             {+amount > 0 ? (
-              <WithdrawButton
+              <BorrowButton
                 amount={amount}
-                aTokenAddress={aTokenAddress}
+                poolAddress={poolAddress}
                 refetchBalance={refetchBalance}
               />
             ) : (

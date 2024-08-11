@@ -13,15 +13,13 @@ import {
 import poolAbi from "@/constants/abi/pool.json";
 import { get } from "lodash";
 
-export function SupplyButton({
+export function BorrowButton({
   amount,
   poolAddress,
-  refetchAllowance,
   refetchBalance,
 }: {
   amount: string;
   poolAddress: `0x${string}`;
-  refetchAllowance: () => void;
   refetchBalance: () => void;
 }) {
   const chainId = useChainId();
@@ -61,15 +59,16 @@ export function SupplyButton({
 
       setLoadingText("Confirming...");
       //@ts-ignore
-      const tx: ContractTransactionResponse = await contractWithSigner.deposit(
+      const tx: ContractTransactionResponse = await contractWithSigner.borrow(
         poolAddress,
         encrypted,
-        1n // _referralCode
+        1n, // _interestRateMode
+        1n, // _referralCode
+        { gasLimit: 1_000_000 }
       );
       setLoadingText("Waiting for tx...");
       await tx.wait(); // return ContractTransactionReceipt from ethers
       setLoading(false);
-      refetchAllowance();
       refetchBalance();
     } catch (error) {
       console.log(error);
@@ -86,7 +85,7 @@ export function SupplyButton({
         loadingText={loadingText}
         isDisabled={loading}
       >
-        Supply
+        Borrow
       </Button>
       {error && (
         <Box mt="2" fontSize="small" color="red.300">
