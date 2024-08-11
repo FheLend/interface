@@ -1,4 +1,4 @@
-import { POOL, POOL_CORE, TOKEN_TEST } from "@/constants/contracts";
+import { POOL_CORE, TOKEN_TEST } from "@/constants/contracts";
 import {
   Modal,
   ModalOverlay,
@@ -21,14 +21,13 @@ import {
 } from "@chakra-ui/react";
 import ConnectButton from "@/common/connect-button";
 import { useAllowance } from "@/hooks/useApproval";
-import { formatGwei, formatUnits, parseUnits, weiUnits } from "viem";
+import { formatUnits } from "viem";
 import { ApproveButton } from "@/common/approveBtn";
 import { filterNumberInput } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
 import { SupplyButton } from "./supplyBtn";
-import { toBeArray, toBigInt } from "ethers";
 
 export default function SupplyModal({
   poolAddress,
@@ -55,9 +54,7 @@ export default function SupplyModal({
     refetchAllowance,
   } = useAllowance(TOKEN_TEST[chainId], address, POOL_CORE[chainId]);
 
-  const allowance = isError
-    ? undefined
-    : formatUnits((data || 0) as bigint, 18); // TODO: need to fetch the token decimals
+  const allowance = isError ? undefined : ((data || 0) as BigInt).toString(); // TODO: need decimals
   const needToBeApproved = allowance !== undefined && +amount > +allowance;
 
   const handleChangeInput = useCallback(
@@ -70,7 +67,6 @@ export default function SupplyModal({
     [amount]
   );
 
-  console.log(weiUnits);
   return (
     <Modal
       isOpen={true}
@@ -140,10 +136,7 @@ export default function SupplyModal({
                     />
                   ) : (
                     <SupplyButton
-                      amount={parseUnits(
-                        amount,
-                        balanceData?.decimals || 18
-                      ).toString()}
+                      amount={amount}
                       poolAddress={poolAddress}
                       refetchAllowance={refetchAllowance}
                       refetchBalance={refetchBalance}

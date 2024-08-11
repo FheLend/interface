@@ -60,7 +60,8 @@ export function WithdrawButton({
       setLoadingText("Confirming...");
       //@ts-ignore
       const tx: ContractTransactionResponse = await contractWithSigner.redeem(
-        encrypted
+        encrypted,
+        { gasLimit: 1_000_000 }
       );
       setLoadingText("Waiting for tx...");
       await tx.wait(); // return ContractTransactionReceipt

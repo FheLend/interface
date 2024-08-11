@@ -42,7 +42,7 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
           <Box ml="2">USDT</Box>
         </Flex>
       </Td>
-      <Td isNumeric>{get(reserveData, "[0]", 0).toString()}</Td>
+      <Td isNumeric>{get(reserveData, "[0]", 0).toLocaleString()}</Td>
       <Td isNumeric>--</Td>
       <Td w="200px">
         <Button onClick={openSupply}>Supply</Button>

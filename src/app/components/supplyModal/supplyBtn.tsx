@@ -67,7 +67,7 @@ export function SupplyButton({
         1n
       );
       setLoadingText("Waiting for tx...");
-      await tx.wait(); // return ContractTransactionReceipt
+      await tx.wait(); // return ContractTransactionReceipt from ethers
       setLoading(false);
       refetchAllowance();
       refetchBalance();
