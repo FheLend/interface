@@ -51,7 +51,9 @@ export function WithdrawButton({
       if (!fhenixClient.current || !fhenixProvider.current) return;
       setLoading(true);
       setError("");
-      let encrypted = await fhenixClient.current.encrypt_uint32(+amount);
+      let encrypted = await fhenixClient.current.encrypt_uint128(
+        BigInt(amount)
+      );
       const signer = await fhenixProvider.current.getSigner();
 
       const contract = new ethers.Contract(aTokenAddress, aTokenAbi, signer);
@@ -61,14 +63,13 @@ export function WithdrawButton({
       //@ts-ignore
       const tx: ContractTransactionResponse = await contractWithSigner.redeem(
         encrypted,
-        { gasLimit: 1_000_000 }
+        { gasLimit: 3_000_000 }
       );
       setLoadingText("Waiting for tx...");
       await tx.wait(); // return ContractTransactionReceipt
       setLoading(false);
       refetchBalance();
     } catch (error) {
-      console.log(error);
       setLoading(false);
       setError(get(error, "reason") || get(error, "message"));
     }
@@ -85,7 +86,7 @@ export function WithdrawButton({
         Withdraw
       </Button>
       {error && (
-        <Box mt="2" fontSize="small" color="red.300">
+        <Box mt="2" fontSize="small" color="red.300" wordBreak="break-word">
           {error}
         </Box>
       )}

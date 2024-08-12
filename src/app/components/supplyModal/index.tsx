@@ -26,6 +26,7 @@ import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
 import { SupplyButton } from "./supplyBtn";
+import { parseUnits } from "viem";
 
 export default function SupplyModal({
   poolAddress,
@@ -132,7 +133,10 @@ export default function SupplyModal({
                 />
               ) : (
                 <SupplyButton
-                  amount={amount}
+                  amount={parseUnits(
+                    amount,
+                    balanceData?.decimals || 18
+                  ).toString()}
                   poolAddress={poolAddress}
                   refetchAllowance={refetchAllowance}
                   refetchBalance={refetchBalance}

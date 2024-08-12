@@ -50,6 +50,7 @@ export default function WithdrawModal({
     },
     [amount]
   );
+  console.log(balanceData);
 
   return (
     <Modal
@@ -76,7 +77,7 @@ export default function WithdrawModal({
             <Flex mt="3" fontSize="small" justify="flex-end">
               <Flex
                 onClick={() => {
-                  setAmount(balanceData?.value.toString() || "");
+                  setAmount(balanceData?.formatted || "");
                 }}
                 cursor="pointer"
               >
@@ -86,7 +87,7 @@ export default function WithdrawModal({
                     <Image src={loading} alt="loading-icon" />
                   ) : (
                     <TextAutoEllipsis ml="1">
-                      {balanceData?.value.toLocaleString()}
+                      {balanceData?.formatted.toLocaleString()}
                     </TextAutoEllipsis>
                   )}
                   <Box ml="1">{balanceData?.symbol}</Box>
@@ -98,7 +99,10 @@ export default function WithdrawModal({
           <Center mt="5" flexDir="column">
             {+amount > 0 ? (
               <WithdrawButton
-                amount={amount}
+                amount={parseUnits(
+                  amount,
+                  balanceData?.decimals || 18
+                ).toString()}
                 aTokenAddress={aTokenAddress}
                 refetchBalance={refetchBalance}
               />

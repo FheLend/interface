@@ -46,12 +46,14 @@ export function BorrowButton({
     }
   }, [connector, chainId]);
 
-  async function deposit() {
+  async function borrow() {
     try {
       if (!fhenixClient.current || !fhenixProvider.current) return;
       setLoading(true);
       setError("");
-      let encrypted = await fhenixClient.current.encrypt_uint32(+amount);
+      let encrypted = await fhenixClient.current.encrypt_uint128(
+        BigInt(amount)
+      );
       const signer = await fhenixProvider.current.getSigner();
 
       const contract = new ethers.Contract(POOL[chainId], poolAbi, signer);
@@ -64,7 +66,7 @@ export function BorrowButton({
         encrypted,
         1n, // _interestRateMode
         1n, // _referralCode
-        { gasLimit: 1_000_000 }
+        { gasLimit: 3_000_000 }
       );
       setLoadingText("Waiting for tx...");
       await tx.wait(); // return ContractTransactionReceipt from ethers
@@ -80,7 +82,7 @@ export function BorrowButton({
   return (
     <>
       <Button
-        onClick={deposit}
+        onClick={borrow}
         isLoading={loading}
         loadingText={loadingText}
         isDisabled={loading}
@@ -88,7 +90,7 @@ export function BorrowButton({
         Borrow
       </Button>
       {error && (
-        <Box mt="2" fontSize="small" color="red.300">
+        <Box mt="2" fontSize="small" color="red.300" wordBreak="break-word">
           {error}
         </Box>
       )}

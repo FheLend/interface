@@ -50,7 +50,7 @@ export default function Faucet() {
         <Flex justifyContent="space-between">
           <FormLabel opacity="0.7">Your wallet address</FormLabel>
           <Flex>
-            <TextAutoEllipsis>{balance?.formatted}</TextAutoEllipsis>{" "}
+            <TextAutoEllipsis mr="1">{balance?.formatted}</TextAutoEllipsis>
             {balance?.symbol}
           </Flex>
         </Flex>

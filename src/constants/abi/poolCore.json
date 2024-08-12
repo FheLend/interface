@@ -956,6 +956,11 @@
         "internalType": "address",
         "name": "_interestRateStrategyAddress",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_underlyingDecimals",
+        "type": "uint256"
       }
     ],
     "name": "initReserve",
@@ -1296,7 +1301,7 @@
         "type": "address"
       },
       {
-        "internalType": "euint32",
+        "internalType": "euint128",
         "name": "_encryptedAmount",
         "type": "uint256"
       }
@@ -1399,7 +1404,7 @@
         "type": "address"
       },
       {
-        "internalType": "euint32",
+        "internalType": "euint128",
         "name": "_encryptedAmount",
         "type": "uint256"
       },

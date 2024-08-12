@@ -20,6 +20,11 @@
         "internalType": "string",
         "name": "_symbol",
         "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_dec",
+        "type": "uint8"
       }
     ],
     "stateMutability": "nonpayable",
@@ -635,7 +640,7 @@
         "type": "address"
       },
       {
-        "internalType": "euint32",
+        "internalType": "euint128",
         "name": "_encryptedAmount",
         "type": "uint256"
       }
@@ -687,7 +692,7 @@
             "type": "bytes"
           }
         ],
-        "internalType": "struct inEuint32",
+        "internalType": "struct inEuint128",
         "name": "_amount",
         "type": "tuple"
       }

@@ -1,4 +1,4 @@
-import { POOL, POOL_CORE, TOKEN_TEST } from "@/constants/contracts";
+import { POOL, TOKEN_TEST } from "@/constants/contracts";
 import {
   Modal,
   ModalOverlay,
@@ -7,13 +7,12 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/modal";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useAccount, useBalance, useChainId, useReadContract } from "wagmi";
 import {
   Button,
   Box,
   FormControl,
-  FormErrorMessage,
   FormLabel,
   Input,
   Center,
@@ -28,6 +27,7 @@ import { TextAutoEllipsis } from "@/common/common";
 import { BorrowButton } from "./borrowBtn";
 import poolAbi from "@/constants/abi/pool.json";
 import { get } from "lodash";
+import { formatUnits, parseUnits } from "viem";
 
 export default function BorrowModal({
   poolAddress,
@@ -41,19 +41,26 @@ export default function BorrowModal({
   const [amount, setAmount] = useState("");
   const { address } = useAccount();
 
-  const {
-    data: balanceData,
-    isFetching: isFetchingBalance,
-    refetch: refetchBalance,
-  } = useBalance({ address, token: TOKEN_TEST[chainId] });
+  const { data: balanceData } = useBalance({
+    address,
+    token: TOKEN_TEST[chainId],
+  });
 
-  const { data: userReserveData, isLoading } = useReadContract({
+  const {
+    data: userReserveData,
+    isLoading,
+    refetch,
+  } = useReadContract({
     abi: poolAbi,
     address: POOL[chainId],
     functionName: "getUserReserveData",
     args: [poolAddress, address],
   });
-  const borrowedBalance = get(userReserveData, "[1]", 0);
+  const borrowedBalance = useMemo(
+    () =>
+      formatUnits(get(userReserveData, "[1]", 0n), balanceData?.decimals || 18),
+    [userReserveData, balanceData]
+  );
 
   const handleChangeInput = useCallback(
     (event: any) => {
@@ -112,9 +119,12 @@ export default function BorrowModal({
           <Center mt="5" flexDir="column">
             {+amount > 0 ? (
               <BorrowButton
-                amount={amount}
+                amount={parseUnits(
+                  amount,
+                  balanceData?.decimals || 18
+                ).toString()}
                 poolAddress={poolAddress}
-                refetchBalance={refetchBalance}
+                refetchBalance={refetch}
               />
             ) : (
               <Button isDisabled>Enter an amount</Button>

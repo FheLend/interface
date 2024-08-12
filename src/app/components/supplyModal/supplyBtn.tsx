@@ -53,7 +53,9 @@ export function SupplyButton({
       if (!fhenixClient.current || !fhenixProvider.current) return;
       setLoading(true);
       setError("");
-      let encrypted = await fhenixClient.current.encrypt_uint32(+amount);
+      let encrypted = await fhenixClient.current.encrypt_uint128(
+        BigInt(amount)
+      );
       const signer = await fhenixProvider.current.getSigner();
 
       const contract = new ethers.Contract(POOL[chainId], poolAbi, signer);
@@ -64,7 +66,8 @@ export function SupplyButton({
       const tx: ContractTransactionResponse = await contractWithSigner.deposit(
         poolAddress,
         encrypted,
-        1n // _referralCode
+        1n, // _referralCode
+        { gasLimit: 3_000_000 }
       );
       setLoadingText("Waiting for tx...");
       await tx.wait(); // return ContractTransactionReceipt from ethers
@@ -89,7 +92,7 @@ export function SupplyButton({
         Supply
       </Button>
       {error && (
-        <Box mt="2" fontSize="small" color="red.300">
+        <Box mt="2" fontSize="small" color="red.300" wordBreak="break-word">
           {error}
         </Box>
       )}

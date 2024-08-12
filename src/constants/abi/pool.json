@@ -93,7 +93,7 @@
       },
       {
         "indexed": false,
-        "internalType": "euint32",
+        "internalType": "euint128",
         "name": "_encryptedAmount",
         "type": "uint256"
       },
@@ -469,7 +469,7 @@
             "type": "bytes"
           }
         ],
-        "internalType": "struct inEuint32",
+        "internalType": "struct inEuint128",
         "name": "_encryptedAmount",
         "type": "tuple"
       },
@@ -530,7 +530,7 @@
             "type": "bytes"
           }
         ],
-        "internalType": "struct inEuint32",
+        "internalType": "struct inEuint128",
         "name": "_encryptedAmount",
         "type": "tuple"
       },
@@ -934,7 +934,7 @@
             "type": "bytes"
           }
         ],
-        "internalType": "struct inEuint32",
+        "internalType": "struct inEuint128",
         "name": "_encryptedAmount",
         "type": "tuple"
       },

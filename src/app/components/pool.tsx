@@ -12,6 +12,7 @@ import SupplyModal from "./supplyModal";
 import { get } from "lodash";
 import WithdrawModal from "./withdrawModal";
 import BorrowModal from "./borrowModal";
+import { formatUnits } from "viem";
 
 export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const chainId = useChainId();
@@ -46,11 +47,17 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
         abi: tokenAbi,
         functionName: "symbol",
       },
+      {
+        address: poolAddress,
+        abi: tokenAbi,
+        functionName: "decimals",
+      },
     ],
   });
 
   const reserveData = get(result, "data[0].result", []) as any[];
   const tokenSymbol = get(result, "data[1].result", "") as string;
+  const tokenDecimals = get(result, "data[2].result", "") as number;
 
   return (
     <Tr>
@@ -60,7 +67,9 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
           <Box ml="2">{tokenSymbol}</Box>
         </Flex>
       </Td>
-      <Td isNumeric>{get(reserveData, "[0]", 0).toLocaleString()}</Td>
+      <Td isNumeric>
+        {formatUnits(get(reserveData, "[0]", 0n), tokenDecimals)}
+      </Td>
       <Td isNumeric>--</Td>
       <Td w="200px">
         <Tooltip label="Connect wallet to supply" isDisabled={isConnected}>
