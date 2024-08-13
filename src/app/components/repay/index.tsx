@@ -1,4 +1,4 @@
-import { POOL, TOKEN_TEST } from "@/constants/contracts";
+import { POOL } from "@/constants/contracts";
 import {
   Modal,
   ModalOverlay,
@@ -8,13 +8,7 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/modal";
 import { useCallback, useMemo, useRef, useState } from "react";
-import {
-  useAccount,
-  useBalance,
-  useChainId,
-  useReadContract,
-  useReadContracts,
-} from "wagmi";
+import { useAccount, useBalance, useChainId, useReadContract } from "wagmi";
 import {
   Button,
   Box,
@@ -24,18 +18,16 @@ import {
   Center,
   Flex,
 } from "@chakra-ui/react";
-import { useAllowance } from "@/hooks/useApproval";
-import { ApproveButton } from "@/common/approveBtn";
 import { filterNumberInput } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
-import { BorrowButton } from "./borrowBtn";
 import poolAbi from "@/constants/abi/pool.json";
 import { get } from "lodash";
 import { formatUnits, parseUnits } from "viem";
+import { RepayButton } from "./repayBtn";
 
-export default function BorrowModal({
+export default function RepayModal({
   poolAddress,
   onClose,
 }: {
@@ -52,27 +44,17 @@ export default function BorrowModal({
     token: poolAddress,
   });
 
-  const { data, isLoading, refetch } = useReadContracts({
-    contracts: [
-      {
-        address: POOL[chainId],
-        abi: poolAbi,
-        functionName: "getUserAccountData",
-        args: [address],
-      },
-      {
-        address: POOL[chainId],
-        abi: poolAbi,
-        functionName: "getUserReserveData",
-        args: [poolAddress, address],
-      },
-    ],
+  const {
+    data: userReserveData,
+    isLoading,
+    refetch,
+  } = useReadContract({
+    address: POOL[chainId],
+    abi: poolAbi,
+    functionName: "getUserReserveData",
+    args: [poolAddress, address],
   });
 
-  const userAccountData = get(data, "[0].result", []) as any[];
-  const userReserveData = get(data, "[1].result", []) as any[];
-
-  console.log(userAccountData, userReserveData);
   const borrowedBalance = useMemo(
     () =>
       formatUnits(get(userReserveData, "[1]", 0n), balanceData?.decimals || 18),
@@ -98,7 +80,7 @@ export default function BorrowModal({
     >
       <ModalOverlay zIndex={1} />
       <ModalContent zIndex={1}>
-        <ModalHeader>Borrow</ModalHeader>
+        <ModalHeader>Repay</ModalHeader>
         <ModalCloseButton />
         <ModalBody mb="10">
           <FormControl mt="5">
@@ -135,7 +117,7 @@ export default function BorrowModal({
 
           <Center mt="5" flexDir="column">
             {+amount > 0 ? (
-              <BorrowButton
+              <RepayButton
                 amount={parseUnits(
                   amount,
                   balanceData?.decimals || 18

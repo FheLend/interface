@@ -13,6 +13,7 @@ import { get } from "lodash";
 import WithdrawModal from "./withdrawModal";
 import BorrowModal from "./borrowModal";
 import { formatUnits } from "viem";
+import RepayModal from "./repay";
 
 export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const chainId = useChainId();
@@ -32,6 +33,11 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
     isOpen: isOpenBorrow,
     onOpen: openBorrow,
     onClose: closeBorrow,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenRepay,
+    onOpen: openRepay,
+    onClose: closeRepay,
   } = useDisclosure();
 
   const result = useReadContracts({
@@ -111,6 +117,21 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
         </Tooltip>
         {isOpenBorrow && (
           <BorrowModal poolAddress={poolAddress} onClose={closeBorrow} />
+        )}
+
+        <Tooltip label="Connect wallet to repay" isDisabled={isConnected}>
+          <Button
+            ml="3"
+            variant="outline"
+            size="sm"
+            isDisabled={!isConnected}
+            onClick={openRepay}
+          >
+            Repay
+          </Button>
+        </Tooltip>
+        {isOpenRepay && (
+          <RepayModal poolAddress={poolAddress} onClose={closeRepay} />
         )}
       </Td>
     </Tr>
