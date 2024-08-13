@@ -3,23 +3,26 @@
 import {
   Box,
   Button,
+  Center,
   Flex,
   FormControl,
   FormHelperText,
   FormLabel,
   Input,
   Link,
+  Select,
 } from "@chakra-ui/react";
 import tokenAbi from "@/constants/abi/token.json";
 import { useAccount, useChainId, useChains, useWriteContract } from "wagmi";
 import ConnectButton from "@/common/connect-button";
-import { TOKEN_TEST } from "@/constants/contracts";
-import { useMemo } from "react";
+import { TOKENS } from "@/constants/contracts";
+import { useMemo, useState } from "react";
 import { ellipsis } from "@/utils/helper";
-import { useWatchPendingTransactions } from "wagmi";
 import { get } from "lodash";
 import { useBalance } from "wagmi";
 import { TextAutoEllipsis } from "@/common/common";
+import Image from "next/image";
+import loading from "@/images/icons/loading.svg";
 
 export default function Faucet() {
   const chainId = useChainId();
@@ -30,13 +33,17 @@ export default function Faucet() {
     () => chains.find((chain) => chain.id === chainId),
     [chains, chainId]
   );
+  const [token, setToken] = useState(TOKENS[chainId][0].address);
 
-  const { data: balance } = useBalance({ address, token: TOKEN_TEST[chainId] });
+  const { data: balance, isLoading } = useBalance({
+    address,
+    token,
+  });
 
   function mint() {
     writeContract({
       abi: tokenAbi,
-      address: TOKEN_TEST[chainId],
+      address: token,
       functionName: "mint",
       args: [],
     });
@@ -49,10 +56,26 @@ export default function Faucet() {
       <FormControl mt="5" w="500px" maxW="100%">
         <Flex justifyContent="space-between">
           <FormLabel opacity="0.7">Your wallet address</FormLabel>
-          <Flex>
-            <TextAutoEllipsis mr="1">{balance?.formatted}</TextAutoEllipsis>
-            {balance?.symbol}
-          </Flex>
+          <Center>
+            {isLoading && <Image src={loading} alt="loading-icon" />}
+            <TextAutoEllipsis mr="2" minW="3">
+              {balance?.formatted}
+            </TextAutoEllipsis>
+            <Select
+              variant="unstyled"
+              onChange={(e) => setToken(e.target.value as `0x${string}`)}
+            >
+              {TOKENS[chainId].map((token) => (
+                <option
+                  value={token.address}
+                  key={token.address}
+                  style={{ color: "#111518" }}
+                >
+                  {token.symbol}
+                </option>
+              ))}
+            </Select>
+          </Center>
         </Flex>
         <Input value={address ?? ""} readOnly />
         <FormHelperText mb="4" color="whiteAlpha.700">

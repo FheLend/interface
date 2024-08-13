@@ -1,11 +1,11 @@
 "use client";
 
-import { Box, Button, Center, Flex, Spacer } from "@chakra-ui/react";
-import { Card, Tag } from "../common/common";
+import { Box, Flex, Spacer } from "@chakra-ui/react";
+import { Card } from "../common/common";
 import poolAbi from "@/constants/abi/pool.json";
 import { useChainId, useReadContract } from "wagmi";
 import Pools from "./components/pools";
-import { first, isEmpty } from "lodash";
+import { isEmpty } from "lodash";
 import { POOL_CORE } from "@/constants/contracts";
 
 export default function Home() {

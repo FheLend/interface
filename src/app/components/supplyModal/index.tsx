@@ -128,6 +128,7 @@ export default function SupplyModal({
               needToBeApproved ? (
                 <ApproveButton
                   amount={amount}
+                  address={poolAddress}
                   isFetchingAllowance={isFetchingAllowance}
                   refetchAllowance={refetchAllowance}
                 />

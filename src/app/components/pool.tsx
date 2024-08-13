@@ -1,13 +1,18 @@
 "use client";
 
-import { Box, Button, Flex, Tooltip, useDisclosure } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Image,
+  Tooltip,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { Tr, Td } from "@chakra-ui/table";
-import Image from "next/image";
-import logo from "@/images/token-demo.png";
 import poolAbi from "@/constants/abi/pool.json";
 import tokenAbi from "@/constants/abi/token.json";
 import { useAccount, useChainId, useReadContracts } from "wagmi";
-import { POOL } from "@/constants/contracts";
+import { POOL, TOKEN_LOGO } from "@/constants/contracts";
 import SupplyModal from "./supplyModal";
 import { get } from "lodash";
 import WithdrawModal from "./withdrawModal";
@@ -69,12 +74,15 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
     <Tr>
       <Td>
         <Flex alignItems="center">
-          <Image src={logo} alt="token" />
+          <Image src={TOKEN_LOGO[tokenSymbol]} boxSize="6" alt="token-logo" />
           <Box ml="2">{tokenSymbol}</Box>
         </Flex>
       </Td>
       <Td isNumeric>
-        {formatUnits(get(reserveData, "[0]", 0n), tokenDecimals)}
+        {(+formatUnits(
+          get(reserveData, "[0]", 0n),
+          tokenDecimals
+        )).toLocaleString()}
       </Td>
       <Td isNumeric>--</Td>
       <Td w="200px">

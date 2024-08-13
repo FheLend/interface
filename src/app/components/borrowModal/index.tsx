@@ -1,4 +1,4 @@
-import { POOL, TOKEN_TEST } from "@/constants/contracts";
+import { POOL } from "@/constants/contracts";
 import {
   Modal,
   ModalOverlay,
@@ -24,8 +24,6 @@ import {
   Center,
   Flex,
 } from "@chakra-ui/react";
-import { useAllowance } from "@/hooks/useApproval";
-import { ApproveButton } from "@/common/approveBtn";
 import { filterNumberInput } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";

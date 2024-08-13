@@ -1,21 +1,23 @@
 import { useEffect, useMemo } from "react";
 import { useApprove } from "../hooks/useApproval";
 import { Button } from "@chakra-ui/react";
-import { POOL_CORE, TOKEN_TEST } from "@/constants/contracts";
+import { POOL_CORE } from "@/constants/contracts";
 import { useChainId } from "wagmi";
 
 export function ApproveButton({
   amount,
+  address,
   isFetchingAllowance,
   refetchAllowance,
 }: {
   amount: string;
+  address: `0x${string}`;
   isFetchingAllowance: boolean;
   refetchAllowance: () => void;
 }) {
   const chainId = useChainId();
   const { isLoading, isTxLoading, isSuccess, approve } = useApprove(
-    TOKEN_TEST[chainId],
+    address,
     POOL_CORE[chainId]
   );
 
