@@ -58,9 +58,7 @@ export default function Faucet() {
           <FormLabel opacity="0.7">Your wallet address</FormLabel>
           <Center>
             {isLoading && <Image src={loading} alt="loading-icon" />}
-            <TextAutoEllipsis mr="2" minW="3">
-              {balance?.formatted}
-            </TextAutoEllipsis>
+            <Box mr="2">{Number(balance?.formatted).toLocaleString()}</Box>
             <Select
               variant="unstyled"
               onChange={(e) => setToken(e.target.value as `0x${string}`)}

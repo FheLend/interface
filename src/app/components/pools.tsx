@@ -27,6 +27,8 @@ export default function Pools({
             <Th>Assets</Th>
             <Th isNumeric>TVL</Th>
             <Th isNumeric>APY</Th>
+            <Th isNumeric>Deposited</Th>
+            <Th isNumeric>Borrowed</Th>
             <Th></Th>
           </Tr>
         </Thead>

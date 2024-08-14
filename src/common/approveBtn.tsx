@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useApprove } from "../hooks/useApproval";
-import { Button } from "@chakra-ui/react";
+import { Box, Button } from "@chakra-ui/react";
 import { POOL_CORE } from "@/constants/contracts";
 import { useChainId } from "wagmi";
 
@@ -16,7 +16,7 @@ export function ApproveButton({
   refetchAllowance: () => void;
 }) {
   const chainId = useChainId();
-  const { isLoading, isTxLoading, isSuccess, approve } = useApprove(
+  const { isLoading, isTxLoading, isSuccess, approve, error } = useApprove(
     address,
     POOL_CORE[chainId]
   );
@@ -37,13 +37,20 @@ export function ApproveButton({
   const approvalLoading = isLoading || isFetchingAllowance || isTxLoading;
 
   return (
-    <Button
-      isDisabled={!amount || approvalLoading}
-      isLoading={approvalLoading}
-      loadingText={buttonLoadingText}
-      onClick={approve}
-    >
-      Approve
-    </Button>
+    <>
+      <Button
+        isDisabled={!amount || approvalLoading}
+        isLoading={approvalLoading}
+        loadingText={buttonLoadingText}
+        onClick={approve}
+      >
+        Approve
+      </Button>
+      {error && (
+        <Box mt="2" fontSize="small" color="red.300" wordBreak="break-word">
+          {error.message}
+        </Box>
+      )}
+    </>
   );
 }

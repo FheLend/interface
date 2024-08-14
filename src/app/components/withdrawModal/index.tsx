@@ -50,7 +50,6 @@ export default function WithdrawModal({
     },
     [amount]
   );
-  console.log(balanceData);
 
   return (
     <Modal
