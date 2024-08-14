@@ -43,7 +43,7 @@ function Navbar() {
       })}
       <Center ml="auto">
         <ConnectButton />
-        {/* <ChainSelector /> */}
+        <ChainSelector />
       </Center>
     </Flex>
   );

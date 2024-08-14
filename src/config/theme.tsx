@@ -49,6 +49,9 @@ export const theme = extendTheme({
           _hover: {
             bgColor: "primary.500",
           },
+          _active: {
+            bgColor: "primary.500",
+          },
         },
         solid: {
           borderColor: "#79D7CF",

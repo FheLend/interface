@@ -1,6 +1,8 @@
 export const FHENIX_CHAIN_ID = 8008135;
 export const FHENIX_CHAIN_ID_LOCAL = 412346;
 
+export const SUPPORTED_CHAINS = [FHENIX_CHAIN_ID, FHENIX_CHAIN_ID_LOCAL];
+
 export const TOKENS: {
   [chainId: number]: { symbol: string; address: `0x${string}` }[];
 } = {
