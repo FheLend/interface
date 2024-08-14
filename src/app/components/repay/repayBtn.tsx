@@ -1,17 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Box, Button } from "@chakra-ui/react";
-import { ContractTransactionResponse, ethers, JsonRpcProvider } from "ethers";
-import { BrowserProvider } from "ethers";
-import { FhenixClient } from "fhenixjs";
+import { ContractTransactionResponse, ethers } from "ethers";
 import { useAccount, useChainId } from "wagmi";
-import { Eip1193Provider } from "ethers";
-import {
-  FHENIX_CHAIN_ID,
-  FHENIX_CHAIN_ID_LOCAL,
-  POOL,
-} from "@/constants/contracts";
+import { POOL } from "@/constants/contracts";
 import poolAbi from "@/constants/abi/pool.json";
 import { get } from "lodash";
+import useFhenix from "@/hooks/useFhenix";
 
 export function RepayButton({
   amount,
@@ -23,38 +17,19 @@ export function RepayButton({
   refetchBalance: () => void;
 }) {
   const chainId = useChainId();
-  const { connector, address } = useAccount();
-  const fhenixProvider = useRef<JsonRpcProvider | BrowserProvider>();
-  const fhenixClient = useRef<FhenixClient>();
+  const { address } = useAccount();
+  const { fhenixClient, fhenixProvider } = useFhenix();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [loadingText, setLoadingText] = useState<string>();
 
-  useEffect(() => {
-    if (
-      connector &&
-      (chainId === FHENIX_CHAIN_ID || chainId === FHENIX_CHAIN_ID_LOCAL)
-    ) {
-      connector.getProvider().then((provider) => {
-        fhenixProvider.current = new BrowserProvider(
-          provider as Eip1193Provider
-        );
-        fhenixClient.current = new FhenixClient({
-          provider: fhenixProvider.current as any,
-        });
-      });
-    }
-  }, [connector, chainId]);
-
   async function borrow() {
     try {
-      if (!fhenixClient.current || !fhenixProvider.current || !address) return;
+      if (!fhenixClient || !fhenixProvider || !address) return;
       setLoading(true);
       setError("");
-      let encrypted = await fhenixClient.current.encrypt_uint128(
-        BigInt(amount)
-      );
-      const signer = await fhenixProvider.current.getSigner();
+      let encrypted = await fhenixClient.encrypt_uint128(BigInt(amount));
+      const signer = await fhenixProvider.getSigner();
 
       const contract = new ethers.Contract(POOL[chainId], poolAbi, signer);
       const contractWithSigner = contract.connect(signer);
