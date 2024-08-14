@@ -20,7 +20,6 @@ import { useMemo, useState } from "react";
 import { ellipsis } from "@/utils/helper";
 import { get } from "lodash";
 import { useBalance } from "wagmi";
-import { TextAutoEllipsis } from "@/common/common";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 
@@ -57,8 +56,13 @@ export default function Faucet() {
         <Flex justifyContent="space-between">
           <FormLabel opacity="0.7">Your wallet address</FormLabel>
           <Center>
-            {isLoading && <Image src={loading} alt="loading-icon" />}
-            <Box mr="2">{Number(balance?.formatted).toLocaleString()}</Box>
+            {isLoading ? (
+              <Box as={Image} mr="2" src={loading} alt="loading-icon" />
+            ) : (
+              <Box mr="2">
+                {Number(balance?.formatted ?? 0).toLocaleString()}
+              </Box>
+            )}
             <Select
               variant="unstyled"
               onChange={(e) => setToken(e.target.value as `0x${string}`)}

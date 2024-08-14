@@ -6,6 +6,7 @@ import logo from "@/images/felend.svg";
 import ConnectButton from "../../common/connect-button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ChainSelector from "./chainSelector";
 
 const links = [
   { name: "Dashboard", href: "/", comingSoon: false },
@@ -40,9 +41,10 @@ function Navbar() {
           </Center>
         );
       })}
-      <Box ml="auto">
+      <Center ml="auto">
         <ConnectButton />
-      </Box>
+        {/* <ChainSelector /> */}
+      </Center>
     </Flex>
   );
 }

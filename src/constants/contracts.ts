@@ -5,7 +5,7 @@ export const TOKENS: {
   [chainId: number]: { symbol: string; address: `0x${string}` }[];
 } = {
   [FHENIX_CHAIN_ID]: [
-    { symbol: "USDT", address: "0xF775b6c3854748Dc0D2Ef9E0D82d13eFF295569C" },
+    { symbol: "USDT", address: "0x01eF7ED545FC2632c4c69de706441e0327dFE0Dc" },
   ],
   [FHENIX_CHAIN_ID_LOCAL]: [
     { symbol: "USDT", address: "0xade09a9b557B6DFb410D8e68f396991dADD8354A" },
@@ -19,10 +19,10 @@ export const TOKEN_LOGO: { [name: string]: string } = {
 };
 
 export const POOL: { [chainId: number]: `0x${string}` } = {
-  [FHENIX_CHAIN_ID]: "0xDE603943466310b6c6CcC54dfeD5264F1cfd5A28",
-  [FHENIX_CHAIN_ID_LOCAL]: "0x6669cB4d3487139c413d227cfd8d1fA702772718",
+  [FHENIX_CHAIN_ID]: "0x58c210109bFa288D0Aca084599bE04c6f43591B2",
+  [FHENIX_CHAIN_ID_LOCAL]: "0x58c210109bFa288D0Aca084599bE04c6f43591B2",
 };
 export const POOL_CORE: { [chainId: number]: `0x${string}` } = {
-  [FHENIX_CHAIN_ID]: "0xb00C2be32C16cE0C50f98b73502f01b2840790a7",
-  [FHENIX_CHAIN_ID_LOCAL]: "0xEc3546f68593dddD6Fca089c903c5D60Ebd560B0",
+  [FHENIX_CHAIN_ID]: "0x48e310B5dcecb5D17C3aC59624Ac61468DE7d108",
+  [FHENIX_CHAIN_ID_LOCAL]: "0x48e310B5dcecb5D17C3aC59624Ac61468DE7d108",
 };

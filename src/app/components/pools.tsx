@@ -14,6 +14,7 @@ export default function Pools({
 }: {
   poolAddresses: `0x${string}`[];
 }) {
+  console.log(poolAddresses);
   return (
     <TableContainer>
       <Table variant="unstyled">
