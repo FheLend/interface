@@ -5,7 +5,7 @@ import { useAccount, useChainId } from "wagmi";
 import { POOL } from "@/constants/contracts";
 import poolAbi from "@/constants/abi/pool.json";
 import { get } from "lodash";
-import useFhenix from "@/hooks/useFhenix";
+import { useFhenix } from "@/context/fhenix";
 
 export function RepayButton({
   amount,

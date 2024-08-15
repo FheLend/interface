@@ -4,7 +4,7 @@ import { ContractTransactionResponse, ethers } from "ethers";
 import { useAccount, useChainId } from "wagmi";
 import aTokenAbi from "@/constants/abi/aToken.json";
 import { get } from "lodash";
-import useFhenix from "@/hooks/useFhenix";
+import { useFhenix } from "@/context/fhenix";
 
 export function WithdrawButton({
   amount,
@@ -21,6 +21,8 @@ export function WithdrawButton({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [loadingText, setLoadingText] = useState<string>();
+
+  console.log(fhenixClient, fhenixProvider);
 
   async function withdraw() {
     try {
