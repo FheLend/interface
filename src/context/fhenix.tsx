@@ -38,7 +38,10 @@ export default function FhenixProvider({
   const [fhenixClient, setFhenixClient] = useState<FhenixClient>();
 
   useEffect(() => {
-    if (chainId === FHENIX_CHAIN_ID || chainId === FHENIX_CHAIN_ID_LOCAL) {
+    if (
+      window.ethereum &&
+      (chainId === FHENIX_CHAIN_ID || chainId === FHENIX_CHAIN_ID_LOCAL)
+    ) {
       const provider = new BrowserProvider(window.ethereum as Eip1193Provider);
       setFhenixProvider(provider);
       const fhenixClient = new FhenixClient({
