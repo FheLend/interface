@@ -21,6 +21,9 @@ import { formatUnits } from "viem";
 import RepayModal from "./repay";
 import { useMemo } from "react";
 
+const RAY = 10 ** 27; // 10 to the power 27
+const SECONDS_PER_YEAR = 31536000;
+
 export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const chainId = useChainId();
   const { isConnected, address } = useAccount();
@@ -84,6 +87,8 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const tokenDecimals = get(data, "[2].result", 18) as number;
   const userReserveData = get(data, "[3].result", []) as any[];
   const aTokenAddress = get(reserveData, "[11]", "") as `0x${string}`;
+  const liquidityRate = get(reserveData, "[4]", 0n);
+  const variableBorrowRate = get(reserveData, "[5]", 0n);
 
   const {
     data: depositedBalance,
@@ -102,6 +107,15 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
     onClose();
   }
 
+  // Deposit and Borrow calculations
+  // APY and APR are returned here as decimals, multiply by 100 to get the percents
+
+  const depositAPR = Number(liquidityRate) / RAY;
+  const depositAPY =
+    ((1 + depositAPR / SECONDS_PER_YEAR) ^ SECONDS_PER_YEAR) - 1;
+  const variableBorrowAPR = Number(variableBorrowRate) / RAY;
+  // stableBorrowAPR = variableBorrowRate / RAY;
+
   return (
     <Tr>
       <Td>
@@ -116,8 +130,11 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
           tokenDecimals
         )).toLocaleString()}
       </Td>
-      <Td isNumeric>--</Td>
-      <Td isNumeric>{depositedBalance?.formatted ?? 0}</Td>
+      <Td isNumeric>{(depositAPR * 100).toLocaleString()}%</Td>
+      <Td isNumeric>{(variableBorrowAPR * 100).toLocaleString()}%</Td>
+      <Td isNumeric>
+        {Number(depositedBalance?.formatted || "0").toLocaleString()}
+      </Td>
       <Td isNumeric>{Number(borrowedBalance).toLocaleString()}</Td>
       <Td w="200px">
         <Tooltip label="Connect wallet to supply" isDisabled={isConnected}>
