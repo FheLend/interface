@@ -29,8 +29,8 @@ export default function Pools({
             <Th>TVL</Th>
             <Th>Supply APR</Th>
             <Th>Borrow APR, variable</Th>
-            <Th>Supplied</Th>
-            <Th>Borrowed</Th>
+            <Th>Your Supplied</Th>
+            <Th>Your Borrowed</Th>
             <Th>Action</Th>
           </Tr>
         </Thead>
