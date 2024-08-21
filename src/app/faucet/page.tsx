@@ -32,20 +32,46 @@ export default function Faucet() {
     () => chains.find((chain) => chain.id === chainId),
     [chains, chainId]
   );
-  const [token, setToken] = useState(TOKENS[chainId][0].address);
+  const [token, setToken] = useState<`0x${string}`>();
+  const [isGetETH, setIsGetETH] = useState(false);
+  const [errorGetETH, setErrorGetETH] = useState<string>();
 
-  const { data: balance, isLoading } = useBalance({
+  const {
+    data: balance,
+    isLoading,
+    refetch,
+  } = useBalance({
     address,
     token,
   });
 
   function mint() {
-    writeContract({
-      abi: tokenAbi,
-      address: token,
-      functionName: "mint",
-      args: [],
-    });
+    if (token) {
+      writeContract({
+        abi: tokenAbi,
+        address: token,
+        functionName: "mint",
+        args: [],
+      });
+    } else {
+      setErrorGetETH("");
+      setIsGetETH(true);
+      fetch(`https://api.felend.xyz/getFunds?address=${address}`)
+        .then((data) => data.json())
+        .then((data) => {
+          if (data.error) {
+            setErrorGetETH(data.error);
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          setErrorGetETH(e.message);
+        })
+        .finally(() => {
+          setIsGetETH(false);
+          refetch();
+        });
+    }
   }
 
   return (
@@ -67,6 +93,9 @@ export default function Faucet() {
               variant="unstyled"
               onChange={(e) => setToken(e.target.value as `0x${string}`)}
             >
+              <option value={undefined} style={{ color: "#111518" }}>
+                tFHE
+              </option>
               {TOKENS[chainId].map((token) => (
                 <option
                   value={token.address}
@@ -88,7 +117,7 @@ export default function Faucet() {
       {isConnected ? (
         <Button
           onClick={mint}
-          isLoading={status === "pending"}
+          isLoading={status === "pending" || isGetETH}
           type="submit"
           loadingText="Confirming..."
         >
@@ -98,7 +127,7 @@ export default function Faucet() {
         <ConnectButton />
       )}
       <Box mt="2" fontSize="sm" color="red.300">
-        {get(error, "shortMessage")}
+        {token ? get(error, "shortMessage") : errorGetETH}
       </Box>
       {data && (
         <Box mt="4">
