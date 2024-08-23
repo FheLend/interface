@@ -20,6 +20,11 @@ export const TOKEN_LOGO: { [name: string]: string } = {
   USDT: "https://assets.coingecko.com/coins/images/325/standard/Tether.png",
 };
 
+export const GAS_LIMIT: { [chainId: number]: number } = {
+  [FHENIX_CHAIN_ID]: 400_000_000,
+  [FHENIX_CHAIN_ID_LOCAL]: 3_000_000,
+};
+
 export const POOL: { [chainId: number]: `0x${string}` } = {
   [FHENIX_CHAIN_ID]: "0x58c210109bFa288D0Aca084599bE04c6f43591B2",
   [FHENIX_CHAIN_ID_LOCAL]: "0x5B0ABc8c4e9Cd491C2A204bf8581Da3Ad9284ff9",

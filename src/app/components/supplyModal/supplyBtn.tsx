@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Box, Button } from "@chakra-ui/react";
 import { ContractTransactionResponse, ethers } from "ethers";
 import { useChainId } from "wagmi";
-import { POOL } from "@/constants/contracts";
+import { GAS_LIMIT, POOL } from "@/constants/contracts";
 import poolAbi from "@/constants/abi/pool.json";
 import { get } from "lodash";
 import { useFhenix } from "@/context/fhenix";
@@ -41,7 +41,7 @@ export function SupplyButton({
         poolAddress,
         encrypted,
         1n, // _referralCode
-        { gasLimit: 3_000_000 }
+        { gasLimit: GAS_LIMIT[chainId] }
       );
       setLoadingText("Waiting for tx...");
       await tx.wait(); // return ContractTransactionReceipt from ethers

@@ -5,6 +5,7 @@ import { useAccount, useChainId } from "wagmi";
 import aTokenAbi from "@/constants/abi/aToken.json";
 import { get } from "lodash";
 import { useFhenix } from "@/context/fhenix";
+import { GAS_LIMIT } from "@/constants/contracts";
 
 export function WithdrawButton({
   amount,
@@ -39,7 +40,7 @@ export function WithdrawButton({
       //@ts-ignore
       const tx: ContractTransactionResponse = await contractWithSigner.redeem(
         encrypted,
-        { gasLimit: 3_000_000 }
+        { gasLimit: GAS_LIMIT[chainId] }
       );
       setLoadingText("Waiting for tx...");
       await tx.wait(); // return ContractTransactionReceipt

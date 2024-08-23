@@ -34,7 +34,7 @@ export default function RootLayout({
             <ChakraProvider>
               <ProgressBarProvider>
                 <Navbar />
-                <Container maxW="container.xl">{children}</Container>
+                <Container maxW="container.2xl">{children}</Container>
               </ProgressBarProvider>
             </ChakraProvider>
           </FhenixProvider>

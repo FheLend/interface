@@ -30,9 +30,13 @@ import { parseUnits } from "viem";
 
 export default function SupplyModal({
   poolAddress,
+  apr,
+  apy,
   onClose,
 }: {
   poolAddress: `0x${string}`;
+  apr: number;
+  apy: number;
   onClose: () => void;
 }) {
   const chainId = useChainId();
@@ -115,12 +119,12 @@ export default function SupplyModal({
           </FormControl>
 
           <Center mt="4" justifyContent="space-between" fontSize="small">
-            <Box color="whiteAlpha.500">Supply APY</Box>
-            <Box>--</Box>
+            <Box color="whiteAlpha.500">Supply APR</Box>
+            <Box>{apr}%</Box>
           </Center>
           <Center mt="1" justifyContent="space-between" fontSize="small">
-            <Box color="whiteAlpha.500">Network fee</Box>
-            <Box>--</Box>
+            <Box color="whiteAlpha.500">Supply APY</Box>
+            <Box>{apy}%</Box>
           </Center>
 
           <Center mt="5" flexDir="column">

@@ -145,6 +145,8 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
         {isOpenSupply && (
           <SupplyModal
             poolAddress={poolAddress}
+            apr={depositAPR}
+            apy={depositAPY}
             onClose={() => {
               handleCloseModal(closeSupply);
             }}
