@@ -120,11 +120,11 @@ export default function SupplyModal({
 
           <Center mt="4" justifyContent="space-between" fontSize="small">
             <Box color="whiteAlpha.500">Supply APR</Box>
-            <Box>{apr}%</Box>
+            <Box>{(apr * 100).toLocaleString()}%</Box>
           </Center>
           <Center mt="1" justifyContent="space-between" fontSize="small">
             <Box color="whiteAlpha.500">Supply APY</Box>
-            <Box>{apy}%</Box>
+            <Box>{(apy * 100).toLocaleString()}%</Box>
           </Center>
 
           <Center mt="5" flexDir="column">

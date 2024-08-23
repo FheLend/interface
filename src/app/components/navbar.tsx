@@ -9,9 +9,9 @@ import { usePathname } from "next/navigation";
 import ChainSelector from "./chainSelector";
 
 const links = [
-  { name: "Dashboard", href: "/", comingSoon: false },
-  { name: "Faucet", href: "/faucet", comingSoon: false },
-  { name: "Document", href: "/document", comingSoon: true },
+  { name: "Dashboard", href: "/", comingSoon: false, show: "base" },
+  { name: "Faucet", href: "/faucet", comingSoon: false, show: "base" },
+  { name: "Document", href: "/document", comingSoon: true, show: "lg" },
 ];
 
 function Navbar() {
@@ -31,6 +31,7 @@ function Navbar() {
             href={link.href}
             opacity={pathname === link.href ? 1 : 0.6}
             mx="3"
+            display={{ base: "none", [link.show]: "flex" }}
           >
             {link.name}
             {link.comingSoon && (
@@ -41,7 +42,17 @@ function Navbar() {
           </Center>
         );
       })}
-      <Center ml="auto">
+      <Center
+        ml="auto"
+        pos={{ base: "fixed", lg: "static" }}
+        bottom="0"
+        left="0"
+        w={{ base: "100%", lg: "auto" }}
+        p={{ base: "3", lg: "0" }}
+        justifyContent="flex-end"
+        bgColor="primary.900"
+        zIndex="1"
+      >
         <ConnectButton />
         <ChainSelector />
       </Center>
