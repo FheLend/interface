@@ -4,9 +4,7 @@ import { cookieToInitialState } from "wagmi";
 import { config } from "@/config/web3modal";
 import Web3ModalProvider from "@/context/web3modal";
 import { headers } from "next/headers";
-import Navbar from "./components/navbar";
-import { Provider as ChakraProvider } from "../context/chakra-ui";
-import { Container } from "@chakra-ui/react";
+import { Provider as ChakraProvider } from "@/context/chakra-ui";
 import ProgressBarProvider from "@/context/nprogress";
 import FhenixProvider from "@/context/fhenix";
 
@@ -32,10 +30,7 @@ export default function RootLayout({
         <Web3ModalProvider initialState={initialState}>
           <FhenixProvider>
             <ChakraProvider>
-              <ProgressBarProvider>
-                <Navbar />
-                <Container maxW="container.2xl">{children}</Container>
-              </ProgressBarProvider>
+              <ProgressBarProvider>{children}</ProgressBarProvider>
             </ChakraProvider>
           </FhenixProvider>
         </Web3ModalProvider>

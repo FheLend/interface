@@ -2,20 +2,12 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  MenuItem,
   MenuItemOption,
-  MenuGroup,
   MenuOptionGroup,
-  MenuDivider,
 } from "@chakra-ui/menu";
-import { Box, Button, Center, Flex } from "@chakra-ui/react";
-import Image from "next/image";
-import logo from "@/images/felend.svg";
-import ConnectButton from "../../common/connect-button";
-import Link from "next/link";
+import { Button } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { SUPPORTED_CHAINS } from "@/constants/contracts";
-import { useAccount, useChainId, useChains, useSwitchChain } from "wagmi";
+import { useChainId, useSwitchChain } from "wagmi";
 
 function ChainSelector() {
   const chainId = useChainId();

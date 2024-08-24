@@ -3,13 +3,13 @@
 import { Box, Center, Flex } from "@chakra-ui/react";
 import Image from "next/image";
 import logo from "@/images/felend.svg";
-import ConnectButton from "../../common/connect-button";
+import ConnectButton from "@/common/connect-button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ChainSelector from "./chainSelector";
 
 const links = [
-  { name: "Dashboard", href: "/", comingSoon: false, show: "base" },
+  { name: "Dashboard", href: "/dashboard", comingSoon: false, show: "base" },
   { name: "Faucet", href: "/faucet", comingSoon: false, show: "base" },
   { name: "Document", href: "/document", comingSoon: true, show: "lg" },
 ];
