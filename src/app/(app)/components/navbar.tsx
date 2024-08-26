@@ -19,7 +19,7 @@ function Navbar() {
 
   return (
     <Flex px="10" py="5" alignItems="center">
-      <Box as={Link} href="/" mr="5">
+      <Box as={Link} href="https://felend.xyz" mr="5">
         <Image src={logo} alt="logo" />
       </Box>
 
