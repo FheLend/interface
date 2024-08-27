@@ -11,7 +11,7 @@ import ChainSelector from "./chainSelector";
 const links = [
   { name: "Dashboard", href: "/dashboard", comingSoon: false, show: "base" },
   { name: "Faucet", href: "/faucet", comingSoon: false, show: "base" },
-  { name: "Document", href: "/document", comingSoon: true, show: "lg" },
+  { name: "Documentation", href: "/documentation", comingSoon: true, show: "lg" },
 ];
 
 function Navbar() {
