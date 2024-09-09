@@ -7,6 +7,8 @@ import { headers } from "next/headers";
 import { Provider as ChakraProvider } from "@/context/chakra-ui";
 import ProgressBarProvider from "@/context/nprogress";
 import FhenixProvider from "@/context/fhenix";
+import { Container } from "@chakra-ui/react";
+import Navbar from "./components/navbar";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -30,7 +32,10 @@ export default function RootLayout({
         <Web3ModalProvider initialState={initialState}>
           <FhenixProvider>
             <ChakraProvider>
-              <ProgressBarProvider>{children}</ProgressBarProvider>
+              <ProgressBarProvider>
+                <Navbar />
+                <Container maxW="container.2xl">{children}</Container>
+              </ProgressBarProvider>
             </ChakraProvider>
           </FhenixProvider>
         </Web3ModalProvider>
