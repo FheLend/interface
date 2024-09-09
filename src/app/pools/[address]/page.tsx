@@ -4,9 +4,46 @@ import NotFound from "@/app/not-found";
 import { Card } from "@/common/common";
 import { TOKEN_LOGO, TOKENS } from "@/constants/contracts";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { Box, Divider, Flex, Grid, GridItem, Image } from "@chakra-ui/react";
+import {
+  Box,
+  Divider,
+  Flex,
+  FlexProps,
+  Grid,
+  GridItem,
+  Image,
+} from "@chakra-ui/react";
 import Link from "next/link";
 import { useChainId } from "wagmi";
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/tabs";
+import SupplyForm from "@/app/components/supplyModal/supplyForm";
+import BorrowForm from "@/app/components/borrowModal/borrowForm";
+import RepayForm from "@/app/components/repay/repayForm";
+import WithdrawForm from "@/app/components/withdrawModal/withdrawForm";
+
+function VerticalDivider() {
+  return (
+    <Divider
+      orientation="vertical"
+      h="70px"
+      mx="10"
+      borderColor="primary.600"
+    />
+  );
+}
+
+function RowInfo(props: FlexProps) {
+  return (
+    <Flex
+      py="4"
+      borderBottom="1px"
+      borderColor="primary.600"
+      justify="space-between"
+      align="center"
+      {...props}
+    />
+  );
+}
 
 function PoolDetail({ params }: { params: { address: string } }) {
   const chainId = useChainId();
@@ -29,31 +66,17 @@ function PoolDetail({ params }: { params: { address: string } }) {
         </Box>
       </Flex>
 
-      <Flex my="10" align="center">
+      <Flex my="6" align="center">
         <Box>
-          <Box color="whiteAlpha.700" mb="3">
+          <Box color="whiteBlue.700" mb="3">
             Supply
           </Box>
           <Box fontSize="2xl">$116.61M</Box>
         </Box>
-        <Divider orientation="vertical" h="70px" mx="10" opacity="0.2" />
+        <VerticalDivider />
         <Box>
-          <Box color="whiteAlpha.700" mb="3">
-            Supply
-          </Box>
-          <Box fontSize="2xl">$116.61M</Box>
-        </Box>
-        <Divider orientation="vertical" h="70px" mx="10" opacity="0.2" />
-        <Box>
-          <Box color="whiteAlpha.700" mb="3">
-            Supply
-          </Box>
-          <Box fontSize="2xl">$116.61M</Box>
-        </Box>
-        <Divider orientation="vertical" h="70px" mx="10" opacity="0.2" />
-        <Box>
-          <Box color="whiteAlpha.700" mb="3">
-            Supply
+          <Box color="whiteBlue.700" mb="3">
+            Liquidity
           </Box>
           <Box fontSize="2xl">$116.61M</Box>
         </Box>
@@ -61,10 +84,90 @@ function PoolDetail({ params }: { params: { address: string } }) {
 
       <Grid templateColumns="repeat(3, 1fr)" gap={6}>
         <GridItem colSpan={2}>
-          <Card title="Supply info">sfs</Card>
+          <Card title="Supply info" px="8">
+            <Flex mt="6" align="center">
+              <Box>
+                <Box color="whiteBlue.700" fontSize="sm" mb="3">
+                  Total Supply
+                </Box>
+                <Box fontSize="lg">$116.61M</Box>
+              </Box>
+              <VerticalDivider />
+              <Box>
+                <Box color="whiteBlue.700" fontSize="sm" mb="3">
+                  Total Supply
+                </Box>
+                <Box fontSize="lg">$116.61M</Box>
+              </Box>
+            </Flex>
+          </Card>
+          <Card title="Borrow info" mt="6" px="8">
+            <Flex mt="6" align="center">
+              <Box>
+                <Box color="whiteBlue.700" fontSize="sm" mb="3">
+                  Total Supply
+                </Box>
+                <Box fontSize="lg">$116.61M</Box>
+              </Box>
+              <VerticalDivider />
+              <Box>
+                <Box color="whiteBlue.700" fontSize="sm" mb="3">
+                  Total Supply
+                </Box>
+                <Box fontSize="lg">$116.61M</Box>
+              </Box>
+            </Flex>
+          </Card>
+          <Card title="Market info" mt="6" px="8">
+            <RowInfo>
+              <Box color="whiteBlue.700" fontSize="sm">
+                Total Supply
+              </Box>
+              <Box>$116.61M</Box>
+            </RowInfo>
+            <RowInfo>
+              <Box color="whiteBlue.700" fontSize="sm">
+                Total Supply
+              </Box>
+              <Box>$116.61M</Box>
+            </RowInfo>
+            <RowInfo>
+              <Box color="whiteBlue.700" fontSize="sm">
+                Total Supply
+              </Box>
+              <Box>$116.61M</Box>
+            </RowInfo>
+          </Card>
         </GridItem>
         <GridItem>
-          <Card>sfs</Card>
+          <Card px="8">
+            <Tabs variant="basic" colorScheme="primary">
+              <TabList>
+                <Tab>Supply</Tab>
+                <Tab>Withdraw</Tab>
+                <Tab>Borrow</Tab>
+                <Tab>Repay</Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel>
+                  <SupplyForm
+                    poolAddress={poolAddress as `0x${string}`}
+                    apr={1}
+                    apy={1}
+                  />
+                </TabPanel>
+                <TabPanel>
+                  <WithdrawForm aTokenAddress={poolAddress as `0x${string}`} />
+                </TabPanel>
+                <TabPanel>
+                  <BorrowForm poolAddress={poolAddress as `0x${string}`} />
+                </TabPanel>
+                <TabPanel>
+                  <RepayForm poolAddress={poolAddress as `0x${string}`} />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </Card>
         </GridItem>
       </Grid>
     </>

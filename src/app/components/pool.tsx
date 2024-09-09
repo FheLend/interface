@@ -119,7 +119,7 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   // stableBorrowAPR = variableBorrowRate / RAY;
 
   return (
-    <Tr onClick={() => router.push(`/pools/${poolAddress}`)}>
+    <Tr onClick={() => router.push(`/pools/${poolAddress}`)} cursor="pointer">
       <Td>
         <Flex alignItems="center">
           <Image src={TOKEN_LOGO[tokenSymbol]} boxSize="6" alt="token-logo" />
@@ -140,7 +140,14 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
       <Td isNumeric>{Number(borrowedBalance).toLocaleString()}</Td>
       <Td w="200px">
         <Tooltip label="Connect wallet to supply" isDisabled={isConnected}>
-          <Button onClick={openSupply} size="sm" isDisabled={!isConnected}>
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              openSupply();
+            }}
+            size="sm"
+            isDisabled={!isConnected}
+          >
             Supply
           </Button>
         </Tooltip>
@@ -157,7 +164,10 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
 
         <Tooltip label="Connect wallet to widthdraw" isDisabled={isConnected}>
           <Button
-            onClick={openWithdraw}
+            onClick={(e) => {
+              e.stopPropagation();
+              openWithdraw();
+            }}
             variant="outline"
             ml="3"
             size="sm"
@@ -180,7 +190,10 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
             ml="3"
             size="sm"
             isDisabled={!isConnected}
-            onClick={openBorrow}
+            onClick={(e) => {
+              e.stopPropagation();
+              openBorrow();
+            }}
           >
             Borrow
           </Button>
@@ -200,7 +213,10 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
             variant="outline"
             size="sm"
             isDisabled={!isConnected}
-            onClick={openRepay}
+            onClick={(e) => {
+              e.stopPropagation();
+              openRepay();
+            }}
           >
             Repay
           </Button>

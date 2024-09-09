@@ -1,4 +1,34 @@
-import { extendTheme, transition } from "@chakra-ui/react";
+import { extendTheme } from "@chakra-ui/react";
+import { tabsAnatomy } from "@chakra-ui/anatomy";
+import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
+
+const { definePartsStyle, defineMultiStyleConfig } =
+  createMultiStyleConfigHelpers(tabsAnatomy.keys);
+
+const colorfulVariant = definePartsStyle((props) => {
+  return {
+    tab: {
+      mr: "2",
+      color: "whiteBlue.700",
+      fontWeight: 300,
+      fontSize: "sm",
+      _selected: {
+        borderRadius: "lg",
+        bg: "primary.600",
+        color: "whiteBlue.400",
+      },
+    },
+    tabpanel: {
+      px: 0,
+    },
+  };
+});
+
+const variants = {
+  basic: colorfulVariant,
+};
+
+export const tabsTheme = defineMultiStyleConfig({ variants });
 
 export const theme = extendTheme({
   initialColorMode: "dark",
@@ -13,6 +43,15 @@ export const theme = extendTheme({
       700: "#1A242C",
       800: "#171F25",
       900: "#111518",
+    },
+    whiteBlue: {
+      300: "#F3F6F9",
+      400: "#D9E1E9",
+      500: "#C3D0DD",
+      600: "#9EB0C1",
+      700: "#8192A2",
+      800: "#6B7D8E",
+      900: "#566B7E",
     },
   },
 
@@ -30,11 +69,12 @@ export const theme = extendTheme({
     global: {
       body: {
         bg: "primary.900",
-        color: "#F3F6F9",
+        color: "whiteBlue.300",
       },
     },
   },
   components: {
+    Tabs: tabsTheme,
     Button: {
       sizes: {
         sm: {
