@@ -2,7 +2,7 @@
 
 import NotFound from "@/app/not-found";
 import { Card } from "@/common/common";
-import { TOKEN_LOGO, TOKENS } from "@/constants/contracts";
+import { POOL, TOKEN_LOGO, TOKENS } from "@/constants/contracts";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -14,12 +14,14 @@ import {
   Image,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { useChainId } from "wagmi";
+import { useChainId, useReadContract, useReadContracts } from "wagmi";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/tabs";
 import SupplyForm from "@/app/components/supplyModal/supplyForm";
 import BorrowForm from "@/app/components/borrowModal/borrowForm";
 import RepayForm from "@/app/components/repay/repayForm";
 import WithdrawForm from "@/app/components/withdrawModal/withdrawForm";
+import { get } from "lodash";
+import poolAbi from "@/constants/abi/pool.json";
 
 function VerticalDivider() {
   return (
@@ -49,6 +51,38 @@ function PoolDetail({ params }: { params: { address: string } }) {
   const chainId = useChainId();
   const poolAddress = params.address;
   const token = TOKENS[chainId].find((t) => t.address === poolAddress);
+
+  // uint256 totalLiquidity,
+  // uint256 availableLiquidity,
+  // uint256 totalBorrowsStable,
+  // uint256 totalBorrowsVariable,
+  // uint256 liquidityRate,
+  // uint256 variableBorrowRate,
+  // uint256 stableBorrowRate,
+  // uint256 averageStableBorrowRate,
+  // uint256 utilizationRate,
+  // uint256 liquidityIndex,
+  // uint256 variableBorrowIndex,
+  // address aTokenAddress,
+  // uint40 lastUpdateTimestamp
+
+  const { data, refetch, isLoading } = useReadContract({
+    address: POOL[chainId],
+    abi: poolAbi,
+    functionName: "getReserveData",
+    args: [poolAddress],
+  });
+
+  const totalLiquidity = get(data, "[0]", 0n);
+  const availableLiquidity = get(data, "[1]", 0n);
+  const totalBorrowsStable = get(data, "[2]", 0n);
+  const totalBorrowsVariable = get(data, "[3]", 0n);
+  const liquidityRate = get(data, "[4]", 0n);
+  const variableBorrowRate = get(data, "[5]", 0n);
+  const stableBorrowRate = get(data, "[6]", 0n);
+  const averageStableBorrowRate = get(data, "[7]", 0n);
+  const utilizationRate = get(data, "[8]", 0n);
+  const aTokenAddress = get(data, "[11]", "");
 
   if (!token) {
     return <NotFound />;
@@ -141,7 +175,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
         </GridItem>
         <GridItem>
           <Card px="8">
-            <Tabs variant="basic" colorScheme="primary">
+            <Tabs variant="basic" colorScheme="primary" isLazy>
               <TabList>
                 <Tab>Supply</Tab>
                 <Tab>Withdraw</Tab>
