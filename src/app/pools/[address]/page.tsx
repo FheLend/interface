@@ -173,7 +173,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
             Utilization Rate
           </Box>
           <Box fontSize="2xl">
-            {(+formatUnits(utilizationRate, tokenDecimals)).toLocaleString()} %
+            {(+formatUnits(utilizationRate, 27)).toLocaleString()} %
           </Box>
         </Box>
       </Flex>
