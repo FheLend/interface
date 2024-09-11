@@ -108,7 +108,7 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
 
   const depositAPR = Number(liquidityRate) / RAY;
   const depositAPY =
-    ((1 + depositAPR / SECONDS_PER_YEAR) ^ SECONDS_PER_YEAR) - 1;
+    (1 + depositAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1;
   const variableBorrowAPR = Number(variableBorrowRate) / RAY;
   // stableBorrowAPR = variableBorrowRate / RAY;
 

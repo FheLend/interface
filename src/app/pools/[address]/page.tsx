@@ -115,17 +115,17 @@ function PoolDetail({ params }: { params: { address: string } }) {
   const usageAsCollateralEnabled = get(reserveConfigurationData, "[4]", false);
   const borrowingEnabled = get(reserveConfigurationData, "[5]", false);
   const stableBorrowRateEnabled = get(reserveConfigurationData, "[6]", false);
-  console.log(reserveConfigurationData, ltv);
+
   const depositAPR = Number(liquidityRate) / RAY;
   const depositAPY =
-    ((1 + depositAPR / SECONDS_PER_YEAR) ^ SECONDS_PER_YEAR) - 1;
+    (1 + depositAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1;
 
   const stableBorrowAPR = Number(variableBorrowRate) / RAY;
   const variableBorrowAPR = Number(variableBorrowRate) / RAY;
   const variableBorrowAPY =
-    ((1 + variableBorrowAPR / SECONDS_PER_YEAR) ^ SECONDS_PER_YEAR) - 1;
+    (1 + variableBorrowAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1;
   const stableBorrowAPY =
-    ((1 + stableBorrowAPR / SECONDS_PER_YEAR) ^ SECONDS_PER_YEAR) - 1;
+    (1 + stableBorrowAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1;
 
   if (!token) {
     return <NotFound />;
@@ -324,8 +324,8 @@ function PoolDetail({ params }: { params: { address: string } }) {
                 <TabPanel>
                   <SupplyForm
                     poolAddress={poolAddress as `0x${string}`}
-                    apr={1}
-                    apy={1}
+                    apr={depositAPR}
+                    apy={depositAPY}
                   />
                 </TabPanel>
                 <TabPanel>
