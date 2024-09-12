@@ -10,8 +10,8 @@ export const TOKENS: {
     { symbol: "USDT", address: "0x01eF7ED545FC2632c4c69de706441e0327dFE0Dc" },
   ],
   [FHENIX_CHAIN_ID_LOCAL]: [
-    { symbol: "USDT", address: "0x20E068a567630483901Af229a6eCF5eb401A5D66" },
-    { symbol: "DAI", address: "0xf621eb91625Eb049d7E3c03497Faf8bfE9B72823" },
+    { symbol: "USDT", address: "0x03820fB370EE34d30833edD544B0A66D67623976" },
+    { symbol: "DAI", address: "0x4aB8f750906a60B8688f44ddA65DA2b54D01B89a" },
   ],
 };
 
@@ -27,9 +27,9 @@ export const GAS_LIMIT: { [chainId: number]: number } = {
 
 export const POOL: { [chainId: number]: `0x${string}` } = {
   [FHENIX_CHAIN_ID]: "0x58c210109bFa288D0Aca084599bE04c6f43591B2",
-  [FHENIX_CHAIN_ID_LOCAL]: "0x5B0ABc8c4e9Cd491C2A204bf8581Da3Ad9284ff9",
+  [FHENIX_CHAIN_ID_LOCAL]: "0x0B8a0070d40b65a0515D88524162eb14e37aE903",
 };
 export const POOL_CORE: { [chainId: number]: `0x${string}` } = {
   [FHENIX_CHAIN_ID]: "0x48e310B5dcecb5D17C3aC59624Ac61468DE7d108",
-  [FHENIX_CHAIN_ID_LOCAL]: "0xc172fc2df2E4841DFf0e2A8395318E51dB031053",
+  [FHENIX_CHAIN_ID_LOCAL]: "0xBf2CA6026553Cd08daB954B7fc51eD75dAd5e354",
 };

@@ -5,6 +5,8 @@ import {
   Button,
   Flex,
   Image,
+  LinkBox,
+  LinkOverlay,
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -20,7 +22,7 @@ import BorrowModal from "./borrowModal";
 import { formatUnits } from "viem";
 import RepayModal from "./repay";
 import { useMemo } from "react";
-import { useRouter } from "next-nprogress-bar";
+import Link from "next/link";
 
 const RAY = 10 ** 27; // 10 to the power 27
 const SECONDS_PER_YEAR = 31536000;
@@ -28,7 +30,6 @@ const SECONDS_PER_YEAR = 31536000;
 export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const chainId = useChainId();
   const { isConnected, address } = useAccount();
-  const router = useRouter();
 
   const {
     isOpen: isOpenSupply,
@@ -113,16 +114,18 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   // stableBorrowAPR = variableBorrowRate / RAY;
 
   return (
-    <Tr
-      onClick={() => router.push(`/pools/${poolAddress}`)}
+    <LinkBox
+      as={Tr}
       cursor="pointer"
       _hover={{ bg: "primary.900", transition: "0.3s" }}
     >
-      <Td>
-        <Flex alignItems="center">
-          <Image src={TOKEN_LOGO[tokenSymbol]} boxSize="6" alt="token-logo" />
-          <Box ml="2">{tokenSymbol}</Box>
-        </Flex>
+      <Td borderLeftRadius="lg">
+        <LinkOverlay as={Link} href={`/pools/${poolAddress}`}>
+          <Flex alignItems="center">
+            <Image src={TOKEN_LOGO[tokenSymbol]} boxSize="6" alt="token-logo" />
+            <Box ml="2">{tokenSymbol}</Box>
+          </Flex>
+        </LinkOverlay>
       </Td>
       <Td isNumeric>
         {(+formatUnits(
@@ -136,7 +139,7 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
         {Number(depositedBalance?.formatted || "0").toLocaleString()}
       </Td>
       <Td isNumeric>{Number(borrowedBalance).toLocaleString()}</Td>
-      <Td w="200px">
+      <Td w="200px" borderRightRadius="lg">
         <Tooltip label="Connect wallet to supply" isDisabled={isConnected}>
           <Button
             onClick={(e) => {
@@ -228,6 +231,6 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
           />
         )}
       </Td>
-    </Tr>
+    </LinkBox>
   );
 }
