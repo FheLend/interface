@@ -15,7 +15,12 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { useChainId, useReadContract, useReadContracts } from "wagmi";
+import {
+  useAccount,
+  useChainId,
+  useReadContract,
+  useReadContracts,
+} from "wagmi";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/tabs";
 import SupplyForm from "@/app/components/supplyModal/supplyForm";
 import BorrowForm from "@/app/components/borrowModal/borrowForm";
@@ -25,6 +30,7 @@ import { get } from "lodash";
 import poolAbi from "@/constants/abi/pool.json";
 import tokenAbi from "@/constants/abi/token.json";
 import { formatUnits } from "viem";
+import UserPoolInfo from "./userPoolInfo";
 
 const RAY = 10 ** 27; // 10 to the power 27
 const SECONDS_PER_YEAR = 31536000;
@@ -57,20 +63,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
   const chainId = useChainId();
   const poolAddress = params.address;
   const token = TOKENS[chainId].find((t) => t.address === poolAddress);
-
-  // uint256 totalLiquidity,
-  // uint256 availableLiquidity,
-  // uint256 totalBorrowsStable,
-  // uint256 totalBorrowsVariable,
-  // uint256 liquidityRate,
-  // uint256 variableBorrowRate,
-  // uint256 stableBorrowRate,
-  // uint256 averageStableBorrowRate,
-  // uint256 utilizationRate,
-  // uint256 liquidityIndex,
-  // uint256 variableBorrowIndex,
-  // address aTokenAddress,
-  // uint40 lastUpdateTimestamp
+  const { isConnected } = useAccount();
 
   const { data, refetch, isLoading } = useReadContracts({
     contracts: [
@@ -339,6 +332,9 @@ function PoolDetail({ params }: { params: { address: string } }) {
                 </TabPanel>
               </TabPanels>
             </Tabs>
+            {isConnected && (
+              <UserPoolInfo poolAddress={poolAddress as `0x${string}`} />
+            )}
           </Card>
         </GridItem>
       </Grid>

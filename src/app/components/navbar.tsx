@@ -11,7 +11,12 @@ import ChainSelector from "./chainSelector";
 const links = [
   { name: "Dashboard", href: "/dashboard", comingSoon: false, show: "base" },
   { name: "Faucet", href: "/faucet", comingSoon: false, show: "base" },
-  { name: "Documentation", href: "/documentation", comingSoon: true, show: "lg" },
+  {
+    name: "Documentation",
+    href: "https://docs.felend.xyz",
+    comingSoon: false,
+    show: "lg",
+  },
 ];
 
 function Navbar() {
