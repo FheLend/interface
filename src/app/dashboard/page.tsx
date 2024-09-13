@@ -5,6 +5,7 @@ import {
   Center,
   Flex,
   FlexProps,
+  Grid,
   GridItem,
   SimpleGrid,
   Spacer,
@@ -76,10 +77,17 @@ export default function Home() {
         /> */}
       </Flex>
 
-      {isConnected && (
-        <Card title="Your Position" mt="7">
-          <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
-            <GridItem>
+      <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+        <GridItem colSpan={{ base: 3, lg: isConnected ? 2 : 3 }}>
+          <Card title="Pools" mt="7">
+            {!isEmpty(reserves) && (
+              <Pools poolAddresses={reserves as `0x${string}`[]} />
+            )}
+          </Card>
+        </GridItem>
+        <GridItem colSpan={{ base: 3, lg: 1 }}>
+          {isConnected && (
+            <Card title="Your Position" mt="7">
               <RowInfo>
                 <Box color="whiteBlue.700" fontSize="sm">
                   Total Liquidity
@@ -113,8 +121,6 @@ export default function Home() {
                   ~ {(+formatUnits(totalFeesETH, 18)).toLocaleString()} ETH
                 </Box>
               </RowInfo>
-            </GridItem>
-            <GridItem>
               <RowInfo>
                 <Box color="whiteBlue.700" fontSize="sm">
                   Available Borrows
@@ -148,16 +154,10 @@ export default function Home() {
                     : "∞"}
                 </Box>
               </RowInfo>
-            </GridItem>
-          </SimpleGrid>
-        </Card>
-      )}
-
-      <Card title="Pools" mt="7">
-        {!isEmpty(reserves) && (
-          <Pools poolAddresses={reserves as `0x${string}`[]} />
-        )}
-      </Card>
+            </Card>
+          )}
+        </GridItem>
+      </Grid>
     </Box>
   );
 }

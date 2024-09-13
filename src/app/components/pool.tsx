@@ -103,12 +103,10 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
       _hover={{ bg: "primary.900", transition: "0.3s" }}
     >
       <Td borderLeftRadius="lg">
-        <LinkOverlay as={Link} href={`/pools/${poolAddress}`}>
-          <Flex alignItems="center">
-            <Image src={TOKEN_LOGO[tokenSymbol]} boxSize="6" alt="token-logo" />
-            <Box ml="2">{tokenSymbol}</Box>
-          </Flex>
-        </LinkOverlay>
+        <Flex alignItems="center">
+          <Image src={TOKEN_LOGO[tokenSymbol]} boxSize="6" alt="token-logo" />
+          <Box ml="2">{tokenSymbol}</Box>
+        </Flex>
       </Td>
       <Td isNumeric>
         {(+formatUnits(totalLiquidity, tokenDecimals)).toLocaleString()}
@@ -144,74 +142,11 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
             }}
           />
         )}
-
-        <Tooltip label="Connect wallet to widthdraw" isDisabled={isConnected}>
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              openWithdraw();
-            }}
-            variant="outline"
-            ml="3"
-            size="sm"
-            isDisabled={!isConnected}
-          >
-            Withdraw
+        <LinkOverlay as={Link} href={`/pools/${poolAddress}`}>
+          <Button variant="outline" ml="3" size="sm">
+            Detail
           </Button>
-        </Tooltip>
-        {isOpenWithdraw && (
-          <WithdrawModal
-            aTokenAddress={aTokenAddress}
-            onClose={() => {
-              handleCloseModal(closeWithdraw);
-            }}
-          />
-        )}
-
-        <Tooltip label="Connect wallet to borrow" isDisabled={isConnected}>
-          <Button
-            ml="3"
-            size="sm"
-            isDisabled={!isConnected}
-            onClick={(e) => {
-              e.stopPropagation();
-              openBorrow();
-            }}
-          >
-            Borrow
-          </Button>
-        </Tooltip>
-        {isOpenBorrow && (
-          <BorrowModal
-            poolAddress={poolAddress}
-            onClose={() => {
-              handleCloseModal(closeBorrow);
-            }}
-          />
-        )}
-
-        <Tooltip label="Connect wallet to repay" isDisabled={isConnected}>
-          <Button
-            ml="3"
-            variant="outline"
-            size="sm"
-            isDisabled={!isConnected}
-            onClick={(e) => {
-              e.stopPropagation();
-              openRepay();
-            }}
-          >
-            Repay
-          </Button>
-        </Tooltip>
-        {isOpenRepay && (
-          <RepayModal
-            poolAddress={poolAddress}
-            onClose={() => {
-              handleCloseModal(closeRepay);
-            }}
-          />
-        )}
+        </LinkOverlay>
       </Td>
     </LinkBox>
   );
