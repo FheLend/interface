@@ -77,7 +77,7 @@ export default function Home() {
       </Flex>
 
       {isConnected && (
-        <Card title="Your supplies" mt="7">
+        <Card title="Your Position" mt="7">
           <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
             <GridItem>
               <RowInfo>
@@ -142,7 +142,11 @@ export default function Home() {
                 <Box color="whiteBlue.700" fontSize="sm">
                   Health Factor
                 </Box>
-                <Box>{(+formatUnits(healthFactor, 18)).toLocaleString()}</Box>
+                <Box>
+                  {totalBorrowsETH
+                    ? (+formatUnits(healthFactor, 18)).toLocaleString()
+                    : "∞"}
+                </Box>
               </RowInfo>
             </GridItem>
           </SimpleGrid>

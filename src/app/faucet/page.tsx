@@ -15,10 +15,14 @@ import {
 import tokenAbi from "@/constants/abi/token.json";
 import { useAccount, useChainId, useChains, useWriteContract } from "wagmi";
 import ConnectButton from "@/common/connect-button";
-import { TOKENS } from "@/constants/contracts";
+import {
+  FHENIX_CHAIN_ID,
+  FHENIX_CHAIN_ID_LOCAL,
+  TOKENS,
+} from "@/constants/contracts";
 import { useMemo, useState } from "react";
 import { ellipsis } from "@/utils/helper";
-import { get } from "lodash";
+import { first, get } from "lodash";
 import { useBalance } from "wagmi";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
@@ -32,7 +36,9 @@ export default function Faucet() {
     () => chains.find((chain) => chain.id === chainId),
     [chains, chainId]
   );
-  const [token, setToken] = useState<`0x${string}`>();
+  const [token, setToken] = useState<`0x${string}` | undefined>(
+    chainId === FHENIX_CHAIN_ID ? first(TOKENS[chainId])?.address : undefined
+  );
   const [isGetETH, setIsGetETH] = useState(false);
   const [errorGetETH, setErrorGetETH] = useState<string>();
 
@@ -76,7 +82,9 @@ export default function Faucet() {
 
   return (
     <>
-      <Box fontSize="2xl">Faucet</Box>
+      <Box fontSize="2xl" mt="5">
+        Faucet
+      </Box>
 
       <FormControl mt="5" w="500px" maxW="100%">
         <Flex justifyContent="space-between">
@@ -93,9 +101,11 @@ export default function Faucet() {
               variant="unstyled"
               onChange={(e) => setToken(e.target.value as `0x${string}`)}
             >
-              <option value={undefined} style={{ color: "#111518" }}>
-                tFHE
-              </option>
+              {chainId === FHENIX_CHAIN_ID_LOCAL && (
+                <option value={undefined} style={{ color: "#111518" }}>
+                  tFHE
+                </option>
+              )}
               {TOKENS[chainId].map((token) => (
                 <option
                   value={token.address}

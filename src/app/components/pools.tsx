@@ -26,11 +26,10 @@ export default function Pools({
             }}
           >
             <Th>Assets</Th>
-            <Th>TVL</Th>
+            <Th>Total Supplied</Th>
+            <Th>Total Borrowed</Th>
             <Th>Supply APR</Th>
             <Th>Borrow APR, variable</Th>
-            <Th>Your Supplied</Th>
-            <Th>Your Borrowed</Th>
             <Th>Action</Th>
           </Tr>
         </Thead>

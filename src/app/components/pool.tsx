@@ -29,7 +29,7 @@ const SECONDS_PER_YEAR = 31536000;
 
 export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const chainId = useChainId();
-  const { isConnected, address } = useAccount();
+  const { isConnected } = useAccount();
 
   const {
     isOpen: isOpenSupply,
@@ -70,36 +70,19 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
         abi: tokenAbi,
         functionName: "decimals",
       },
-      {
-        address: POOL[chainId],
-        abi: poolAbi,
-        functionName: "getUserReserveData",
-        args: [poolAddress, address],
-      },
     ],
   });
 
   const reserveData = get(data, "[0].result", []) as any[];
   const tokenSymbol = get(data, "[1].result", "") as string;
   const tokenDecimals = get(data, "[2].result", 18) as number;
-  const userReserveData = get(data, "[3].result", []) as any[];
+  const totalLiquidity = get(reserveData, "[0]", 0n);
+  const availableLiquidity = get(reserveData, "[1]", 0n);
   const aTokenAddress = get(reserveData, "[11]", "") as `0x${string}`;
   const liquidityRate = get(reserveData, "[4]", 0n);
   const variableBorrowRate = get(reserveData, "[5]", 0n);
 
-  const {
-    data: depositedBalance,
-    isFetching: isFetchingBalance,
-    refetch: refetchBalance,
-  } = useBalance({ address, token: aTokenAddress });
-
-  const borrowedBalance = useMemo(
-    () => formatUnits(get(userReserveData, "[1]", 0n), tokenDecimals),
-    [userReserveData, tokenDecimals]
-  );
-
   function handleCloseModal(onClose: () => void) {
-    refetchBalance();
     refetch();
     onClose();
   }
@@ -128,17 +111,16 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
         </LinkOverlay>
       </Td>
       <Td isNumeric>
+        {(+formatUnits(totalLiquidity, tokenDecimals)).toLocaleString()}
+      </Td>
+      <Td isNumeric>
         {(+formatUnits(
-          get(reserveData, "[0]", 0n),
+          totalLiquidity - availableLiquidity,
           tokenDecimals
         )).toLocaleString()}
       </Td>
       <Td isNumeric>{(depositAPR * 100).toLocaleString()}%</Td>
       <Td isNumeric>{(variableBorrowAPR * 100).toLocaleString()}%</Td>
-      <Td isNumeric>
-        {Number(depositedBalance?.formatted || "0").toLocaleString()}
-      </Td>
-      <Td isNumeric>{Number(borrowedBalance).toLocaleString()}</Td>
       <Td w="200px" borderRightRadius="lg">
         <Tooltip label="Connect wallet to supply" isDisabled={isConnected}>
           <Button
