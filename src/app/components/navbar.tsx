@@ -9,13 +9,26 @@ import { usePathname } from "next/navigation";
 import ChainSelector from "./chainSelector";
 
 const links = [
-  { name: "Dashboard", href: "/dashboard", comingSoon: false, show: "base" },
-  { name: "Faucet", href: "/faucet", comingSoon: false, show: "base" },
+  {
+    name: "Dashboard",
+    href: "/dashboard",
+    comingSoon: false,
+    target: "_self",
+    show: "base",
+  },
+  {
+    name: "Faucet",
+    href: "/faucet",
+    comingSoon: false,
+    target: "_self",
+    show: "base",
+  },
   {
     name: "Documentation",
     href: "https://docs.felend.xyz",
     comingSoon: false,
     show: "lg",
+    target: "_blank",
   },
 ];
 
@@ -37,6 +50,7 @@ function Navbar() {
             opacity={pathname === link.href ? 1 : 0.6}
             mx="3"
             display={{ base: "none", [link.show]: "flex" }}
+            target={link.target}
           >
             {link.name}
             {link.comingSoon && (

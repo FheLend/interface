@@ -6,6 +6,7 @@ import { GAS_LIMIT, POOL } from "@/constants/contracts";
 import poolAbi from "@/constants/abi/pool.json";
 import { get } from "lodash";
 import { useFhenix } from "@/context/fhenix";
+import { getError } from "@/utils/helper";
 
 export function BorrowButton({
   amount,
@@ -47,9 +48,8 @@ export function BorrowButton({
       setLoading(false);
       refetchBalance();
     } catch (error) {
-      console.log(error);
       setLoading(false);
-      setError(get(error, "reason") || get(error, "message"));
+      setError(getError(error));
     }
   }
 
@@ -64,7 +64,7 @@ export function BorrowButton({
         Borrow
       </Button>
       {error && (
-        <Box mt="2" fontSize="small" color="red.300" wordBreak="break-word">
+        <Box mt="3" fontSize="small" color="red.300" wordBreak="break-word">
           {error}
         </Box>
       )}

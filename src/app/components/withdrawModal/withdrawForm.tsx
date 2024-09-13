@@ -82,14 +82,20 @@ export default function WithdrawForm({
         {isConnected ? (
           <>
             {+amount > 0 ? (
-              <WithdrawButton
-                amount={parseUnits(
-                  amount,
-                  balanceData?.decimals || 18
-                ).toString()}
-                aTokenAddress={aTokenAddress}
-                refetchBalance={refetchBalance}
-              />
+              amount <= (balanceData?.formatted || 0) ? (
+                <WithdrawButton
+                  amount={parseUnits(
+                    amount,
+                    balanceData?.decimals || 18
+                  ).toString()}
+                  aTokenAddress={aTokenAddress}
+                  refetchBalance={refetchBalance}
+                />
+              ) : (
+                <Button isDisabled>
+                  Insufficient {balanceData?.symbol} token
+                </Button>
+              )
             ) : (
               <Button isDisabled>Enter an amount</Button>
             )}

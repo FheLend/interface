@@ -9,7 +9,8 @@ import ProgressBarProvider from "@/context/nprogress";
 import FhenixProvider from "@/context/fhenix";
 import { Container } from "@chakra-ui/react";
 import Navbar from "./components/navbar";
-import Notice from "./components/Notice";
+import Notice from "./components/notices";
+import Footer from "./components/footer";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -39,6 +40,7 @@ export default function RootLayout({
                   <Notice />
                   {children}
                 </Container>
+                <Footer />
               </ProgressBarProvider>
             </ChakraProvider>
           </FhenixProvider>

@@ -30,9 +30,8 @@ import { get } from "lodash";
 import poolAbi from "@/constants/abi/pool.json";
 import tokenAbi from "@/constants/abi/token.json";
 import { formatUnits } from "viem";
-import UserPoolInfo from "./userPoolInfo";
 
-const RAY = 10 ** 27; // 10 to the power 27
+const RAY = 10 ** 27;
 const SECONDS_PER_YEAR = 31536000;
 
 function VerticalDivider() {
@@ -63,7 +62,6 @@ function PoolDetail({ params }: { params: { address: string } }) {
   const chainId = useChainId();
   const poolAddress = params.address;
   const token = TOKENS[chainId].find((t) => t.address === poolAddress);
-  const { isConnected } = useAccount();
 
   const { data, refetch, isLoading } = useReadContracts({
     contracts: [
@@ -172,7 +170,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
       </Flex>
 
       <Grid templateColumns="repeat(3, 1fr)" gap={6}>
-        <GridItem colSpan={2}>
+        <GridItem colSpan={{ base: 3, lg: 2 }}>
           <Card title="Supply info" px="8">
             <Flex mt="6" align="center">
               <Box>
@@ -206,7 +204,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
             </Flex>
           </Card>
           <Card title="Borrow info" mt="6" px="8">
-            <Flex mt="6" align="center">
+            <Flex mt="6" align="center" flexWrap="wrap">
               <Box>
                 <Box color="whiteBlue.700" fontSize="sm" mb="3">
                   Total Borrowed
@@ -304,7 +302,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
             </RowInfo>
           </Card>
         </GridItem>
-        <GridItem>
+        <GridItem colSpan={{ base: 3, lg: 1 }}>
           <Card px="8">
             <Tabs variant="basic" colorScheme="primary" isLazy>
               <TabList>
@@ -322,7 +320,9 @@ function PoolDetail({ params }: { params: { address: string } }) {
                   />
                 </TabPanel>
                 <TabPanel>
-                  <WithdrawForm aTokenAddress={poolAddress as `0x${string}`} />
+                  <WithdrawForm
+                    aTokenAddress={aTokenAddress as `0x${string}`}
+                  />
                 </TabPanel>
                 <TabPanel>
                   <BorrowForm poolAddress={poolAddress as `0x${string}`} />
@@ -332,9 +332,6 @@ function PoolDetail({ params }: { params: { address: string } }) {
                 </TabPanel>
               </TabPanels>
             </Tabs>
-            {isConnected && (
-              <UserPoolInfo poolAddress={poolAddress as `0x${string}`} />
-            )}
           </Card>
         </GridItem>
       </Grid>

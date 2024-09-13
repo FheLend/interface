@@ -121,7 +121,7 @@ export default function SupplyForm({
                   isFetchingAllowance={isFetchingAllowance}
                   refetchAllowance={refetchAllowance}
                 />
-              ) : (
+              ) : amount <= (balanceData?.formatted || 0) ? (
                 <SupplyButton
                   amount={parseUnits(
                     amount,
@@ -131,6 +131,10 @@ export default function SupplyForm({
                   refetchAllowance={refetchAllowance}
                   refetchBalance={refetchBalance}
                 />
+              ) : (
+                <Button isDisabled>
+                  Insufficient {balanceData?.symbol} token
+                </Button>
               )
             ) : (
               <Button isDisabled>Enter an amount</Button>

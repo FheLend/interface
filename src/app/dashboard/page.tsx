@@ -1,20 +1,65 @@
 "use client";
 
-import { Box, Flex, Spacer } from "@chakra-ui/react";
-import { Card } from "@/common/common";
+import {
+  Box,
+  Center,
+  Flex,
+  FlexProps,
+  GridItem,
+  SimpleGrid,
+  Spacer,
+} from "@chakra-ui/react";
+import { Card, Tag } from "@/common/common";
 import poolAbi from "@/constants/abi/pool.json";
-import { useChainId, useReadContract } from "wagmi";
+import { useAccount, useChainId, useReadContracts } from "wagmi";
 import Pools from "../components/pools";
-import { isEmpty } from "lodash";
-import { POOL_CORE } from "@/constants/contracts";
+import { get, isEmpty } from "lodash";
+import { POOL, POOL_CORE } from "@/constants/contracts";
+import { formatUnits } from "viem";
+
+function RowInfo(props: FlexProps) {
+  return (
+    <Flex
+      py="2"
+      borderBottom="1px"
+      borderColor="primary.600"
+      justify="space-between"
+      align="center"
+      {...props}
+    />
+  );
+}
 
 export default function Home() {
   const chainId = useChainId();
-  const { data: reserves } = useReadContract({
-    abi: poolAbi,
-    address: POOL_CORE[chainId],
-    functionName: "getReserves",
+  const { address, isConnected } = useAccount();
+  const { data } = useReadContracts({
+    contracts: [
+      {
+        abi: poolAbi,
+        address: POOL_CORE[chainId],
+        functionName: "getReserves",
+      },
+      {
+        address: POOL[chainId],
+        abi: poolAbi,
+        functionName: "getUserAccountData",
+        args: [address],
+      },
+    ],
   });
+
+  const reserves = get(data, "[0].result", []) as any[];
+  const userAccountData = get(data, "[1].result", []) as any[];
+
+  const totalLiquidityETH = get(userAccountData, "[0]", 0n);
+  const totalCollateralETH = get(userAccountData, "[1]", 0n);
+  const totalBorrowsETH = get(userAccountData, "[2]", 0n);
+  const totalFeesETH = get(userAccountData, "[3]", 0n);
+  const availableBorrowsETH = get(userAccountData, "[4]", 0n);
+  const currentLiquidationThreshold = get(userAccountData, "[5]", 0n);
+  const ltv = get(userAccountData, "[6]", 0n);
+  const healthFactor = get(userAccountData, "[7]", 0n);
 
   return (
     <Box mt="10">
@@ -22,22 +67,89 @@ export default function Home() {
         <Box fontSize="2xl">Dashboard</Box>
         <Spacer />
 
-        {/* <Tag title="Net worth" sub="$22,222" />
-        <Tag title="Net APY" sub="17.6%" ml="3" /> */}
+        {/* <Tag
+          title="Net worth"
+          sub={`~ ${(+formatUnits(
+            totalLiquidityETH,
+            18
+          )).toLocaleString()} ETH`}
+        /> */}
       </Flex>
 
-      <Card
-        title="Pools"
-        mt="7"
-        // sub={
-        //   <Center fontSize="sm" color="whiteAlpha.600">
-        //     Collateral:
-        //     <Box fontSize="lg" color="whiteAlpha.900" ml="2">
-        //       $6,765
-        //     </Box>
-        //   </Center>
-        // }
-      >
+      {isConnected && (
+        <Card title="Your supplies" mt="7">
+          <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+            <GridItem>
+              <RowInfo>
+                <Box color="whiteBlue.700" fontSize="sm">
+                  Total Liquidity
+                </Box>
+                <Box>
+                  ~ {(+formatUnits(totalLiquidityETH, 18)).toLocaleString()} ETH
+                </Box>
+              </RowInfo>
+              <RowInfo>
+                <Box color="whiteBlue.700" fontSize="sm">
+                  Total Collateral
+                </Box>
+                <Box>
+                  ~ {(+formatUnits(totalCollateralETH, 18)).toLocaleString()}{" "}
+                  ETH
+                </Box>
+              </RowInfo>
+              <RowInfo>
+                <Box color="whiteBlue.700" fontSize="sm">
+                  Total Borrowed
+                </Box>
+                <Box>
+                  ~ {(+formatUnits(totalBorrowsETH, 18)).toLocaleString()} ETH
+                </Box>
+              </RowInfo>
+              <RowInfo>
+                <Box color="whiteBlue.700" fontSize="sm">
+                  Total Fees
+                </Box>
+                <Box>
+                  ~ {(+formatUnits(totalFeesETH, 18)).toLocaleString()} ETH
+                </Box>
+              </RowInfo>
+            </GridItem>
+            <GridItem>
+              <RowInfo>
+                <Box color="whiteBlue.700" fontSize="sm">
+                  Available Borrows
+                </Box>
+                <Box>
+                  ~ {(+formatUnits(availableBorrowsETH, 18)).toLocaleString()}{" "}
+                  ETH
+                </Box>
+              </RowInfo>
+              <RowInfo>
+                <Box color="whiteBlue.700" fontSize="sm">
+                  Liquidation Threshold
+                </Box>
+                <Box>
+                  {Number(currentLiquidationThreshold).toLocaleString()} %
+                </Box>
+              </RowInfo>
+              <RowInfo>
+                <Box color="whiteBlue.700" fontSize="sm">
+                  Loan to value
+                </Box>
+                <Box>{Number(ltv).toLocaleString()} %</Box>
+              </RowInfo>
+              <RowInfo>
+                <Box color="whiteBlue.700" fontSize="sm">
+                  Health Factor
+                </Box>
+                <Box>{(+formatUnits(healthFactor, 18)).toLocaleString()}</Box>
+              </RowInfo>
+            </GridItem>
+          </SimpleGrid>
+        </Card>
+      )}
+
+      <Card title="Pools" mt="7">
         {!isEmpty(reserves) && (
           <Pools poolAddresses={reserves as `0x${string}`[]} />
         )}

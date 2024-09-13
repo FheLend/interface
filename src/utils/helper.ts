@@ -1,3 +1,5 @@
+import { get } from "lodash";
+
 export function ellipsis(string: string, start = 8, end = 4) {
   if (!string) return "";
   return `${string.substring(0, start)}...${string.substring(
@@ -17,4 +19,14 @@ export function filterNumberInput(event: any, value: string, preVal: string) {
   event.target.value = str;
 
   return preVal !== str;
+}
+
+export function getError(error: any) {
+  return (
+    get(error, "error.message") ||
+    get(error, "info.error.message") ||
+    get(error, "shortMessage") ||
+    get(error, "reason") ||
+    get(error, "message")
+  );
 }

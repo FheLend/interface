@@ -6,6 +6,7 @@ import aTokenAbi from "@/constants/abi/aToken.json";
 import { get } from "lodash";
 import { useFhenix } from "@/context/fhenix";
 import { GAS_LIMIT } from "@/constants/contracts";
+import { getError } from "@/utils/helper";
 
 export function WithdrawButton({
   amount,
@@ -22,8 +23,6 @@ export function WithdrawButton({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [loadingText, setLoadingText] = useState<string>();
-
-  console.log(fhenixClient, fhenixProvider);
 
   async function withdraw() {
     try {
@@ -48,7 +47,7 @@ export function WithdrawButton({
       refetchBalance();
     } catch (error) {
       setLoading(false);
-      setError(get(error, "reason") || get(error, "message"));
+      setError(getError(error));
     }
   }
 
@@ -63,7 +62,7 @@ export function WithdrawButton({
         Withdraw
       </Button>
       {error && (
-        <Box mt="2" fontSize="small" color="red.300" wordBreak="break-word">
+        <Box mt="3" fontSize="small" color="red.300" wordBreak="break-word">
           {error}
         </Box>
       )}

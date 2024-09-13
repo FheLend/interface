@@ -8,7 +8,7 @@ import { useChainId, useSwitchChain } from "wagmi";
 
 function Notice() {
   const chainId = useChainId();
-  const { chains, switchChain } = useSwitchChain();
+  const { switchChain } = useSwitchChain();
   if (chainId === FHENIX_CHAIN_ID) {
     return (
       <Flex

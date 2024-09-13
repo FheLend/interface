@@ -68,6 +68,7 @@ export const theme = extendTheme({
   styles: {
     global: {
       body: {
+        minH: "100vh",
         bg: "primary.900",
         color: "whiteBlue.300",
       },
