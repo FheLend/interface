@@ -171,7 +171,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
 
       <Grid templateColumns="repeat(3, 1fr)" gap={6}>
         <GridItem colSpan={{ base: 3, lg: 2 }}>
-          <Card title="Supply info" px="8">
+          <Card cardTitle="Supply info" px="8">
             <Flex mt="6" align="center">
               <Box>
                 <Box color="whiteBlue.700" fontSize="sm" mb="3">
@@ -203,7 +203,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
               </Box>
             </Flex>
           </Card>
-          <Card title="Borrow info" mt="6" px="8">
+          <Card cardTitle="Borrow info" mt="6" px="8">
             <Flex mt="6" align="center" flexWrap="wrap">
               <Box>
                 <Box color="whiteBlue.700" fontSize="sm" mb="3">
@@ -257,7 +257,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
               </Box>
             </Flex>
           </Card>
-          <Card title="Pool info" mt="6" px="8">
+          <Card cardTitle="Pool info" mt="6" px="8">
             <RowInfo>
               <Box color="whiteBlue.700" fontSize="sm">
                 a{token.symbol} address

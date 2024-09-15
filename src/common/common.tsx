@@ -1,4 +1,12 @@
-import { Box, BoxProps, Divider, Flex, Spacer } from "@chakra-ui/react";
+import {
+  Box,
+  BoxProps,
+  Divider,
+  Flex,
+  Spacer,
+  Text,
+  TextProps,
+} from "@chakra-ui/react";
 import { TagProps, Tag as ChakraTag } from "@chakra-ui/tag";
 
 export function Tag({
@@ -16,11 +24,25 @@ export function Tag({
   );
 }
 
-export function Card({
-  title,
-  sub,
+export function PrivateText({
+  isShow,
   ...props
-}: { title?: string | JSX.Element; sub?: string | JSX.Element } & BoxProps) {
+}: { isShow: boolean } & TextProps) {
+  return (
+    <Text {...props} as="span">
+      {isShow ? props.children : "******"}
+    </Text>
+  );
+}
+
+export function Card({
+  cardTitle,
+  subTitle,
+  ...props
+}: {
+  cardTitle?: string | JSX.Element;
+  subTitle?: string | JSX.Element;
+} & BoxProps) {
   return (
     <Box
       bgColor="primary.800"
@@ -30,12 +52,12 @@ export function Card({
       borderRadius="2xl"
       {...props}
     >
-      {title && (
+      {cardTitle && (
         <>
           <Flex alignItems="center" fontSize="lg" fontWeight="medium">
-            {title}
+            {cardTitle}
             <Spacer />
-            {sub}
+            {subTitle}
           </Flex>
           <Divider opacity="0.1" mt="4" mb="5" />
         </>

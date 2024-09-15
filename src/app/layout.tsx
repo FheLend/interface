@@ -11,6 +11,9 @@ import { Container } from "@chakra-ui/react";
 import Navbar from "./components/navbar";
 import Notice from "./components/notices";
 import Footer from "./components/footer";
+import FeedBack from "./components/feedback";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -40,11 +43,20 @@ export default function RootLayout({
                   <Notice />
                   {children}
                 </Container>
+                <FeedBack />
                 <Footer />
               </ProgressBarProvider>
             </ChakraProvider>
           </FhenixProvider>
         </Web3ModalProvider>
+
+        <Analytics />
+        <SpeedInsights />
+        <script
+          defer
+          src="https://umami.felend.xyz/script.js"
+          data-website-id="e15e63b1-d20b-4148-8f7e-08701c50d088"
+        ></script>
       </body>
     </html>
   );
