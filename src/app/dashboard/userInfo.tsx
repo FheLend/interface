@@ -54,7 +54,7 @@ function UserInfo({ data }: { data: any }) {
       }
       subTitle={
         <Link
-          href="https://docs.felend.xyz"
+          href="https://docs.felend.xyz/introduction/retrieve-data"
           isExternal
           fontSize="xs"
           fontWeight="300"
