@@ -122,12 +122,11 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
       <Td w="200px" borderRightRadius="lg">
         <Tooltip label="Connect wallet to supply" isDisabled={isConnected}>
           <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              openSupply();
-            }}
+            onClick={openSupply}
             size="sm"
             isDisabled={!isConnected}
+            pos="relative"
+            zIndex="1"
           >
             Supply
           </Button>
