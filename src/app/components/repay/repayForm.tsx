@@ -10,7 +10,7 @@ import {
   Center,
   Flex,
 } from "@chakra-ui/react";
-import { filterNumberInput } from "@/utils/helper";
+import { filterNumberInput, formatSmallNumber } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
@@ -89,7 +89,7 @@ export default function RepayForm({
                 <Image src={loading} alt="loading-icon" />
               ) : (
                 <TextAutoEllipsis ml="1">
-                  {borrowedBalance.toLocaleString()}
+                  {formatSmallNumber(borrowedBalance)}
                 </TextAutoEllipsis>
               )}
               <Box ml="1">{balanceData?.symbol}</Box>
@@ -101,15 +101,21 @@ export default function RepayForm({
       <Center mt="5" flexDir="column">
         {isConnected ? (
           <>
-            {+amount > 0 ? (
-              <RepayButton
-                amount={parseUnits(
-                  amount,
-                  balanceData?.decimals || 18
-                ).toString()}
-                poolAddress={poolAddress}
-                refetchBalance={refetch}
-              />
+            {Number(amount) > 0 ? (
+              Number(amount) > Number(borrowedBalance) ? (
+                <Button isDisabled>
+                  You paid more than the required amount
+                </Button>
+              ) : (
+                <RepayButton
+                  amount={parseUnits(
+                    amount,
+                    balanceData?.decimals || 18
+                  ).toString()}
+                  poolAddress={poolAddress}
+                  refetchBalance={refetch}
+                />
+              )
             ) : (
               <Button isDisabled>Enter an amount</Button>
             )}

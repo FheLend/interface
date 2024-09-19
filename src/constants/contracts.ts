@@ -34,3 +34,12 @@ export const POOL_CORE: { [chainId: number]: `0x${string}` } = {
   [FHENIX_CHAIN_ID]: "0x48e310B5dcecb5D17C3aC59624Ac61468DE7d108",
   [FHENIX_CHAIN_ID_LOCAL]: "0xBf2CA6026553Cd08daB954B7fc51eD75dAd5e354",
 };
+export const POOL_ADDRESSES_PROVIDER: { [chainId: number]: `0x${string}` } = {
+  [FHENIX_CHAIN_ID]: "0x022Bd81E9fB057fA37F4da76380E86eB6E7CFd81",
+  [FHENIX_CHAIN_ID_LOCAL]: "0x022Bd81E9fB057fA37F4da76380E86eB6E7CFd81",
+};
+
+export const PRICE_ORACLE: { [chainId: number]: `0x${string}` } = {
+  [FHENIX_CHAIN_ID]: "0xac36800cfC5efbEe2494458723e4ec7F313ee3E5",
+  [FHENIX_CHAIN_ID_LOCAL]: "0xac36800cfC5efbEe2494458723e4ec7F313ee3E5",
+};

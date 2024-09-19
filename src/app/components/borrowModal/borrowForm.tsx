@@ -1,6 +1,12 @@
-import { POOL } from "@/constants/contracts";
+import { POOL, POOL_ADDRESSES_PROVIDER } from "@/constants/contracts";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { useAccount, useBalance, useChainId, useReadContracts } from "wagmi";
+import {
+  useAccount,
+  useBalance,
+  useChainId,
+  useReadContract,
+  useReadContracts,
+} from "wagmi";
 import {
   Button,
   Box,
@@ -10,15 +16,17 @@ import {
   Center,
   Flex,
 } from "@chakra-ui/react";
-import { filterNumberInput } from "@/utils/helper";
+import { filterNumberInput, formatSmallNumber } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
 import { BorrowButton } from "./borrowBtn";
 import poolAbi from "@/constants/abi/pool.json";
+import poolAddressesProviderAbi from "@/constants/abi/poolAddressesProvider.json";
 import { get } from "lodash";
 import { formatUnits, parseUnits } from "viem";
 import ConnectButton from "@/common/connect-button";
+import AvailableBorrow from "./availableBorrow";
 
 export default function BorrowForm({
   poolAddress,
@@ -51,13 +59,19 @@ export default function BorrowForm({
         functionName: "getUserReserveData",
         args: [poolAddress, address],
       },
+      {
+        address: POOL_ADDRESSES_PROVIDER[chainId],
+        abi: poolAddressesProviderAbi,
+        functionName: "getPriceOracle",
+      },
     ],
   });
 
   const userAccountData = get(data, "[0].result", []) as any[];
   const userReserveData = get(data, "[1].result", []) as any[];
+  const priceOracleAddress = get(data, "[2].result", "");
+  const availableBorrowsETH = get(userAccountData, "[4]", 0n);
 
-  console.log(userAccountData, userReserveData);
   const borrowedBalance = useMemo(
     () =>
       formatUnits(get(userReserveData, "[1]", 0n), balanceData?.decimals || 18),
@@ -89,24 +103,35 @@ export default function BorrowForm({
         />
 
         <Flex mt="3" fontSize="small" justify="flex-end">
-          <Flex
-            onClick={() => {
-              setAmount(borrowedBalance.toString());
-            }}
-            cursor="pointer"
-          >
-            <Box opacity="0.7">Borrowed: </Box>
-            <Flex fontWeight="semibold" ml="1">
-              {isLoading ? (
-                <Image src={loading} alt="loading-icon" />
-              ) : (
-                <TextAutoEllipsis ml="1">
-                  {borrowedBalance.toLocaleString()}
-                </TextAutoEllipsis>
+          {isLoading ? (
+            <Image src={loading} alt="loading-icon" />
+          ) : (
+            <>
+              {priceOracleAddress && (
+                <AvailableBorrow
+                  address={priceOracleAddress as `0x${string}`}
+                  tokenAddress={poolAddress}
+                  availableBorrowsETH={+formatUnits(availableBorrowsETH, 18)}
+                  render={(amount) => (
+                    <Flex
+                      onClick={() => {
+                        setAmount(amount);
+                      }}
+                      cursor="pointer"
+                    >
+                      <Box opacity="0.7">Available to borrow: </Box>
+                      <Flex fontWeight="semibold" ml="1">
+                        <TextAutoEllipsis ml="1">
+                          {formatSmallNumber(amount)}
+                        </TextAutoEllipsis>
+                        <Box ml="1">{balanceData?.symbol}</Box>
+                      </Flex>
+                    </Flex>
+                  )}
+                />
               )}
-              <Box ml="1">{balanceData?.symbol}</Box>
-            </Flex>
-          </Flex>
+            </>
+          )}
         </Flex>
       </FormControl>
       <Center mt="5" flexDir="column">
@@ -114,7 +139,9 @@ export default function BorrowForm({
           <>
             {Number(amount) > 0 ? (
               Number(amount) > Number(totalLiquidity) * 0.25 ? (
-                <Button isDisabled>Insufficient tokens to borrow</Button>
+                <Button isDisabled>
+                  You can borrow only 25% of available liquidity at a time
+                </Button>
               ) : (
                 <BorrowButton
                   amount={parseUnits(

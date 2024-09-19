@@ -13,12 +13,12 @@ import {
 } from "@chakra-ui/react";
 import { useAllowance } from "@/hooks/useApproval";
 import { ApproveButton } from "@/common/approveBtn";
-import { filterNumberInput } from "@/utils/helper";
+import { filterNumberInput, formatSmallNumber } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
 import { SupplyButton } from "./supplyBtn";
-import { parseUnits } from "viem";
+import { formatUnits, parseUnits } from "viem";
 import ConnectButton from "@/common/connect-button";
 
 export default function SupplyForm({
@@ -44,12 +44,13 @@ export default function SupplyForm({
   const {
     isFetching: isFetchingAllowance,
     data,
-    isError,
     refetchAllowance,
   } = useAllowance(poolAddress, address, POOL_CORE[chainId]);
 
-  const allowance = isError ? undefined : ((data || 0) as BigInt).toString(); // TODO: need decimals
-  const needToBeApproved = allowance !== undefined && +amount > +allowance;
+  const allowance = (data || 0n) as bigint;
+  const needToBeApproved =
+    allowance !== undefined &&
+    +amount > +formatUnits(allowance, balanceData?.decimals || 18);
 
   const handleChangeInput = useCallback(
     (event: any) => {
@@ -90,7 +91,8 @@ export default function SupplyForm({
                   <Image src={loading} alt="loading-icon" />
                 ) : (
                   <TextAutoEllipsis ml="1">
-                    {balanceData?.formatted}
+                    {balanceData?.formatted &&
+                      formatSmallNumber(balanceData?.formatted)}
                   </TextAutoEllipsis>
                 )}
                 <Box ml="1">{balanceData?.symbol}</Box>

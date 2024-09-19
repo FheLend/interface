@@ -1,4 +1,5 @@
 import { get } from "lodash";
+import BN from "bignumber.js";
 
 export function ellipsis(string: string, start = 8, end = 4) {
   if (!string) return "";
@@ -29,4 +30,12 @@ export function getError(error: any) {
     get(error, "reason") ||
     get(error, "message")
   );
+}
+
+export function formatSmallNumber(number: string | number, decimals = 3) {
+  if (Number(number) >= 1) {
+    return Number(number).toLocaleString();
+  }
+  const toPrecision = new BN(number).toPrecision(decimals);
+  return new BN(toPrecision).toFixed();
 }
