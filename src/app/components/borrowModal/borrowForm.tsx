@@ -22,8 +22,10 @@ import ConnectButton from "@/common/connect-button";
 
 export default function BorrowForm({
   poolAddress,
+  totalLiquidity,
 }: {
   poolAddress: `0x${string}`;
+  totalLiquidity?: number;
 }) {
   const chainId = useChainId();
   const initialRef = useRef(null);
@@ -107,19 +109,22 @@ export default function BorrowForm({
           </Flex>
         </Flex>
       </FormControl>
-
       <Center mt="5" flexDir="column">
         {isConnected ? (
           <>
-            {+amount > 0 ? (
-              <BorrowButton
-                amount={parseUnits(
-                  amount,
-                  balanceData?.decimals || 18
-                ).toString()}
-                poolAddress={poolAddress}
-                refetchBalance={refetch}
-              />
+            {Number(amount) > 0 ? (
+              Number(amount) > Number(totalLiquidity) * 0.25 ? (
+                <Button isDisabled>Insufficient tokens to borrow</Button>
+              ) : (
+                <BorrowButton
+                  amount={parseUnits(
+                    amount,
+                    balanceData?.decimals || 18
+                  ).toString()}
+                  poolAddress={poolAddress}
+                  refetchBalance={refetch}
+                />
+              )
             ) : (
               <Button isDisabled>Enter an amount</Button>
             )}
