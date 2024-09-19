@@ -8,6 +8,7 @@ export const TOKENS: {
 } = {
   [FHENIX_CHAIN_ID]: [
     { symbol: "USDT", address: "0x01eF7ED545FC2632c4c69de706441e0327dFE0Dc" },
+    { symbol: "DAI", address: "0xA6cb3785e7A675d850215a3211777cFB77Ca1C7C" },
   ],
   [FHENIX_CHAIN_ID_LOCAL]: [
     { symbol: "USDT", address: "0x03820fB370EE34d30833edD544B0A66D67623976" },

@@ -61,7 +61,6 @@ function RowInfo(props: FlexProps) {
 function PoolDetail({ params }: { params: { address: string } }) {
   const chainId = useChainId();
   const poolAddress = params.address;
-  const token = TOKENS[chainId].find((t) => t.address === poolAddress);
 
   const { data, refetch, isLoading } = useReadContracts({
     contracts: [
@@ -82,6 +81,11 @@ function PoolDetail({ params }: { params: { address: string } }) {
         abi: tokenAbi,
         functionName: "decimals",
       },
+      {
+        address: poolAddress as `0x${string}`,
+        abi: tokenAbi,
+        functionName: "symbol",
+      },
     ],
   });
 
@@ -89,6 +93,8 @@ function PoolDetail({ params }: { params: { address: string } }) {
   const reserveConfigurationData = get(data, "[1].result", []) as any[];
 
   const tokenDecimals = get(data, "[2].result", 18) as number;
+  const tokenSymbol = get(data, "[3].result", "TOKEN") as string;
+
   const totalLiquidity = get(reserveData, "[0]", 0n);
   const availableLiquidity = get(reserveData, "[1]", 0n);
   const totalBorrowsStable = get(reserveData, "[2]", 0n);
@@ -118,19 +124,15 @@ function PoolDetail({ params }: { params: { address: string } }) {
   const stableBorrowAPY =
     (1 + stableBorrowAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1;
 
-  if (!token) {
-    return <NotFound />;
-  }
-
   return (
     <>
       <Flex mt="10" align="center">
         <Box as={Link} href="/dashboard" mr="2">
           <ChevronLeftIcon boxSize={6} />
         </Box>
-        <Image src={TOKEN_LOGO[token.symbol]} alt="token logo" boxSize={7} />
+        <Image src={TOKEN_LOGO[tokenSymbol]} alt="token logo" boxSize={7} />
         <Box ml="2" fontSize="xl" fontWeight="medium">
-          {token.symbol}
+          {tokenSymbol}
         </Box>
       </Flex>
 
@@ -142,7 +144,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
           <Box fontSize="2xl">
             {(+formatUnits(totalLiquidity, tokenDecimals)).toLocaleString()}
             <Text as="span" ml="1" color="whiteBlue.700">
-              {token.symbol}
+              {tokenSymbol}
             </Text>
           </Box>
         </Box>
@@ -154,7 +156,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
           <Box fontSize="2xl">
             {(+formatUnits(availableLiquidity, tokenDecimals)).toLocaleString()}
             <Text as="span" ml="1" color="whiteBlue.700">
-              {token.symbol}
+              {tokenSymbol}
             </Text>
           </Box>
         </Box>
@@ -183,7 +185,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
                     tokenDecimals
                   )).toLocaleString()}
                   <Text as="span" ml="1" color="whiteBlue.700">
-                    {token.symbol}
+                    {tokenSymbol}
                   </Text>
                 </Box>
               </Box>
@@ -215,7 +217,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
                     tokenDecimals
                   )).toLocaleString()}
                   <Text as="span" ml="1" color="whiteBlue.700">
-                    {token.symbol}
+                    {tokenSymbol}
                   </Text>
                 </Box>
               </Box>
@@ -260,7 +262,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
           <Card cardTitle="Pool info" mt="6" px="8">
             <RowInfo>
               <Box color="whiteBlue.700" fontSize="sm">
-                a{token.symbol} address
+                a{tokenSymbol} address
               </Box>
               <Box>{aTokenAddress}</Box>
             </RowInfo>
