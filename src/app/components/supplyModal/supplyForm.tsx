@@ -123,7 +123,7 @@ export default function SupplyForm({
                   isFetchingAllowance={isFetchingAllowance}
                   refetchAllowance={refetchAllowance}
                 />
-              ) : amount <= (balanceData?.formatted || 0) ? (
+              ) : +amount <= +(balanceData?.formatted || 0) ? (
                 <SupplyButton
                   amount={parseUnits(
                     amount,
