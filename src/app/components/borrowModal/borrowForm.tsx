@@ -15,25 +15,27 @@ import {
   Input,
   Center,
   Flex,
+  Tooltip,
 } from "@chakra-ui/react";
-import { filterNumberInput, formatSmallNumber } from "@/utils/helper";
+import { filterNumberInput, formatNumber } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
 import { BorrowButton } from "./borrowBtn";
 import poolAbi from "@/constants/abi/pool.json";
 import poolAddressesProviderAbi from "@/constants/abi/poolAddressesProvider.json";
-import { get } from "lodash";
+import { get, min } from "lodash";
 import { formatUnits, parseUnits } from "viem";
 import ConnectButton from "@/common/connect-button";
 import AvailableBorrow from "./availableBorrow";
+import { InfoOutlineIcon } from "@chakra-ui/icons";
 
 export default function BorrowForm({
   poolAddress,
-  totalLiquidity,
+  availableLiquidity,
 }: {
   poolAddress: `0x${string}`;
-  totalLiquidity?: number;
+  availableLiquidity?: number;
 }) {
   const chainId = useChainId();
   const initialRef = useRef(null);
@@ -72,12 +74,6 @@ export default function BorrowForm({
   const priceOracleAddress = get(data, "[2].result", "");
   const availableBorrowsETH = get(userAccountData, "[4]", 0n);
 
-  const borrowedBalance = useMemo(
-    () =>
-      formatUnits(get(userReserveData, "[1]", 0n), balanceData?.decimals || 18),
-    [userReserveData, balanceData]
-  );
-
   const handleChangeInput = useCallback(
     (event: any) => {
       const isValid = filterNumberInput(event, event.target.value, amount);
@@ -115,16 +111,46 @@ export default function BorrowForm({
                   render={(amount) => (
                     <Flex
                       onClick={() => {
-                        setAmount(amount);
+                        setAmount(
+                          (
+                            min([
+                              Number(amount),
+                              Number(availableLiquidity) * 0.25,
+                            ]) as number
+                          ).toString()
+                        );
                       }}
                       cursor="pointer"
                     >
                       <Box opacity="0.7">Available to borrow: </Box>
-                      <Flex fontWeight="semibold" ml="1">
+                      <Flex fontWeight="semibold" ml="1" align="center">
                         <TextAutoEllipsis ml="1">
-                          {formatSmallNumber(amount)}
+                          {formatNumber(
+                            min([
+                              Number(amount),
+                              Number(availableLiquidity) * 0.25,
+                            ]) as number
+                          )}
                         </TextAutoEllipsis>
                         <Box ml="1">{balanceData?.symbol}</Box>
+                        <Tooltip
+                          label={
+                            <Box>
+                              <Box>Max to borrow: {formatNumber(amount)}</Box>
+                              <Box>
+                                Available to borrow:{" "}
+                                {formatNumber(
+                                  Number(availableLiquidity) * 0.25
+                                )}
+                              </Box>
+                              <Box fontSize="xs">
+                                (25% of current liquidity)
+                              </Box>
+                            </Box>
+                          }
+                        >
+                          <InfoOutlineIcon ml="1" />
+                        </Tooltip>
                       </Flex>
                     </Flex>
                   )}
@@ -138,7 +164,7 @@ export default function BorrowForm({
         {isConnected ? (
           <>
             {Number(amount) > 0 ? (
-              Number(amount) > Number(totalLiquidity) * 0.25 ? (
+              Number(amount) > Number(availableLiquidity) * 0.25 ? (
                 <Button isDisabled>
                   You can borrow only 25% of available liquidity at a time
                 </Button>

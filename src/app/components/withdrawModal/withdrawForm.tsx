@@ -10,7 +10,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { parseUnits } from "viem";
-import { filterNumberInput, formatSmallNumber } from "@/utils/helper";
+import { filterNumberInput, formatNumber } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
@@ -70,7 +70,7 @@ export default function WithdrawForm({
               ) : (
                 <TextAutoEllipsis ml="1">
                   {balanceData?.formatted &&
-                    formatSmallNumber(balanceData?.formatted)}
+                    formatNumber(balanceData?.formatted)}
                 </TextAutoEllipsis>
               )}
               <Box ml="1">{balanceData?.symbol}</Box>

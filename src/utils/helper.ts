@@ -32,7 +32,7 @@ export function getError(error: any) {
   );
 }
 
-export function formatSmallNumber(number: string | number, decimals = 3) {
+export function formatNumber(number: string | number, decimals = 3) {
   if (Number(number) >= 1) {
     return Number(number).toLocaleString();
   }

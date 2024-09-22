@@ -329,7 +329,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
                 <TabPanel>
                   <BorrowForm
                     poolAddress={poolAddress as `0x${string}`}
-                    totalLiquidity={+formatUnits(totalLiquidity, tokenDecimals)}
+                    availableLiquidity={+formatUnits(availableLiquidity, tokenDecimals)}
                   />
                 </TabPanel>
                 <TabPanel>

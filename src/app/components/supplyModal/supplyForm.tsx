@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { useAllowance } from "@/hooks/useApproval";
 import { ApproveButton } from "@/common/approveBtn";
-import { filterNumberInput, formatSmallNumber } from "@/utils/helper";
+import { filterNumberInput, formatNumber } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
@@ -92,7 +92,7 @@ export default function SupplyForm({
                 ) : (
                   <TextAutoEllipsis ml="1">
                     {balanceData?.formatted &&
-                      formatSmallNumber(balanceData?.formatted)}
+                      formatNumber(balanceData?.formatted)}
                   </TextAutoEllipsis>
                 )}
                 <Box ml="1">{balanceData?.symbol}</Box>

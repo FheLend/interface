@@ -10,7 +10,7 @@ import {
   Center,
   Flex,
 } from "@chakra-ui/react";
-import { filterNumberInput, formatSmallNumber } from "@/utils/helper";
+import { filterNumberInput, formatNumber } from "@/utils/helper";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
 import { TextAutoEllipsis } from "@/common/common";
@@ -89,7 +89,7 @@ export default function RepayForm({
                 <Image src={loading} alt="loading-icon" />
               ) : (
                 <TextAutoEllipsis ml="1">
-                  {formatSmallNumber(borrowedBalance)}
+                  {formatNumber(borrowedBalance)}
                 </TextAutoEllipsis>
               )}
               <Box ml="1">{balanceData?.symbol}</Box>
