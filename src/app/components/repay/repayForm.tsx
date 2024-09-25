@@ -1,4 +1,4 @@
-import { POOL } from "@/constants/contracts";
+import { POOL, POOL_CORE } from "@/constants/contracts";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useAccount, useBalance, useChainId, useReadContract } from "wagmi";
 import {
@@ -19,6 +19,8 @@ import { get } from "lodash";
 import { formatUnits, parseUnits } from "viem";
 import { RepayButton } from "./repayBtn";
 import ConnectButton from "@/common/connect-button";
+import { useAllowance } from "@/hooks/useApproval";
+import { ApproveButton } from "@/common/approveBtn";
 
 export default function RepayForm({
   poolAddress,
@@ -34,6 +36,17 @@ export default function RepayForm({
     address,
     token: poolAddress,
   });
+
+  const {
+    isFetching: isFetchingAllowance,
+    data,
+    refetchAllowance,
+  } = useAllowance(poolAddress, address, POOL_CORE[chainId]);
+
+  const allowance = (data || 0n) as bigint;
+  const needToBeApproved =
+    allowance !== undefined &&
+    +amount > +formatUnits(allowance, balanceData?.decimals || 18);
 
   const {
     data: userReserveData,
@@ -102,7 +115,14 @@ export default function RepayForm({
         {isConnected ? (
           <>
             {Number(amount) > 0 ? (
-              Number(amount) > Number(borrowedBalance) ? (
+              needToBeApproved ? (
+                <ApproveButton
+                  amount={amount}
+                  address={poolAddress}
+                  isFetchingAllowance={isFetchingAllowance}
+                  refetchAllowance={refetchAllowance}
+                />
+              ) : Number(amount) > Number(borrowedBalance) ? (
                 <Button isDisabled>
                   You paid more than the required amount
                 </Button>
