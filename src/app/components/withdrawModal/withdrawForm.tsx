@@ -82,8 +82,8 @@ export default function WithdrawForm({
       <Center mt="5" flexDir="column">
         {isConnected ? (
           <>
-            {+amount > 0 ? (
-              amount <= (balanceData?.formatted || 0) ? (
+            {Number(amount) > 0 ? (
+              Number(amount) <= Number(balanceData?.formatted) ? (
                 <WithdrawButton
                   amount={parseUnits(
                     amount,
