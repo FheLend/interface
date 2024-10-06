@@ -31,6 +31,7 @@ export default function WithdrawForm({
     isFetching: isFetchingBalance,
     refetch: refetchBalance,
   } = useBalance({ address, token: aTokenAddress });
+  console.log(aTokenAddress);
 
   const handleChangeInput = useCallback(
     (event: any) => {

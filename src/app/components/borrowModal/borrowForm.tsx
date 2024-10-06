@@ -73,6 +73,7 @@ export default function BorrowForm({
   const userReserveData = get(data, "[1].result", []) as any[];
   const priceOracleAddress = get(data, "[2].result", "");
   const availableBorrowsETH = get(userAccountData, "[4]", 0n);
+  console.log(userReserveData);
 
   const handleChangeInput = useCallback(
     (event: any) => {
