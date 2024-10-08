@@ -14,6 +14,7 @@ import Footer from "./components/footer";
 import FeedBack from "./components/feedback";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import FetchData from "./components/fetchData";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -38,6 +39,7 @@ export default function RootLayout({
           <FhenixProvider>
             <ChakraProvider>
               <ProgressBarProvider>
+                <FetchData />
                 <Navbar />
                 <Container maxW="container.2xl">
                   <Notice />

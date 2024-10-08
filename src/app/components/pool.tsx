@@ -12,17 +12,13 @@ import {
 } from "@chakra-ui/react";
 import { Tr, Td } from "@chakra-ui/table";
 import poolAbi from "@/constants/abi/pool.json";
-import tokenAbi from "@/constants/abi/token.json";
-import { useAccount, useBalance, useChainId, useReadContracts } from "wagmi";
-import { POOL, TOKEN_LOGO } from "@/constants/contracts";
+import { useAccount, useChainId, useReadContracts } from "wagmi";
+import { POOL } from "@/constants/contracts";
 import SupplyModal from "./supplyModal";
 import { get } from "lodash";
-import WithdrawModal from "./withdrawModal";
-import BorrowModal from "./borrowModal";
 import { formatUnits } from "viem";
-import RepayModal from "./repay";
-import { useMemo } from "react";
 import Link from "next/link";
+import { useTokens } from "@/store/pools";
 
 const RAY = 10 ** 27; // 10 to the power 27
 const SECONDS_PER_YEAR = 31536000;
@@ -30,6 +26,7 @@ const SECONDS_PER_YEAR = 31536000;
 export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const chainId = useChainId();
   const { isConnected } = useAccount();
+  const { tokens } = useTokens();
 
   const {
     isOpen: isOpenSupply,
@@ -60,22 +57,10 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
         functionName: "getReserveData",
         args: [poolAddress],
       },
-      {
-        address: poolAddress,
-        abi: tokenAbi,
-        functionName: "symbol",
-      },
-      {
-        address: poolAddress,
-        abi: tokenAbi,
-        functionName: "decimals",
-      },
     ],
   });
 
   const reserveData = get(data, "[0].result", []) as any[];
-  const tokenSymbol = get(data, "[1].result", "") as string;
-  const tokenDecimals = get(data, "[2].result", 18) as number;
   const totalLiquidity = get(reserveData, "[0]", 0n);
   const availableLiquidity = get(reserveData, "[1]", 0n);
   const aTokenAddress = get(reserveData, "[11]", "") as `0x${string}`;
@@ -96,6 +81,10 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const variableBorrowAPR = Number(variableBorrowRate) / RAY;
   // stableBorrowAPR = variableBorrowRate / RAY;
 
+  if (!tokens[poolAddress]) {
+    return null;
+  }
+
   return (
     <LinkBox
       as={Tr}
@@ -104,17 +93,20 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
     >
       <Td borderLeftRadius="lg">
         <Flex alignItems="center">
-          <Image src={TOKEN_LOGO[tokenSymbol]} boxSize="6" alt="token-logo" />
-          <Box ml="2">{tokenSymbol}</Box>
+          <Image src={tokens[poolAddress].logo} boxSize="6" alt="token-logo" />
+          <Box ml="2">{tokens[poolAddress].symbol}</Box>
         </Flex>
       </Td>
       <Td isNumeric>
-        {(+formatUnits(totalLiquidity, tokenDecimals)).toLocaleString()}
+        {(+formatUnits(
+          totalLiquidity,
+          tokens[poolAddress].decimals
+        )).toLocaleString()}
       </Td>
       <Td isNumeric>
         {(+formatUnits(
           totalLiquidity - availableLiquidity,
-          tokenDecimals
+          tokens[poolAddress].decimals
         )).toLocaleString()}
       </Td>
       <Td isNumeric>{(depositAPR * 100).toLocaleString()}%</Td>
