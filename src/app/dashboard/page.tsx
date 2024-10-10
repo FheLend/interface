@@ -37,9 +37,7 @@ export default function Home() {
           </Card>
         </GridItem>
         <GridItem colSpan={{ base: 3, lg: 1 }}>
-          {isConnected && (
-            <UserInfo data={userAccountData} reserves={reserves} />
-          )}
+          {isConnected && <UserInfo data={userAccountData} />}
         </GridItem>
       </Grid>
     </Box>

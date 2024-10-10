@@ -6,6 +6,7 @@ import {
   FlexProps,
   Link,
   useDisclosure,
+  Image as ChakraImage,
 } from "@chakra-ui/react";
 import { flatten, get, map } from "lodash";
 import Image from "next/image";
@@ -17,6 +18,7 @@ import { POOL } from "@/constants/contracts";
 import poolAbi from "@/constants/abi/pool.json";
 import tokenAbi from "@/constants/abi/token.json";
 import { useMemo } from "react";
+import { useReserves, useTokens } from "@/store/pools";
 
 function RowInfo(props: FlexProps) {
   return (
@@ -31,80 +33,64 @@ function RowInfo(props: FlexProps) {
   );
 }
 
-function BorrowBalance({
-  aTokenAddresses,
-  isOpen,
-}: {
-  aTokenAddresses: `0x${string}`[];
-  isOpen: boolean;
-}) {
+function BorrowBalance({ isOpen }: { isOpen: boolean }) {
   const { address } = useAccount();
+  const chainId = useChainId();
+  const { reserves } = useReserves();
+  const { tokens } = useTokens();
   const { data } = useReadContracts({
     //@ts-ignore
-    contracts: flatten(
-      aTokenAddresses.map((tokenAddress) => [
-        {
-          address: tokenAddress,
-          abi: tokenAbi,
-          functionName: "symbol",
-        },
-        {
-          address: tokenAddress,
-          abi: tokenAbi,
-          functionName: "decimals",
-        },
-        {
-          address: tokenAddress,
-          abi: tokenAbi,
-          functionName: "balanceOf",
-          args: [address],
-        },
-      ])
-    ),
+    contracts: reserves.map((reserve) => ({
+      address: POOL[chainId],
+      abi: poolAbi,
+      functionName: "getUserReserveData",
+      args: [reserve, address],
+    })),
   });
 
   const tokenData = useMemo(() => {
-    return aTokenAddresses.map((address, index) => {
-      const symbol = get(data, `[${index * 3}].result`);
-      const decimals = get(data, `[${index * 3 + 1}].result`);
-      const balance = get(data, `[${index * 3 + 2}].result`);
-
+    return map(data, (reserve, index) => {
+      const borrowBalance = get(reserve, "result[0]", 0n);
       return {
-        address,
-        symbol,
-        decimals,
-        balance,
+        symbol: tokens[reserves[index]]?.symbol,
+        decimals: tokens[reserves[index]]?.decimals,
+        logo: tokens[reserves[index]]?.logo || "",
+        balance: borrowBalance,
       };
-    });
-  }, [aTokenAddresses, data]);
+    })
+      .filter((token) => token.balance > 0)
+      .sort((a, b) => Number(b.balance) - Number(a.balance));
+  }, [data, reserves, tokens]);
 
-  // TODO: Make the UI for tokenData is []
-  // TODO: map aToken to the pool token
   return (
     <Card cardTitle="Deposited Assets" mt="7">
-      {tokenData.map((token, index) => (
-        <RowInfo key={index}>
-          <Box color="whiteBlue.700" fontSize="sm">
-            {token.symbol}
-          </Box>
+      {tokenData.map((token, index) => {
+        return (
+          <RowInfo key={index}>
+            <Center>
+              <ChakraImage src={token.logo} boxSize="6" alt="token-logo" />
+              <Box fontSize="sm" ml="2">
+                {token.symbol}
+              </Box>
+            </Center>
 
-          <PrivateText isShow={isOpen}>
-            {token.balance
-              ? (+formatUnits(
-                  token.balance,
-                  token.decimals || 18
-                )).toLocaleString()
-              : "0"}
-          </PrivateText>
-        </RowInfo>
-      ))}
+            <PrivateText isShow={isOpen}>
+              {token.balance
+                ? (+formatUnits(
+                    token.balance,
+                    token.decimals || 18
+                  )).toLocaleString()
+                : "0"}
+            </PrivateText>
+          </RowInfo>
+        );
+      })}
     </Card>
   );
 }
 
-function UserInfo({ data, reserves }: { data: any; reserves: any[] }) {
+function UserInfo({ data }: { data: any }) {
   const { isOpen, onToggle } = useDisclosure();
-  const chainId = useChainId();
 
   const totalLiquidityETH = get(data, "[0]", 0n);
   const totalCollateralETH = get(data, "[1]", 0n);
@@ -114,21 +100,6 @@ function UserInfo({ data, reserves }: { data: any; reserves: any[] }) {
   const currentLiquidationThreshold = get(data, "[5]", 0n);
   const ltv = get(data, "[6]", 0n);
   const healthFactor = get(data, "[7]", 0n);
-
-  const {
-    data: reserveData,
-    isLoading,
-    refetch,
-  } = useReadContracts({
-    //@ts-ignore
-    contracts: reserves.map((reserve: any) => ({
-      address: POOL[chainId],
-      abi: poolAbi,
-      functionName: "getReserveData",
-      args: [reserve],
-    })),
-  });
-  const aTokenAddresses = map(reserveData, (data: any) => data.result[11]);
 
   return (
     <>
@@ -247,7 +218,7 @@ function UserInfo({ data, reserves }: { data: any; reserves: any[] }) {
         </RowInfo>
       </Card>
 
-      <BorrowBalance aTokenAddresses={aTokenAddresses} isOpen={isOpen} />
+      <BorrowBalance isOpen={isOpen} />
     </>
   );
 }
