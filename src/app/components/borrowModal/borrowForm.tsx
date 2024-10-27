@@ -1,12 +1,6 @@
 import { POOL, POOL_ADDRESSES_PROVIDER } from "@/constants/contracts";
 import { useCallback, useMemo, useRef, useState } from "react";
-import {
-  useAccount,
-  useBalance,
-  useChainId,
-  useReadContract,
-  useReadContracts,
-} from "wagmi";
+import { useAccount, useBalance, useChainId, useReadContracts } from "wagmi";
 import {
   Button,
   Box,
@@ -16,6 +10,9 @@ import {
   Center,
   Flex,
   Tooltip,
+  InputGroup,
+  InputRightElement,
+  Image as ChakraImage,
 } from "@chakra-ui/react";
 import { filterNumberInput, formatNumber } from "@/utils/helper";
 import Image from "next/image";
@@ -28,7 +25,10 @@ import { get, min } from "lodash";
 import { formatUnits, parseUnits } from "viem";
 import ConnectButton from "@/common/connect-button";
 import AvailableBorrow from "./availableBorrow";
-import { InfoOutlineIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, InfoOutlineIcon } from "@chakra-ui/icons";
+import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/menu";
+import { useTokens } from "@/store/pools";
+import { orderBy } from "lodash";
 
 export default function BorrowForm({
   poolAddress,
@@ -41,7 +41,13 @@ export default function BorrowForm({
   const initialRef = useRef(null);
   const [amount, setAmount] = useState("");
   const { address, isConnected } = useAccount();
+  const { tokens } = useTokens();
+  const sortedTokens = orderBy(
+    Object.entries(tokens),
+    ([addr]) => addr !== address
+  );
 
+  console.log(sortedTokens);
   const { data: balanceData } = useBalance({
     address,
     token: poolAddress,
@@ -83,21 +89,61 @@ export default function BorrowForm({
     },
     [amount]
   );
-
+  console.log("tokens", tokens);
   return (
     <>
       <FormControl mt="5">
         <FormLabel color="whiteBlue.600" fontWeight="light" fontSize="sm">
           Amount to borrow
         </FormLabel>
-        <Input
-          ref={initialRef}
-          type="number"
-          placeholder="0"
-          value={amount}
-          onChange={handleChangeInput}
-        />
-
+        <InputGroup>
+          <Input
+            ref={initialRef}
+            type="number"
+            placeholder="0"
+            value={amount}
+            onChange={handleChangeInput}
+            variant="filled"
+            size="lg"
+          />
+          {/* <InputRightElement
+            w="fit-content"
+            h="100%"
+            fontSize="sm"
+            pr="3"
+            color="whiteBlue.700"
+            cursor="pointer"
+          >
+            <Menu>
+              <MenuButton
+                as={Button}
+                rightIcon={<ChevronDownIcon verticalAlign="middle" />}
+                variant="unstyled"
+              >
+                Select token
+              </MenuButton>
+              <MenuList
+                zIndex={1}
+                bgColor="primary.600"
+                border="0"
+                minW="140px"
+              >
+                {sortedTokens.map(([address, token]) => (
+                  <MenuItem
+                    key={address}
+                    bgColor="primary.600"
+                    _hover={{ bgColor: "primary.300" }}
+                  >
+                    <ChakraImage src={token.logo} boxSize="6" />
+                    <Box color="whiteBlue.400" ml="2">
+                      {token.symbol}
+                    </Box>
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
+          </InputRightElement> */}
+        </InputGroup>
         <Flex mt="3" fontSize="small" justify="flex-end">
           {isLoading ? (
             <Image src={loading} alt="loading-icon" />
@@ -122,7 +168,7 @@ export default function BorrowForm({
                       }}
                       cursor="pointer"
                     >
-                      <Box opacity="0.7">Available to borrow: </Box>
+                      <Box color="whiteBlue.600">Available to borrow: </Box>
                       <Flex fontWeight="semibold" ml="1" align="center">
                         <TextAutoEllipsis ml="1">
                           {formatNumber(

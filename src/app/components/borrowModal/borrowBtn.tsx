@@ -40,7 +40,6 @@ export function BorrowButton({
         poolAddress,
         encrypted,
         1n, // _interestRateMode
-        1n, // _referralCode
         { gasLimit: GAS_LIMIT[chainId] }
       );
       setLoadingText("Waiting for tx...");

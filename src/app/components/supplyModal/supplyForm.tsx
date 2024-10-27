@@ -74,6 +74,8 @@ export default function SupplyForm({
           placeholder="0"
           value={amount}
           onChange={handleChangeInput}
+          variant="filled"
+          size="lg"
         />
 
         {address && (

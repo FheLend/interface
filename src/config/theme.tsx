@@ -126,5 +126,31 @@ export const theme = extendTheme({
         dialog: { color: "whiteAlpha.800", bg: "primary.800" },
       },
     },
+    Input: {
+      baseStyle: {
+        color: "red.900",
+      },
+      variants: {
+        filled: {
+          field: {
+            borderColor: "primary.600",
+            bgColor: "primary.600",
+            color: "whiteBlue.400",
+            outline: "none",
+            boxShadow: "none",
+            _hover: {
+              bgColor: "primary.500",
+              _disabled: {
+                bgColor: "primary.800",
+              },
+            },
+            _focusVisible: {
+              borderColor: "primary.600",
+              bgColor: "primary.500",
+            },
+          },
+        },
+      },
+    },
   },
 });

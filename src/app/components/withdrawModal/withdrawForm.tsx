@@ -55,6 +55,8 @@ export default function WithdrawForm({
           placeholder="0"
           value={amount}
           onChange={handleChangeInput}
+          variant="filled"
+          size="lg"
         />
 
         <Flex mt="3" fontSize="small" justify="flex-end">
