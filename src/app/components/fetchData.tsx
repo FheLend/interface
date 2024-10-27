@@ -45,7 +45,7 @@ function FetchData() {
     }
   }, [userAccountData]);
 
-  return <>{reserves.length && <FetchTokenInfo addresses={reserves} />}</>;
+  return <>{!!reserves.length && <FetchTokenInfo addresses={reserves} />}</>;
 }
 
 function FetchTokenInfo({ addresses }: { addresses: `0x${string}`[] }) {
