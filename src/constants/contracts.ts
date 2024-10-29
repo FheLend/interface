@@ -13,12 +13,18 @@ export const TOKENS: {
   [FHENIX_CHAIN_ID_LOCAL]: [
     { symbol: "USDT", address: "0x20E068a567630483901Af229a6eCF5eb401A5D66" },
     { symbol: "DAI", address: "0xF126547C7B6C78D5e7876a96f4FCE9bcBF5dB529" },
+    { symbol: "BNB", address: "0x3af00077e984074Ad71D8A856be75A9Fe2A5711b" },
+    { symbol: "SUI", address: "0x09a991DDA02984D3B6C6dC42348E07678691Dea8" },
+    { symbol: "AAVE", address: "0x4bfEA237e1757F7B57bD1ef6da4EE2A3122275cd" },
   ],
 };
 
 export const TOKEN_LOGO: { [name: string]: string } = {
   DAI: "https://assets.coingecko.com/coins/images/9956/standard/Badge_Dai.png",
   USDT: "https://assets.coingecko.com/coins/images/325/standard/Tether.png",
+  BNB: "https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png",
+  SUI: "https://assets.coingecko.com/coins/images/26375/standard/sui-ocean-square.png",
+  AAVE: "https://assets.coingecko.com/coins/images/12645/standard/aave-token-round.png",
 };
 
 export const GAS_LIMIT: { [chainId: number]: number } = {
