@@ -19,6 +19,7 @@ import { get } from "lodash";
 import { formatUnits } from "viem";
 import Link from "next/link";
 import { useTokens } from "@/store/pools";
+import WithdrawModal from "./withdrawModal";
 
 const RAY = 10 ** 27; // 10 to the power 27
 const SECONDS_PER_YEAR = 31536000;
@@ -133,11 +134,28 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
             }}
           />
         )}
-        <LinkOverlay as={Link} href={`/pools/${poolAddress}`}>
-          <Button variant="outline" ml="3" size="sm">
-            Detail
+        <Tooltip label="Connect wallet to withdraw" isDisabled={isConnected}>
+          <Button
+            onClick={openWithdraw}
+            size="sm"
+            isDisabled={!isConnected}
+            pos="relative"
+            zIndex="1"
+            ml="2"
+            variant="outline"
+          >
+            Withdraw
           </Button>
-        </LinkOverlay>
+        </Tooltip>
+        {isOpenWithdraw && (
+          <WithdrawModal
+            aTokenAddress={aTokenAddress}
+            onClose={() => {
+              handleCloseModal(closeWithdraw);
+            }}
+          />
+        )}
+        <LinkOverlay as={Link} href={`/pools/${poolAddress}`} />
       </Td>
     </LinkBox>
   );

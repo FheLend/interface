@@ -1,8 +1,7 @@
 "use client";
 
-import NotFound from "@/app/not-found";
 import { Card } from "@/common/common";
-import { POOL, TOKEN_LOGO, TOKENS } from "@/constants/contracts";
+import { POOL, TOKEN_LOGO } from "@/constants/contracts";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -15,21 +14,12 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import {
-  useAccount,
-  useChainId,
-  useReadContract,
-  useReadContracts,
-} from "wagmi";
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/tabs";
-import SupplyForm from "@/app/components/supplyModal/supplyForm";
-import BorrowForm from "@/app/components/borrowModal/borrowForm";
-import RepayForm from "@/app/components/repay/repayForm";
-import WithdrawForm from "@/app/components/withdrawModal/withdrawForm";
+import { useChainId, useReadContracts } from "wagmi";
 import { get } from "lodash";
 import poolAbi from "@/constants/abi/pool.json";
 import tokenAbi from "@/constants/abi/token.json";
 import { formatUnits } from "viem";
+import PoolFormActions from "./components/poolFormActions";
 
 const RAY = 10 ** 27;
 const SECONDS_PER_YEAR = 31536000;
@@ -306,37 +296,15 @@ function PoolDetail({ params }: { params: { address: string } }) {
         </GridItem>
         <GridItem colSpan={{ base: 3, lg: 1 }}>
           <Card px="8">
-            <Tabs variant="basic" colorScheme="primary" isLazy>
-              <TabList>
-                <Tab>Supply</Tab>
-                <Tab>Withdraw</Tab>
-                <Tab>Borrow</Tab>
-                <Tab>Repay</Tab>
-              </TabList>
-              <TabPanels>
-                <TabPanel>
-                  <SupplyForm
-                    poolAddress={poolAddress as `0x${string}`}
-                    apr={depositAPR}
-                    apy={depositAPY}
-                  />
-                </TabPanel>
-                <TabPanel>
-                  <WithdrawForm
-                    aTokenAddress={aTokenAddress as `0x${string}`}
-                  />
-                </TabPanel>
-                <TabPanel>
-                  <BorrowForm
-                    poolAddress={poolAddress as `0x${string}`}
-                    availableLiquidity={+formatUnits(availableLiquidity, tokenDecimals)}
-                  />
-                </TabPanel>
-                <TabPanel>
-                  <RepayForm poolAddress={poolAddress as `0x${string}`} />
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
+            <PoolFormActions
+              poolAddress={poolAddress as `0x${string}`}
+              depositAPR={depositAPR}
+              depositAPY={depositAPY}
+              aTokenAddress={aTokenAddress as `0x${string}`}
+              availableLiquidity={
+                +formatUnits(availableLiquidity, tokenDecimals)
+              }
+            />
           </Card>
         </GridItem>
       </Grid>

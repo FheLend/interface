@@ -29,7 +29,14 @@ import { ChevronDownIcon, InfoOutlineIcon } from "@chakra-ui/icons";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/menu";
 import { useTokens } from "@/store/pools";
 import { orderBy } from "lodash";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
+type Token = {
+  address: string;
+  logo: string;
+  symbol: string;
+};
 export default function BorrowForm({
   poolAddress,
   availableLiquidity,
@@ -37,17 +44,29 @@ export default function BorrowForm({
   poolAddress: `0x${string}`;
   availableLiquidity?: number;
 }) {
+  const searchParams = useSearchParams();
+  const selectedTokenAddress = searchParams.get("token");
   const chainId = useChainId();
   const initialRef = useRef(null);
   const [amount, setAmount] = useState("");
   const { address, isConnected } = useAccount();
   const { tokens } = useTokens();
-  const sortedTokens = orderBy(
-    Object.entries(tokens),
-    ([addr]) => addr !== address
-  );
 
-  console.log(sortedTokens);
+  const tokenArray = useMemo(() => {
+    return orderBy(
+      Object.entries(tokens).map(([address, token]) => ({
+        ...token,
+        address,
+      })),
+      (token) => token.address === poolAddress,
+      "asc"
+    );
+  }, [tokens, poolAddress]);
+
+  const selectedToken = useMemo(() => {
+    return tokenArray.find((token) => token.address === selectedTokenAddress);
+  }, [tokenArray, selectedTokenAddress]);
+
   const { data: balanceData } = useBalance({
     address,
     token: poolAddress,
@@ -62,12 +81,6 @@ export default function BorrowForm({
         args: [address],
       },
       {
-        address: POOL[chainId],
-        abi: poolAbi,
-        functionName: "getUserReserveData",
-        args: [poolAddress, address],
-      },
-      {
         address: POOL_ADDRESSES_PROVIDER[chainId],
         abi: poolAddressesProviderAbi,
         functionName: "getPriceOracle",
@@ -76,8 +89,7 @@ export default function BorrowForm({
   });
 
   const userAccountData = get(data, "[0].result", []) as any[];
-  const userReserveData = get(data, "[1].result", []) as any[];
-  const priceOracleAddress = get(data, "[2].result", "");
+  const priceOracleAddress = get(data, "[1].result", "");
   const availableBorrowsETH = get(userAccountData, "[4]", 0n);
 
   const handleChangeInput = useCallback(
@@ -89,7 +101,7 @@ export default function BorrowForm({
     },
     [amount]
   );
-  console.log("tokens", tokens);
+
   return (
     <>
       <FormControl mt="5">
@@ -106,7 +118,7 @@ export default function BorrowForm({
             variant="filled"
             size="lg"
           />
-          {/* <InputRightElement
+          <InputRightElement
             w="fit-content"
             h="100%"
             fontSize="sm"
@@ -115,12 +127,18 @@ export default function BorrowForm({
             cursor="pointer"
           >
             <Menu>
-              <MenuButton
-                as={Button}
-                rightIcon={<ChevronDownIcon verticalAlign="middle" />}
-                variant="unstyled"
-              >
-                Select token
+              <MenuButton>
+                <Center>
+                  {selectedToken && (
+                    <ChakraImage src={selectedToken.logo} boxSize="6" />
+                  )}
+                  <Box mx="1">
+                    {selectedToken?.symbol
+                      ? selectedToken.symbol
+                      : "Select token"}
+                  </Box>
+                  <ChevronDownIcon />
+                </Center>
               </MenuButton>
               <MenuList
                 zIndex={1}
@@ -128,31 +146,33 @@ export default function BorrowForm({
                 border="0"
                 minW="140px"
               >
-                {sortedTokens.map(([address, token]) => (
+                {tokenArray.map(({ address, logo, symbol }) => (
                   <MenuItem
                     key={address}
+                    as={Link}
+                    href={`/pools/${address}?tab=borrow&token=${address}`}
                     bgColor="primary.600"
                     _hover={{ bgColor: "primary.300" }}
                   >
-                    <ChakraImage src={token.logo} boxSize="6" />
+                    <ChakraImage src={logo} boxSize="6" />
                     <Box color="whiteBlue.400" ml="2">
-                      {token.symbol}
+                      {symbol}
                     </Box>
                   </MenuItem>
                 ))}
               </MenuList>
             </Menu>
-          </InputRightElement> */}
+          </InputRightElement>
         </InputGroup>
         <Flex mt="3" fontSize="small" justify="flex-end">
           {isLoading ? (
             <Image src={loading} alt="loading-icon" />
           ) : (
             <>
-              {priceOracleAddress && (
+              {priceOracleAddress && selectedTokenAddress && (
                 <AvailableBorrow
                   address={priceOracleAddress as `0x${string}`}
-                  tokenAddress={poolAddress}
+                  tokenAddress={selectedTokenAddress as `0x${string}`}
                   availableBorrowsETH={+formatUnits(availableBorrowsETH, 18)}
                   render={(amount) => (
                     <Flex
