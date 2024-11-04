@@ -92,14 +92,16 @@ function BorrowBalance({ isOpen }: { isOpen: boolean }) {
 function UserInfo({ data }: { data: any }) {
   const { isOpen, onToggle } = useDisclosure();
 
-  const totalLiquidityETH = get(data, "[0]", 0n);
-  const totalCollateralETH = get(data, "[1]", 0n);
-  const totalBorrowsETH = get(data, "[2]", 0n);
-  const totalFeesETH = get(data, "[3]", 0n);
-  const availableBorrowsETH = get(data, "[4]", 0n);
-  const currentLiquidationThreshold = get(data, "[5]", 0n);
-  const ltv = get(data, "[6]", 0n);
-  const healthFactor = get(data, "[7]", 0n);
+  const {
+    totalLiquidityETH = 0n,
+    totalCollateralETH = 0n,
+    totalBorrowsETH = 0n,
+    totalFeesETH = 0n,
+    availableBorrowsETH = 0n,
+    currentLiquidationThreshold = 0,
+    ltv = 0,
+    healthFactor = 0n,
+  } = data || {};
 
   return (
     <>

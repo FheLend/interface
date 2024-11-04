@@ -1,6 +1,7 @@
 "use client";
 
 import poolAbi from "@/constants/abi/pool.json";
+import poolCoreAbi from "@/constants/abi/poolCore.json";
 import { useAccount, useChainId, useReadContracts } from "wagmi";
 import { flatten, get } from "lodash";
 import { POOL, POOL_CORE, TOKEN_LOGO } from "@/constants/contracts";
@@ -15,7 +16,7 @@ function FetchData() {
   const { data } = useReadContracts({
     contracts: [
       {
-        abi: poolAbi,
+        abi: poolCoreAbi,
         address: POOL_CORE[chainId],
         functionName: "getReserves",
       },

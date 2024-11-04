@@ -11,9 +11,11 @@ import BorrowForm from "./borrowForm";
 
 export default function BorrowModal({
   poolAddress,
+  availableLiquidity,
   onClose,
 }: {
   poolAddress: `0x${string}`;
+  availableLiquidity?: number;
   onClose: () => void;
 }) {
   const initialRef = useRef(null);
@@ -30,7 +32,11 @@ export default function BorrowModal({
         <ModalHeader>Borrow</ModalHeader>
         <ModalCloseButton />
         <ModalBody mb="10">
-          <BorrowForm poolAddress={poolAddress} />
+          <BorrowForm
+            poolAddress={poolAddress}
+            availableLiquidity={availableLiquidity}
+            allowSelect={false}
+          />
         </ModalBody>
       </ModalContent>
     </Modal>

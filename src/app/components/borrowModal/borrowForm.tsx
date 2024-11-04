@@ -32,17 +32,14 @@ import { orderBy } from "lodash";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-type Token = {
-  address: string;
-  logo: string;
-  symbol: string;
-};
 export default function BorrowForm({
   poolAddress,
   availableLiquidity,
+  allowSelect,
 }: {
   poolAddress: `0x${string}`;
   availableLiquidity?: number;
+  allowSelect?: boolean;
 }) {
   const searchParams = useSearchParams();
   const selectedTokenAddress = searchParams.get("token");
@@ -118,61 +115,68 @@ export default function BorrowForm({
             variant="filled"
             size="lg"
           />
-          <InputRightElement
-            w="fit-content"
-            h="100%"
-            fontSize="sm"
-            pr="3"
-            color="whiteBlue.700"
-            cursor="pointer"
-          >
-            <Menu>
-              <MenuButton>
-                <Center>
-                  {selectedToken && (
-                    <ChakraImage src={selectedToken.logo} boxSize="6" />
-                  )}
-                  <Box mx="1">
-                    {selectedToken?.symbol
-                      ? selectedToken.symbol
-                      : "Select token"}
-                  </Box>
-                  <ChevronDownIcon />
-                </Center>
-              </MenuButton>
-              <MenuList
-                zIndex={1}
-                bgColor="primary.600"
-                border="0"
-                minW="140px"
-              >
-                {tokenArray.map(({ address, logo, symbol }) => (
-                  <MenuItem
-                    key={address}
-                    as={Link}
-                    href={`/pools/${address}?tab=borrow&token=${address}`}
-                    bgColor="primary.600"
-                    _hover={{ bgColor: "primary.300" }}
-                  >
-                    <ChakraImage src={logo} boxSize="6" />
-                    <Box color="whiteBlue.400" ml="2">
-                      {symbol}
+          {allowSelect && (
+            <InputRightElement
+              w="fit-content"
+              h="100%"
+              fontSize="sm"
+              pr="3"
+              color="whiteBlue.700"
+              cursor="pointer"
+            >
+              <Menu>
+                <MenuButton>
+                  <Center>
+                    {selectedToken && (
+                      <ChakraImage src={selectedToken.logo} boxSize="6" />
+                    )}
+                    <Box mx="1">
+                      {selectedToken?.symbol
+                        ? selectedToken.symbol
+                        : "Select token"}
                     </Box>
-                  </MenuItem>
-                ))}
-              </MenuList>
-            </Menu>
-          </InputRightElement>
+                    <ChevronDownIcon />
+                  </Center>
+                </MenuButton>
+                <MenuList
+                  zIndex={1}
+                  bgColor="primary.600"
+                  border="0"
+                  minW="140px"
+                >
+                  {tokenArray.map(({ address, logo, symbol }) => (
+                    <MenuItem
+                      key={address}
+                      as={Link}
+                      href={`/pools/${address}?tab=borrow&token=${address}`}
+                      bgColor="primary.600"
+                      _hover={{ bgColor: "primary.300" }}
+                    >
+                      <ChakraImage src={logo} boxSize="6" />
+                      <Box color="whiteBlue.400" ml="2">
+                        {symbol}
+                      </Box>
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
+            </InputRightElement>
+          )}
         </InputGroup>
         <Flex mt="3" fontSize="small" justify="flex-end">
           {isLoading ? (
             <Image src={loading} alt="loading-icon" />
           ) : (
             <>
-              {priceOracleAddress && selectedTokenAddress && (
+              {(!allowSelect ||
+                (priceOracleAddress && selectedTokenAddress)) && (
                 <AvailableBorrow
                   address={priceOracleAddress as `0x${string}`}
-                  tokenAddress={selectedTokenAddress as `0x${string}`}
+                  tokenAddress={
+                    allowSelect
+                      ? (selectedTokenAddress as `0x${string}`)
+                      : poolAddress
+                  }
                   availableBorrowsETH={+formatUnits(availableBorrowsETH, 18)}
                   render={(amount) => (
                     <Flex

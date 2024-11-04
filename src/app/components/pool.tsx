@@ -20,6 +20,7 @@ import { formatUnits } from "viem";
 import Link from "next/link";
 import { useTokens } from "@/store/pools";
 import WithdrawModal from "./withdrawModal";
+import BorrowModal from "./borrowModal";
 
 const RAY = 10 ** 27; // 10 to the power 27
 const SECONDS_PER_YEAR = 31536000;
@@ -136,7 +137,7 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
         )}
         <Tooltip label="Connect wallet to withdraw" isDisabled={isConnected}>
           <Button
-            onClick={openWithdraw}
+            onClick={openBorrow}
             size="sm"
             isDisabled={!isConnected}
             pos="relative"
@@ -144,15 +145,16 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
             ml="2"
             variant="outline"
           >
-            Withdraw
+            Borrow
           </Button>
         </Tooltip>
-        {isOpenWithdraw && (
-          <WithdrawModal
-            aTokenAddress={aTokenAddress}
+        {isOpenBorrow && (
+          <BorrowModal
+            poolAddress={poolAddress}
             onClose={() => {
-              handleCloseModal(closeWithdraw);
+              handleCloseModal(closeBorrow);
             }}
+            availableLiquidity={+formatUnits(availableLiquidity, 18)}
           />
         )}
         <LinkOverlay as={Link} href={`/pools/${poolAddress}`} />
