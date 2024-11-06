@@ -4,6 +4,7 @@ import { ContractTransactionResponse, ethers } from "ethers";
 import { useChainId } from "wagmi";
 import { GAS_LIMIT, POOL } from "@/constants/contracts";
 import poolAbi from "@/constants/abi/pool.json";
+import { get } from "lodash";
 import { useFhenix } from "@/context/fhenix";
 import { getError } from "@/utils/helper";
 
@@ -39,7 +40,6 @@ export function BorrowButton({
         poolAddress,
         encrypted,
         1n, // _interestRateMode
-        1n, // _referralCode
         { gasLimit: GAS_LIMIT[chainId] }
       );
       setLoadingText("Waiting for tx...");
