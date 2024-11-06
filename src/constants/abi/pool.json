@@ -61,6 +61,12 @@
         "type": "uint256"
       },
       {
+        "indexed": true,
+        "internalType": "uint16",
+        "name": "_referral",
+        "type": "uint16"
+      },
+      {
         "indexed": false,
         "internalType": "uint256",
         "name": "_timestamp",
@@ -90,6 +96,12 @@
         "internalType": "euint128",
         "name": "_encryptedAmount",
         "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint16",
+        "name": "_referral",
+        "type": "uint16"
       },
       {
         "indexed": false,
@@ -465,6 +477,11 @@
         "internalType": "uint256",
         "name": "_interestRateMode",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint16",
+        "name": "_referralCode",
+        "type": "uint16"
       }
     ],
     "name": "borrow",
@@ -516,6 +533,11 @@
         "internalType": "struct inEuint128",
         "name": "_encryptedAmount",
         "type": "tuple"
+      },
+      {
+        "internalType": "uint16",
+        "name": "_referralCode",
+        "type": "uint16"
       }
     ],
     "name": "deposit",

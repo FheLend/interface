@@ -41,6 +41,7 @@ export function SupplyButton({
       const tx: ContractTransactionResponse = await contractWithSigner.deposit(
         poolAddress,
         encrypted,
+        1n, // _referralCode
         { gasLimit: GAS_LIMIT[chainId] }
       );
       setLoadingText("Waiting for tx...");
