@@ -455,6 +455,11 @@
             "internalType": "bytes",
             "name": "data",
             "type": "bytes"
+          },
+          {
+            "internalType": "int32",
+            "name": "securityZone",
+            "type": "int32"
           }
         ],
         "internalType": "struct inEuint128",
@@ -511,6 +516,11 @@
             "internalType": "bytes",
             "name": "data",
             "type": "bytes"
+          },
+          {
+            "internalType": "int32",
+            "name": "securityZone",
+            "type": "int32"
           }
         ],
         "internalType": "struct inEuint128",
@@ -910,6 +920,11 @@
             "internalType": "bytes",
             "name": "data",
             "type": "bytes"
+          },
+          {
+            "internalType": "int32",
+            "name": "securityZone",
+            "type": "int32"
           }
         ],
         "internalType": "struct inEuint128",

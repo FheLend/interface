@@ -16,16 +16,16 @@ const metadata = {
   icons: ["https://avatars.githubusercontent.com/u/37784886"],
 };
 
-export const fhenixRpcUrl = "https://api.helium.fhenix.zone";
+export const fhenixRpcUrl = "https://api.nitrogen.fhenix.zone";
 export const fhenix = defineChain({
   id: FHENIX_CHAIN_ID,
-  name: "Fhenix Helium",
-  nativeCurrency: { name: "Fhenix Helium", symbol: "tFHE", decimals: 18 },
+  name: "Fhenix Nitrogen",
+  nativeCurrency: { name: "Fhenix Nitrogen", symbol: "tFHE", decimals: 18 },
   rpcUrls: {
     default: { http: [fhenixRpcUrl] },
   },
   blockExplorers: {
-    default: { name: "Fhenixscan", url: "https://explorer.helium.fhenix.zone" },
+    default: { name: "Fhenixscan", url: "https://explorer.nitrogen.fhenix.zone" },
   },
   contracts: {},
 });
@@ -34,12 +34,12 @@ export const fhenixRpcUrlLocal = "https://local.felend.xyz";
 export const fhenixLocal = defineChain({
   id: FHENIX_CHAIN_ID_LOCAL,
   name: "Local Fhenix Helium",
-  nativeCurrency: { name: "Fhenix Helium", symbol: "tFHE", decimals: 18 },
+  nativeCurrency: { name: "Fhenix Local", symbol: "tFHE", decimals: 18 },
   rpcUrls: {
     default: { http: [fhenixRpcUrlLocal] },
   },
   blockExplorers: {
-    default: { name: "Fhenixscan", url: "https://explorer.helium.fhenix.zone" },
+    default: { name: "Fhenixscan", url: "https://explorer.nitrogen.fhenix.zone" },
   },
   contracts: {},
 });
