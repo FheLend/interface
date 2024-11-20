@@ -70,6 +70,7 @@ function PoolFormActions({
           <BorrowForm
             poolAddress={poolAddress as `0x${string}`}
             availableLiquidity={availableLiquidity}
+            allowSelect
           />
         </TabPanel>
         <TabPanel>

@@ -7,18 +7,27 @@ import {
   Link,
   useDisclosure,
   Image as ChakraImage,
+  Circle,
+  Tooltip,
 } from "@chakra-ui/react";
 import { flatten, get, map } from "lodash";
 import Image from "next/image";
 import { formatUnits } from "viem";
 import eyeIcon from "@/images/icons/eye.svg";
 import eyeOffIcon from "@/images/icons/eye-off.svg";
-import { useAccount, useChainId, useReadContracts } from "wagmi";
+import {
+  useAccount,
+  useChainId,
+  useReadContract,
+  useReadContracts,
+} from "wagmi";
 import { POOL } from "@/constants/contracts";
 import poolAbi from "@/constants/abi/pool.json";
 import tokenAbi from "@/constants/abi/token.json";
 import { useMemo } from "react";
 import { useReserves, useTokens } from "@/store/pools";
+import { MinusIcon } from "@chakra-ui/icons";
+import WithdrawModal from "../components/withdrawModal";
 
 function RowInfo(props: FlexProps) {
   return (
@@ -33,8 +42,40 @@ function RowInfo(props: FlexProps) {
   );
 }
 
-function BorrowBalance({ isOpen }: { isOpen: boolean }) {
+function WithdrawBtn({ token }: any) {
+  const {
+    isOpen: isOpenWithdraw,
+    onOpen: openWithdraw,
+    onClose: closeWithdraw,
+  } = useDisclosure();
+
+  return (
+    <>
+      <Tooltip label={`Withdraw ${token.symbol}`}>
+        <Circle
+          onClick={openWithdraw}
+          border="1px"
+          borderColor="whiteBlue.300"
+          size="5"
+          cursor="pointer"
+        >
+          <MinusIcon boxSize="3" />
+        </Circle>
+      </Tooltip>
+
+      {isOpenWithdraw && (
+        <WithdrawModal
+          aTokenAddress={token.aTokenAddress as `0x${string}`}
+          onClose={closeWithdraw}
+        />
+      )}
+    </>
+  );
+}
+
+function DepositedBalance({ isOpen }: { isOpen: boolean }) {
   const { address } = useAccount();
+
   const chainId = useChainId();
   const { reserves } = useReserves();
   const { tokens } = useTokens();
@@ -48,19 +89,35 @@ function BorrowBalance({ isOpen }: { isOpen: boolean }) {
     })),
   });
 
+  const {
+    data: reserveData,
+    refetch,
+    isLoading,
+  } = useReadContracts({
+    //@ts-ignore
+    contracts: reserves.map((reserve) => ({
+      address: POOL[chainId],
+      abi: poolAbi,
+      functionName: "getReserveData",
+      args: [reserve],
+    })),
+  });
+
   const tokenData = useMemo(() => {
     return map(data, (reserve, index) => {
       const borrowBalance = get(reserve, "result[0]", 0n);
+      const aTokenAddress = get(reserveData, `[${index}].result[11]`, "");
       return {
         symbol: tokens[reserves[index]]?.symbol,
         decimals: tokens[reserves[index]]?.decimals,
         logo: tokens[reserves[index]]?.logo || "",
         balance: borrowBalance,
+        aTokenAddress,
       };
     })
       .filter((token) => token.balance > 0)
       .sort((a, b) => Number(b.balance) - Number(a.balance));
-  }, [data, reserves, tokens]);
+  }, [data, reserves, tokens, reserveData]);
 
   return (
     <Card cardTitle="Deposited Assets" mt="7">
@@ -74,14 +131,17 @@ function BorrowBalance({ isOpen }: { isOpen: boolean }) {
               </Box>
             </Center>
 
-            <PrivateText isShow={isOpen}>
-              {token.balance
-                ? (+formatUnits(
-                    token.balance,
-                    token.decimals || 18
-                  )).toLocaleString()
-                : "0"}
-            </PrivateText>
+            <Center>
+              <PrivateText isShow={isOpen} mr="2">
+                {token.balance
+                  ? (+formatUnits(
+                      token.balance,
+                      token.decimals || 18
+                    )).toLocaleString()
+                  : "0"}
+              </PrivateText>
+              <WithdrawBtn token={token} />
+            </Center>
           </RowInfo>
         );
       })}
@@ -220,7 +280,7 @@ function UserInfo({ data }: { data: any }) {
         </RowInfo>
       </Card>
 
-      <BorrowBalance isOpen={isOpen} />
+      <DepositedBalance isOpen={isOpen} />
     </>
   );
 }
