@@ -53,6 +53,9 @@ export const theme = extendTheme({
       800: "#6B7D8E",
       900: "#566B7E",
     },
+    success: {
+      300: "#79D7CF",
+    },
   },
 
   sizes: {
@@ -94,19 +97,19 @@ export const theme = extendTheme({
       },
       variants: {
         outline: {
-          borderColor: "#79D7CF",
+          borderColor: "gray.300",
           bgColor: "primary.800",
-          color: "#79D7CF",
+          color: "white",
           _hover: {
-            bgColor: "primary.500",
+            bgColor: "primary.700",
           },
           _active: {
-            bgColor: "primary.500",
+            bgColor: "primary.700",
           },
         },
         solid: {
-          borderColor: "#79D7CF",
-          bgColor: "#79D7CF",
+          borderColor: "success.300",
+          bgColor: "success.300",
           color: "primary.900",
           _hover: {
             bgColor: "#8dd3cd",

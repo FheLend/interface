@@ -4,20 +4,18 @@ import {
   Box,
   Button,
   Flex,
+  GridItem,
   Image,
-  LinkBox,
-  LinkOverlay,
+  SimpleGrid,
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Tr, Td } from "@chakra-ui/table";
 import poolAbi from "@/constants/abi/pool.json";
 import { useAccount, useChainId, useReadContracts } from "wagmi";
 import { POOL } from "@/constants/contracts";
 import SupplyModal from "./supplyModal";
 import { get } from "lodash";
 import { formatUnits } from "viem";
-import Link from "next/link";
 import { useTokens } from "@/store/pools";
 import WithdrawModal from "./withdrawModal";
 import BorrowModal from "./borrowModal";
@@ -25,7 +23,11 @@ import BorrowModal from "./borrowModal";
 const RAY = 10 ** 27; // 10 to the power 27
 const SECONDS_PER_YEAR = 31536000;
 
-export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
+export default function PoolCard({
+  poolAddress,
+}: {
+  poolAddress: `0x${string}`;
+}) {
   const chainId = useChainId();
   const { isConnected } = useAccount();
   const { tokens } = useTokens();
@@ -81,7 +83,7 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const depositAPY =
     (1 + depositAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1;
   const variableBorrowAPR = Number(variableBorrowRate) / RAY;
-  const variableAPY =
+  const variableBorrowAPY =
     (1 + variableBorrowAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1;
   // stableBorrowAPR = variableBorrowRate / RAY;
 
@@ -90,47 +92,54 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   }
 
   return (
-    <LinkBox
-      as={Tr}
-      cursor="pointer"
-      _hover={{ bg: "primary.900", transition: "0.3s" }}
-    >
-      <Td borderLeftRadius="lg">
+    <SimpleGrid columns={2} color="whiteBlue.600" gap={4}>
+      <GridItem colSpan={2}>
         <Flex alignItems="center">
           <Image src={tokens[poolAddress].logo} boxSize="6" alt="token-logo" />
           <Box ml="2">{tokens[poolAddress].symbol}</Box>
         </Flex>
-      </Td>
-      <Td isNumeric>
-        {(+formatUnits(
-          totalLiquidity,
-          tokens[poolAddress].decimals
-        )).toLocaleString()}
-      </Td>
-      <Td isNumeric>
-        {(+formatUnits(
-          totalLiquidity - availableLiquidity,
-          tokens[poolAddress].decimals
-        )).toLocaleString()}
-      </Td>
-      <Td isNumeric>
-        <Flex align="center">
-          <Box mr="2" color="green.300">
-            {(depositAPY * 100).toLocaleString()}%
-          </Box>
-          <Tooltip label="Connect wallet to supply" isDisabled={isConnected}>
-            <Button
-              onClick={openSupply}
-              size="sm"
-              isDisabled={!isConnected}
-              pos="relative"
-              variant="outline"
-              zIndex="1"
-            >
-              Supply
-            </Button>
-          </Tooltip>
-        </Flex>
+      </GridItem>
+      <GridItem>
+        <Box fontSize="sm">Total Supplied</Box>
+        <Box fontSize="lg" color="white" mt="1">
+          {(+formatUnits(
+            totalLiquidity,
+            tokens[poolAddress].decimals
+          )).toLocaleString()}
+        </Box>
+      </GridItem>
+      <GridItem>
+        <Box fontSize="sm">Total Borrowed</Box>
+        <Box fontSize="lg" color="white" mt="1">
+          {(+formatUnits(
+            totalLiquidity - availableLiquidity,
+            tokens[poolAddress].decimals
+          )).toLocaleString()}
+        </Box>
+      </GridItem>
+      <GridItem>
+        <Box fontSize="sm">Supply APY</Box>
+        <Box fontSize="lg" color="green.300" mt="1">
+          {(depositAPY * 100).toLocaleString()}%
+        </Box>
+      </GridItem>
+      <GridItem>
+        <Box fontSize="sm">Borrow APY</Box>
+        <Box fontSize="lg" color="yellow.300" mt="1">
+          {(variableBorrowAPY * 100).toLocaleString()}%
+        </Box>
+      </GridItem>
+      <GridItem>
+        <Tooltip label="Connect wallet to supply" isDisabled={isConnected}>
+          <Button
+            variant="outline"
+            w="100%"
+            onClick={openSupply}
+            isDisabled={!isConnected}
+          >
+            Supply
+          </Button>
+        </Tooltip>
         {isOpenSupply && (
           <SupplyModal
             poolAddress={poolAddress}
@@ -141,25 +150,18 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
             }}
           />
         )}
-      </Td>
-      <Td isNumeric>
-        <Flex align="center">
-          <Box mr="2" color="yellow.300">
-            {(variableAPY * 100).toLocaleString()}%
-          </Box>
-          <Tooltip label="Connect wallet to withdraw" isDisabled={isConnected}>
-            <Button
-              onClick={openBorrow}
-              size="sm"
-              isDisabled={!isConnected}
-              pos="relative"
-              zIndex="1"
-              variant="outline"
-            >
-              Borrow
-            </Button>
-          </Tooltip>
-        </Flex>
+      </GridItem>
+      <GridItem>
+        <Tooltip label="Connect wallet to withdraw" isDisabled={isConnected}>
+          <Button
+            variant="outline"
+            w="100%"
+            onClick={openBorrow}
+            isDisabled={!isConnected}
+          >
+            Borrow
+          </Button>
+        </Tooltip>
         {isOpenBorrow && (
           <BorrowModal
             poolAddress={poolAddress}
@@ -169,8 +171,7 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
             availableLiquidity={+formatUnits(availableLiquidity, 18)}
           />
         )}
-        <LinkOverlay as={Link} href={`/pools/${poolAddress}`} />
-      </Td>
-    </LinkBox>
+      </GridItem>
+    </SimpleGrid>
   );
 }

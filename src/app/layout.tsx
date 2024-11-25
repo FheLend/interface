@@ -9,7 +9,6 @@ import ProgressBarProvider from "@/context/nprogress";
 import FhenixProvider from "@/context/fhenix";
 import { Container } from "@chakra-ui/react";
 import Navbar from "./components/navbar";
-import Notice from "./components/notices";
 import Footer from "./components/footer";
 import FeedBack from "./components/feedback";
 import { Analytics } from "@vercel/analytics/react";
@@ -42,7 +41,7 @@ export default function RootLayout({
                 <FetchData />
                 <Navbar />
                 <Container maxW="container.2xl">
-                  <Notice />
+                  {/* <Notice /> */}
                   {children}
                 </Container>
                 <FeedBack />
