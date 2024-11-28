@@ -92,7 +92,15 @@ export default function PoolCard({
   }
 
   return (
-    <SimpleGrid columns={2} color="whiteBlue.600" gap={4}>
+    <SimpleGrid
+      columns={2}
+      color="whiteBlue.600"
+      gap={4}
+      pb="10"
+      mb="10"
+      borderBottom="1px solid"
+      borderColor="whiteBlue.900"
+    >
       <GridItem colSpan={2}>
         <Flex alignItems="center">
           <Image src={tokens[poolAddress].logo} boxSize="6" alt="token-logo" />

@@ -93,7 +93,7 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
     <LinkBox
       as={Tr}
       cursor="pointer"
-      _hover={{ bg: "primary.900", transition: "0.3s" }}
+      _hover={{ bg: "primary.600", transition: "0.3s" }}
     >
       <Td borderLeftRadius="lg">
         <Flex alignItems="center">
@@ -124,8 +124,10 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
               size="sm"
               isDisabled={!isConnected}
               pos="relative"
-              variant="outline"
               zIndex="1"
+              bgColor="primary.900"
+              color="whiteBlue.500"
+              _hover={{ bg: "primary.800" }}
             >
               Supply
             </Button>
@@ -154,7 +156,9 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
               isDisabled={!isConnected}
               pos="relative"
               zIndex="1"
-              variant="outline"
+              bgColor="primary.900"
+              color="whiteBlue.500"
+              _hover={{ bg: "primary.800" }}
             >
               Borrow
             </Button>
