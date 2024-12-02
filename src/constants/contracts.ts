@@ -7,7 +7,7 @@ export const TOKENS: {
   [chainId: number]: { symbol: string; address: `0x${string}` }[];
 } = {
   [FHENIX_CHAIN_ID]: [
-    { symbol: "DAI", address: "0x2a320A0DDDFB778ff80F0321c684b9a86771B8f9" },
+    { symbol: "USDT", address: "0x10672Bfb7c9B90Ad3a1C53EBa433bc0d15d53E7E" },
   ],
   [FHENIX_CHAIN_ID_LOCAL]: [
     { symbol: "USDT", address: "0x20E068a567630483901Af229a6eCF5eb401A5D66" },
@@ -32,19 +32,19 @@ export const GAS_LIMIT: { [chainId: number]: number } = {
 };
 
 export const POOL: { [chainId: number]: `0x${string}` } = {
-  [FHENIX_CHAIN_ID]: "0x417b80C8c11f05097039198Aa714e068aE9daa0E",
+  [FHENIX_CHAIN_ID]: "0xb7FD1F702f37a997213e53D137102fda78CdDd08",
   [FHENIX_CHAIN_ID_LOCAL]: "0x5B0ABc8c4e9Cd491C2A204bf8581Da3Ad9284ff9",
 };
 export const POOL_CORE: { [chainId: number]: `0x${string}` } = {
-  [FHENIX_CHAIN_ID]: "0xfe9517F1A0F46e105c02c99de8FB18CAF3d197AB",
+  [FHENIX_CHAIN_ID]: "0x3dCFFD91767f158e1977D5bBA75E66E715aFaF7b",
   [FHENIX_CHAIN_ID_LOCAL]: "0xc172fc2df2E4841DFf0e2A8395318E51dB031053",
 };
 export const POOL_ADDRESSES_PROVIDER: { [chainId: number]: `0x${string}` } = {
-  [FHENIX_CHAIN_ID]: "0x4208C0f3FB8988BfFa260573Ec8dE51fD4896D37",
+  [FHENIX_CHAIN_ID]: "0x5Ef4656BDB1c1127E2B3b8fC2502d6AcC20AA1Fa",
   [FHENIX_CHAIN_ID_LOCAL]: "0xbeb4eF1fcEa618C6ca38e3828B00f8D481EC2CC2",
 };
 
 export const PRICE_ORACLE: { [chainId: number]: `0x${string}` } = {
-  [FHENIX_CHAIN_ID]: "0x16BC76613aC12540Cc87377bff3ebAD37B2aD9CF",
+  [FHENIX_CHAIN_ID]: "0x707E0143BfBB629674EccA2AE2fBCfa4c81E46EF",
   [FHENIX_CHAIN_ID_LOCAL]: "0xbCC7589da48B323afDB81810B064815Fe530ebe2",
 };
