@@ -7,33 +7,45 @@ import ConnectButton from "@/common/connect-button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ChainSelector from "./chainSelector";
-
-const links = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-    comingSoon: false,
-    target: "_self",
-    show: "base",
-  },
-  {
-    name: "Faucet",
-    href: "/faucet",
-    comingSoon: false,
-    target: "_self",
-    show: "base",
-  },
-  {
-    name: "Documentation",
-    href: "https://docs.felend.xyz",
-    comingSoon: false,
-    show: "lg",
-    target: "_blank",
-  },
-];
+import { useAccount } from "wagmi";
+import { WHITE_LIST } from "@/constants/contracts";
 
 function Navbar() {
   const pathname = usePathname();
+  const { address } = useAccount();
+
+  const links = [
+    {
+      name: "Dashboard",
+      href: "/dashboard",
+      comingSoon: false,
+      target: "_self",
+      show: "base",
+    },
+    {
+      name: "Faucet",
+      href: "/faucet",
+      comingSoon: false,
+      target: "_self",
+      show: "base",
+    },
+    {
+      name: "Documentation",
+      href: "https://docs.felend.xyz",
+      comingSoon: false,
+      show: "lg",
+      target: "_blank",
+    },
+    {
+      name: "Settings",
+      href: "/settings",
+      comingSoon: false,
+      show: "base",
+      onlyAdmin: true,
+      // address &&
+      // WHITE_LIST.find((a) => a.toLowerCase() === address.toLowerCase()),
+    },
+  ];
 
   return (
     <Flex px="10" py="5" alignItems="center">
@@ -42,6 +54,13 @@ function Navbar() {
       </Box>
 
       {links.map((link) => {
+        if (
+          link.onlyAdmin &&
+          (!address ||
+            !WHITE_LIST.find((a) => a.toLowerCase() === address.toLowerCase()))
+        ) {
+          return null;
+        }
         return (
           <Center
             as={Link}

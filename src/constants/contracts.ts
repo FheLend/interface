@@ -3,11 +3,16 @@ export const FHENIX_CHAIN_ID_LOCAL = 412346;
 
 export const SUPPORTED_CHAINS = [FHENIX_CHAIN_ID, FHENIX_CHAIN_ID_LOCAL];
 
+export const WHITE_LIST: `0x${string}`[] = [
+  "0x9E97A40996c749C8C86F16b4F412dD96467da69C",
+];
+
 export const TOKENS: {
   [chainId: number]: { symbol: string; address: `0x${string}` }[];
 } = {
   [FHENIX_CHAIN_ID]: [
     { symbol: "USDT", address: "0x10672Bfb7c9B90Ad3a1C53EBa433bc0d15d53E7E" },
+    { symbol: "DAI", address: "0x804f702117B7809c12ED624373FE3230006a7815" },
   ],
   [FHENIX_CHAIN_ID_LOCAL]: [
     { symbol: "USDT", address: "0x20E068a567630483901Af229a6eCF5eb401A5D66" },
