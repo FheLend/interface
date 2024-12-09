@@ -3,6 +3,7 @@ import { useApprove } from "../hooks/useApproval";
 import { Box, Button } from "@chakra-ui/react";
 import { POOL_CORE } from "@/constants/contracts";
 import { useChainId } from "wagmi";
+import { useConfig } from "@/store/pools";
 
 export function ApproveButton({
   amount,
@@ -16,9 +17,10 @@ export function ApproveButton({
   refetchAllowance: () => void;
 }) {
   const chainId = useChainId();
+  const { config } = useConfig();
   const { isLoading, isTxLoading, isSuccess, approve, error } = useApprove(
     address,
-    POOL_CORE[chainId]
+    config?.poolCore as `0x${string}`
   );
 
   useEffect(() => {

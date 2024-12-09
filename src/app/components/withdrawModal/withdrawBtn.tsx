@@ -7,6 +7,7 @@ import { get } from "lodash";
 import { useFhenix } from "@/context/fhenix";
 import { GAS_LIMIT } from "@/constants/contracts";
 import { getError } from "@/utils/helper";
+import { useConfig } from "@/store/pools";
 
 export function WithdrawButton({
   amount,
@@ -23,6 +24,7 @@ export function WithdrawButton({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [loadingText, setLoadingText] = useState<string>();
+  const { config } = useConfig();
 
   async function withdraw() {
     try {
@@ -39,7 +41,7 @@ export function WithdrawButton({
       //@ts-ignore
       const tx: ContractTransactionResponse = await contractWithSigner.redeem(
         encrypted,
-        { gasLimit: GAS_LIMIT[chainId] }
+        { gasLimit: config?.defaultGas || GAS_LIMIT[chainId] }
       );
       setLoadingText("Waiting for tx...");
       await tx.wait(); // return ContractTransactionReceipt

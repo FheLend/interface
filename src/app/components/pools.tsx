@@ -8,7 +8,7 @@ import {
   TableContainer,
 } from "@chakra-ui/table";
 import Pool from "./pool";
-import { Box, Button, GridItem, Show, SimpleGrid } from "@chakra-ui/react";
+import { Show } from "@chakra-ui/react";
 import PoolCard from "./pool.card";
 
 export default function Pools({
@@ -16,7 +16,6 @@ export default function Pools({
 }: {
   poolAddresses: `0x${string}`[];
 }) {
-  console.log(poolAddresses);
   return (
     <>
       <Show above="md">

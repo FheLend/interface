@@ -20,6 +20,7 @@ import { TextAutoEllipsis } from "@/common/common";
 import { SupplyButton } from "./supplyBtn";
 import { formatUnits, parseUnits } from "viem";
 import ConnectButton from "@/common/connect-button";
+import { useConfig } from "@/store/pools";
 
 export default function SupplyForm({
   poolAddress,
@@ -34,6 +35,7 @@ export default function SupplyForm({
   const initialRef = useRef(null);
   const [amount, setAmount] = useState("");
   const { address, isConnected } = useAccount();
+  const { config } = useConfig();
 
   const {
     data: balanceData,
@@ -45,7 +47,7 @@ export default function SupplyForm({
     isFetching: isFetchingAllowance,
     data,
     refetchAllowance,
-  } = useAllowance(poolAddress, address, POOL_CORE[chainId]);
+  } = useAllowance(poolAddress, address, config?.poolCore as `0x${string}`);
 
   const allowance = (data || 0n) as bigint;
   const needToBeApproved =

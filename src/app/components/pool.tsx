@@ -13,13 +13,11 @@ import {
 import { Tr, Td } from "@chakra-ui/table";
 import poolAbi from "@/constants/abi/pool.json";
 import { useAccount, useChainId, useReadContracts } from "wagmi";
-import { POOL } from "@/constants/contracts";
 import SupplyModal from "./supplyModal";
 import { get } from "lodash";
 import { formatUnits } from "viem";
 import Link from "next/link";
-import { useTokens } from "@/store/pools";
-import WithdrawModal from "./withdrawModal";
+import { useConfig, useTokens } from "@/store/pools";
 import BorrowModal from "./borrowModal";
 
 const RAY = 10 ** 27; // 10 to the power 27
@@ -29,6 +27,7 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const chainId = useChainId();
   const { isConnected } = useAccount();
   const { tokens } = useTokens();
+  const { config } = useConfig();
 
   const {
     isOpen: isOpenSupply,
@@ -54,7 +53,7 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const { data, refetch, isLoading } = useReadContracts({
     contracts: [
       {
-        address: POOL[chainId],
+        address: config?.pool as `0x${string}`,
         abi: poolAbi,
         functionName: "getReserveData",
         args: [poolAddress],

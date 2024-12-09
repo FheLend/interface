@@ -7,6 +7,7 @@ import poolAbi from "@/constants/abi/pool.json";
 import { get } from "lodash";
 import { useFhenix } from "@/context/fhenix";
 import { getError } from "@/utils/helper";
+import { useConfig } from "@/store/pools";
 
 export function BorrowButton({
   amount,
@@ -22,6 +23,7 @@ export function BorrowButton({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [loadingText, setLoadingText] = useState<string>();
+  const { config } = useConfig();
 
   async function borrow() {
     try {
@@ -31,7 +33,11 @@ export function BorrowButton({
       let encrypted = await fhenixClient.encrypt_uint128(BigInt(amount));
       const signer = await fhenixProvider.getSigner();
 
-      const contract = new ethers.Contract(POOL[chainId], poolAbi, signer);
+      const contract = new ethers.Contract(
+        config?.pool as `0x${string}`,
+        poolAbi,
+        signer
+      );
       const contractWithSigner = contract.connect(signer);
 
       setLoadingText("Confirming...");
@@ -40,7 +46,7 @@ export function BorrowButton({
         poolAddress,
         encrypted,
         1n, // _interestRateMode
-        { gasLimit: GAS_LIMIT[chainId] }
+        { gasLimit: config?.defaultGas || GAS_LIMIT[chainId] }
       );
       setLoadingText("Waiting for tx...");
       await tx.wait(); // return ContractTransactionReceipt from ethers

@@ -21,6 +21,7 @@ import { RepayButton } from "./repayBtn";
 import ConnectButton from "@/common/connect-button";
 import { useAllowance } from "@/hooks/useApproval";
 import { ApproveButton } from "@/common/approveBtn";
+import { useConfig } from "@/store/pools";
 
 export default function RepayForm({
   poolAddress,
@@ -31,6 +32,7 @@ export default function RepayForm({
   const initialRef = useRef(null);
   const [amount, setAmount] = useState("");
   const { address, isConnected } = useAccount();
+  const { config } = useConfig();
 
   const { data: balanceData } = useBalance({
     address,
@@ -41,7 +43,7 @@ export default function RepayForm({
     isFetching: isFetchingAllowance,
     data,
     refetchAllowance,
-  } = useAllowance(poolAddress, address, POOL_CORE[chainId]);
+  } = useAllowance(poolAddress, address, config?.poolCore as `0x${string}`);
 
   const allowance = (data || 0n) as bigint;
   const needToBeApproved =
@@ -53,7 +55,7 @@ export default function RepayForm({
     isLoading,
     refetch,
   } = useReadContract({
-    address: POOL[chainId],
+    address: config?.pool as `0x${string}`,
     abi: poolAbi,
     functionName: "getUserReserveData",
     args: [poolAddress, address],

@@ -2,26 +2,43 @@
 
 import poolAbi from "@/constants/abi/pool.json";
 import poolCoreAbi from "@/constants/abi/poolCore.json";
-import { useAccount, useChainId, useReadContracts } from "wagmi";
+import { useAccount, useReadContracts } from "wagmi";
 import { flatten, get } from "lodash";
-import { POOL, POOL_CORE, TOKEN_LOGO } from "@/constants/contracts";
-import { useReserves, useTokens, useUserAccountData } from "@/store/pools";
+import { TOKEN_LOGO } from "@/constants/contracts";
+import {
+  useConfig,
+  useReserves,
+  useTokens,
+  useUserAccountData,
+} from "@/store/pools";
 import { useEffect, useMemo } from "react";
 import tokenAbi from "@/constants/abi/token.json";
 
-function FetchData() {
-  const chainId = useChainId();
+function FetchData({ config }: { config: any }) {
+  const { setConfig } = useConfig();
+
+  useEffect(() => {
+    if (config) {
+      setConfig(config);
+    }
+  }, [config, setConfig]);
+
+  return <>{config && <FetchPoolCore />}</>;
+}
+
+function FetchPoolCore() {
+  const { config } = useConfig();
   const { address } = useAccount();
 
   const { data } = useReadContracts({
     contracts: [
       {
         abi: poolCoreAbi,
-        address: POOL_CORE[chainId],
+        address: config?.poolCore as `0x${string}`,
         functionName: "getReserves",
       },
       {
-        address: POOL[chainId],
+        address: config?.pool as `0x${string}`,
         abi: poolAbi,
         functionName: "getUserAccountData",
         args: [address],
@@ -38,13 +55,13 @@ function FetchData() {
     if (reserves.length) {
       setReserves(reserves);
     }
-  }, [reserves]);
+  }, [reserves, setReserves]);
 
   useEffect(() => {
     if (userAccountData.length) {
       setUserAccountData(userAccountData);
     }
-  }, [userAccountData]);
+  }, [userAccountData, setUserAccountData]);
 
   return <>{!!reserves.length && <FetchTokenInfo addresses={reserves} />}</>;
 }
@@ -82,7 +99,7 @@ function FetchTokenInfo({ addresses }: { addresses: `0x${string}`[] }) {
   const { setTokens } = useTokens();
   useEffect(() => {
     setTokens(tokens);
-  }, [tokens]);
+  }, [tokens, setTokens]);
 
   return null;
 }

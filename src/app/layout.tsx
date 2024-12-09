@@ -13,7 +13,7 @@ import Footer from "./components/footer";
 import FeedBack from "./components/feedback";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import FetchData from "./components/fetchData";
+import FetchData from "./components/fetcher";
 
 const poppins = Poppins({
   subsets: ["latin"],

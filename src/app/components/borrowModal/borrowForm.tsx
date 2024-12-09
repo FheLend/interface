@@ -27,7 +27,7 @@ import ConnectButton from "@/common/connect-button";
 import AvailableBorrow from "./availableBorrow";
 import { ChevronDownIcon, InfoOutlineIcon } from "@chakra-ui/icons";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/menu";
-import { useTokens } from "@/store/pools";
+import { useConfig, useTokens } from "@/store/pools";
 import { orderBy } from "lodash";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -48,6 +48,7 @@ export default function BorrowForm({
   const [amount, setAmount] = useState("");
   const { address, isConnected } = useAccount();
   const { tokens } = useTokens();
+  const { config } = useConfig();
 
   const tokenArray = useMemo(() => {
     return orderBy(
@@ -72,13 +73,13 @@ export default function BorrowForm({
   const { data, isLoading, refetch } = useReadContracts({
     contracts: [
       {
-        address: POOL[chainId],
+        address: config?.pool as `0x${string}`,
         abi: poolAbi,
         functionName: "getUserAccountData",
         args: [address],
       },
       {
-        address: POOL_ADDRESSES_PROVIDER[chainId],
+        address: config?.poolAddressesProvider as `0x${string}`,
         abi: poolAddressesProviderAbi,
         functionName: "getPriceOracle",
       },

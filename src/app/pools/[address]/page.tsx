@@ -20,6 +20,7 @@ import poolAbi from "@/constants/abi/pool.json";
 import tokenAbi from "@/constants/abi/token.json";
 import { formatUnits } from "viem";
 import PoolFormActions from "./components/poolFormActions";
+import { useConfig } from "@/store/pools";
 
 const RAY = 10 ** 27;
 const SECONDS_PER_YEAR = 31536000;
@@ -51,17 +52,18 @@ function RowInfo(props: FlexProps) {
 function PoolDetail({ params }: { params: { address: string } }) {
   const chainId = useChainId();
   const poolAddress = params.address;
+  const { config } = useConfig();
 
   const { data, refetch, isLoading } = useReadContracts({
     contracts: [
       {
-        address: POOL[chainId],
+        address: config?.pool as `0x${string}`,
         abi: poolAbi,
         functionName: "getReserveData",
         args: [poolAddress],
       },
       {
-        address: POOL[chainId],
+        address: config?.pool as `0x${string}`,
         abi: poolAbi,
         functionName: "getReserveConfigurationData",
         args: [poolAddress],

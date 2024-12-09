@@ -12,13 +12,13 @@ import {
 } from "@chakra-ui/react";
 import poolAbi from "@/constants/abi/pool.json";
 import { useAccount, useChainId, useReadContracts } from "wagmi";
-import { POOL } from "@/constants/contracts";
 import SupplyModal from "./supplyModal";
 import { get } from "lodash";
 import { formatUnits } from "viem";
-import { useTokens } from "@/store/pools";
+import { useConfig, useTokens } from "@/store/pools";
 import WithdrawModal from "./withdrawModal";
 import BorrowModal from "./borrowModal";
+import Link from "next/link";
 
 const RAY = 10 ** 27; // 10 to the power 27
 const SECONDS_PER_YEAR = 31536000;
@@ -31,6 +31,7 @@ export default function PoolCard({
   const chainId = useChainId();
   const { isConnected } = useAccount();
   const { tokens } = useTokens();
+  const { config } = useConfig();
 
   const {
     isOpen: isOpenSupply,
@@ -56,7 +57,7 @@ export default function PoolCard({
   const { data, refetch, isLoading } = useReadContracts({
     contracts: [
       {
-        address: POOL[chainId],
+        address: config?.pool as `0x${string}`,
         abi: poolAbi,
         functionName: "getReserveData",
         args: [poolAddress],
@@ -102,9 +103,11 @@ export default function PoolCard({
       borderColor="whiteBlue.900"
     >
       <GridItem colSpan={2}>
-        <Flex alignItems="center">
+        <Flex alignItems="center" as={Link} href={`/pools/${poolAddress}`}>
           <Image src={tokens[poolAddress].logo} boxSize="6" alt="token-logo" />
-          <Box ml="2">{tokens[poolAddress].symbol}</Box>
+          <Box ml="2" textDecor="underline">
+            {tokens[poolAddress].symbol}
+          </Box>
         </Flex>
       </GridItem>
       <GridItem>

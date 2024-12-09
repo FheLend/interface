@@ -16,20 +16,29 @@ interface Token {
   symbol: string;
   logo?: string;
 }
+interface Config {
+  pool: string;
+  poolCore: string;
+  poolAddressesProvider: string;
+  priceOracle: string;
+  defaultGas: number;
+}
 
 interface TokensState {
   tokens: Record<string, Token>;
   setTokens: (tokens: Record<string, Token>) => void;
 }
-
 interface ReservesState {
   reserves: `0x${string}`[];
   setReserves: (addresses: `0x${string}`[]) => void;
 }
-
 interface UserAccountDataState {
   userAccountData?: UserAccountData;
   setUserAccountData: (data: any[]) => void;
+}
+interface ConfigState {
+  config?: Config;
+  setConfig: (data: Config) => void;
 }
 
 export const useReserves = create<ReservesState>((set) => ({
@@ -59,19 +68,11 @@ export const useUserAccountData = create<UserAccountDataState>((set) => ({
     }),
 }));
 
-export const useBalances = create<UserAccountDataState>((set) => ({
-  userAccountData: undefined,
-  setUserAccountData: (data) =>
+export const useConfig = create<ConfigState>((set) => ({
+  config: undefined,
+  setConfig: (data) => {
     set({
-      userAccountData: {
-        totalLiquidityETH: data[0],
-        totalCollateralETH: data[1],
-        totalBorrowsETH: data[2],
-        totalFeesETH: data[3],
-        availableBorrowsETH: data[4],
-        currentLiquidationThreshold: data[5],
-        ltv: data[6],
-        healthFactor: data[7],
-      },
-    }),
+      config: data,
+    });
+  },
 }));

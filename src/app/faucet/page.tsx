@@ -26,18 +26,22 @@ import { first, get } from "lodash";
 import { useBalance } from "wagmi";
 import Image from "next/image";
 import loading from "@/images/icons/loading.svg";
+import { useTokens } from "@/store/pools";
 
 export default function Faucet() {
   const chainId = useChainId();
   const chains = useChains();
   const { address, isConnected } = useAccount();
+  const { tokens } = useTokens();
   const { writeContract, status, data, error } = useWriteContract();
   const chainInfo = useMemo(
     () => chains.find((chain) => chain.id === chainId),
     [chains, chainId]
   );
   const [token, setToken] = useState<`0x${string}` | undefined>(
-    chainId === FHENIX_CHAIN_ID ? first(TOKENS[chainId])?.address : undefined
+    chainId === FHENIX_CHAIN_ID
+      ? (first(Object.keys(tokens)) as `0x${string}`)
+      : undefined
   );
   const [isGetETH, setIsGetETH] = useState(false);
   const [errorGetETH, setErrorGetETH] = useState<string>();
@@ -106,13 +110,9 @@ export default function Faucet() {
                   tFHE
                 </option>
               )}
-              {TOKENS[chainId].map((token) => (
-                <option
-                  value={token.address}
-                  key={token.address}
-                  style={{ color: "#111518" }}
-                >
-                  {token.symbol}
+              {Object.keys(tokens).map((token) => (
+                <option value={token} key={token} style={{ color: "#111518" }}>
+                  {tokens[token].symbol}
                 </option>
               ))}
             </Select>

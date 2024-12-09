@@ -25,7 +25,7 @@ import { POOL } from "@/constants/contracts";
 import poolAbi from "@/constants/abi/pool.json";
 import tokenAbi from "@/constants/abi/token.json";
 import { useMemo } from "react";
-import { useReserves, useTokens } from "@/store/pools";
+import { useConfig, useReserves, useTokens } from "@/store/pools";
 import { MinusIcon } from "@chakra-ui/icons";
 import WithdrawModal from "../components/withdrawModal";
 
@@ -79,10 +79,11 @@ function DepositedBalance({ isOpen }: { isOpen: boolean }) {
   const chainId = useChainId();
   const { reserves } = useReserves();
   const { tokens } = useTokens();
+  const { config } = useConfig();
   const { data } = useReadContracts({
     //@ts-ignore
     contracts: reserves.map((reserve) => ({
-      address: POOL[chainId],
+      address: config?.pool as `0x${string}`,
       abi: poolAbi,
       functionName: "getUserReserveData",
       args: [reserve, address],
@@ -96,7 +97,7 @@ function DepositedBalance({ isOpen }: { isOpen: boolean }) {
   } = useReadContracts({
     //@ts-ignore
     contracts: reserves.map((reserve) => ({
-      address: POOL[chainId],
+      address: config?.pool as `0x${string}`,
       abi: poolAbi,
       functionName: "getReserveData",
       args: [reserve],
