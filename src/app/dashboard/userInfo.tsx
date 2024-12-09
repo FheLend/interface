@@ -10,20 +10,13 @@ import {
   Circle,
   Tooltip,
 } from "@chakra-ui/react";
-import { flatten, get, map } from "lodash";
+import { get, map } from "lodash";
 import Image from "next/image";
 import { formatUnits } from "viem";
 import eyeIcon from "@/images/icons/eye.svg";
 import eyeOffIcon from "@/images/icons/eye-off.svg";
-import {
-  useAccount,
-  useChainId,
-  useReadContract,
-  useReadContracts,
-} from "wagmi";
-import { POOL } from "@/constants/contracts";
+import { useAccount, useChainId, useReadContracts } from "wagmi";
 import poolAbi from "@/constants/abi/pool.json";
-import tokenAbi from "@/constants/abi/token.json";
 import { useMemo } from "react";
 import { useConfig, useReserves, useTokens } from "@/store/pools";
 import { MinusIcon } from "@chakra-ui/icons";

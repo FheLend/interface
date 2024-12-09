@@ -13,7 +13,6 @@ export default function Home() {
   const { reserves } = useReserves();
   const { userAccountData } = useUserAccountData();
 
-  console.log(reserves);
   return (
     <Box mt="10">
       <Flex>
