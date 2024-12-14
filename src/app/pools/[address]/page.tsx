@@ -2,9 +2,10 @@
 
 import { Card } from "@/common/common";
 import { POOL, TOKEN_LOGO } from "@/constants/contracts";
-import { ChevronLeftIcon } from "@chakra-ui/icons";
+import { ChevronLeftIcon, CopyIcon } from "@chakra-ui/icons";
 import {
   Box,
+  Center,
   Divider,
   Flex,
   FlexProps,
@@ -12,6 +13,8 @@ import {
   GridItem,
   Image,
   Text,
+  Tooltip,
+  useClipboard,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useChainId, useReadContracts } from "wagmi";
@@ -21,6 +24,7 @@ import tokenAbi from "@/constants/abi/token.json";
 import { formatUnits } from "viem";
 import PoolFormActions from "./components/poolFormActions";
 import { useConfig } from "@/store/pools";
+import { ellipsis } from "@/utils/helper";
 
 const RAY = 10 ** 27;
 const SECONDS_PER_YEAR = 31536000;
@@ -53,6 +57,8 @@ function PoolDetail({ params }: { params: { address: string } }) {
   const chainId = useChainId();
   const poolAddress = params.address;
   const { config } = useConfig();
+
+  const { onCopy, value, setValue, hasCopied } = useClipboard("");
 
   const { data, refetch, isLoading } = useReadContracts({
     contracts: [
@@ -128,7 +134,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
         </Box>
       </Flex>
 
-      <Flex my="6" align="center">
+      <Flex my="6" align="center" flexWrap="wrap" rowGap="4">
         <Box>
           <Box color="whiteBlue.700" mb="3">
             Total Liquidity
@@ -184,13 +190,6 @@ function PoolDetail({ params }: { params: { address: string } }) {
               <VerticalDivider />
               <Box>
                 <Box color="whiteBlue.700" fontSize="sm" mb="3">
-                  APR
-                </Box>
-                <Box fontSize="lg">{(depositAPR * 100).toLocaleString()}%</Box>
-              </Box>
-              <VerticalDivider />
-              <Box>
-                <Box color="whiteBlue.700" fontSize="sm" mb="3">
                   APY
                 </Box>
                 <Box fontSize="lg">{(depositAPY * 100).toLocaleString()}%</Box>
@@ -216,28 +215,10 @@ function PoolDetail({ params }: { params: { address: string } }) {
               <VerticalDivider />
               <Box>
                 <Box color="whiteBlue.700" fontSize="sm" mb="3">
-                  APR, variable
-                </Box>
-                <Box fontSize="lg">
-                  {(variableBorrowAPR * 100).toLocaleString()}%
-                </Box>
-              </Box>
-              <VerticalDivider />
-              <Box>
-                <Box color="whiteBlue.700" fontSize="sm" mb="3">
                   APY, variable
                 </Box>
                 <Box fontSize="lg">
                   {(variableBorrowAPY * 100).toLocaleString()}%
-                </Box>
-              </Box>
-              <VerticalDivider />
-              <Box>
-                <Box color="whiteBlue.700" fontSize="sm" mb="3">
-                  APR, stable
-                </Box>
-                <Box fontSize="lg">
-                  {(stableBorrowAPR * 100).toLocaleString()}%
                 </Box>
               </Box>
               <VerticalDivider />
@@ -256,7 +237,24 @@ function PoolDetail({ params }: { params: { address: string } }) {
               <Box color="whiteBlue.700" fontSize="sm">
                 a{tokenSymbol} address
               </Box>
-              <Box>{aTokenAddress}</Box>
+              <Center>
+                {ellipsis(aTokenAddress)}
+                <Tooltip
+                  placement="top"
+                  label={hasCopied ? "Copied!" : "Copy address"}
+                  aria-label="Copy address"
+                  closeOnClick={false}
+                >
+                  <CopyIcon
+                    ml="2"
+                    cursor="pointer"
+                    onClick={() => {
+                      setValue(aTokenAddress);
+                      onCopy();
+                    }}
+                  />
+                </Tooltip>
+              </Center>
             </RowInfo>
             <RowInfo>
               <Box color="whiteBlue.700" fontSize="sm">

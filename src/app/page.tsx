@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 function Home() {
-  redirect("/dashboard");
+  redirect("/lending");
 }
 
 export default Home;

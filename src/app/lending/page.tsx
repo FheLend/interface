@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <Box mt="10">
       <Flex>
-        <Box fontSize="2xl">Dashboard</Box>
+        <Box fontSize="2xl">Borrow / Lend</Box>
         <Spacer />
 
         {/* <Tag

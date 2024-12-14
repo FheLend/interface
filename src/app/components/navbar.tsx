@@ -16,8 +16,15 @@ function Navbar() {
 
   const links = [
     {
-      name: "Dashboard",
-      href: "/dashboard",
+      name: "Borrow / Lend",
+      href: "/lending",
+      comingSoon: false,
+      target: "_self",
+      show: "base",
+    },
+    {
+      name: "Portfolio",
+      href: "/portfolio",
       comingSoon: false,
       target: "_self",
       show: "base",
