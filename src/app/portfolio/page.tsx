@@ -7,15 +7,12 @@ import {
   Circle,
   Flex,
   FlexProps,
-  Grid,
-  GridItem,
-  Image,
   Spacer,
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Card, Tag } from "@/common/common";
-import { useAccount, useChainId, useReadContracts } from "wagmi";
+import { Card, PrivateText } from "@/common/common";
+import { useAccount, useReadContracts } from "wagmi";
 import Pools from "../components/pools";
 import { get, isEmpty, map } from "lodash";
 import {
@@ -29,16 +26,22 @@ import Link from "next/link";
 import poolAbi from "@/constants/abi/pool.json";
 import WithdrawModal from "../components/withdrawModal";
 import { useMemo } from "react";
-import { formatUnits } from "viem";
+import useETHPrice from "@/hooks/usePrices";
+import { formatNumber } from "@/utils/helper";
+import eyeIcon from "@/images/icons/eye.svg";
+import eyeOffIcon from "@/images/icons/eye-off.svg";
+import Image from "next/image";
 
 function BoxInfo({
   title,
   usdVal,
   ethVal,
+  isShow,
 }: {
   title: string;
   usdVal: number;
   ethVal: number;
+  isShow: boolean;
 }) {
   return (
     <Box
@@ -54,9 +57,9 @@ function BoxInfo({
     >
       {title}
       <Box color="white" fontSize="xl" my="1" fontWeight="semibold">
-        ${usdVal}
+        <PrivateText isShow={isShow}>${formatNumber(usdVal)}</PrivateText>
       </Box>
-      {ethVal} ETH
+      <PrivateText isShow={isShow}>{formatNumber(ethVal)} ETH</PrivateText>
     </Box>
   );
 }
@@ -178,6 +181,19 @@ export default function Portfolio() {
   const { isConnected } = useAccount();
   const { reserves } = useReserves();
   const { userAccountData } = useUserAccountData();
+  const { ethPrice } = useETHPrice();
+  const { isOpen, onToggle } = useDisclosure();
+
+  const {
+    totalLiquidityETH = 0n,
+    totalCollateralETH = 0n,
+    totalBorrowsETH = 0n,
+    totalFeesETH = 0n,
+    availableBorrowsETH = 0n,
+    currentLiquidationThreshold = 0,
+    ltv = 0,
+    healthFactor = 0n,
+  } = userAccountData || {};
 
   return (
     <Box mt="10">
@@ -189,6 +205,14 @@ export default function Portfolio() {
             </Box>
           </Link>
           Dashboard
+          <Box
+            as={Image}
+            src={isOpen ? eyeIcon : eyeOffIcon}
+            alt="icon"
+            cursor="pointer"
+            onClick={onToggle}
+            ml="3"
+          />
         </Flex>
         <Spacer />
       </Flex>
@@ -198,9 +222,24 @@ export default function Portfolio() {
       </Box>
 
       <Flex my="10">
-        <BoxInfo title="Net worth" usdVal={0} ethVal={0} />
-        <BoxInfo title="Total borrowed" usdVal={0} ethVal={0} />
-        <BoxInfo title="Total collateral" usdVal={0} ethVal={0} />
+        <BoxInfo
+          title="Net worth"
+          usdVal={Number(totalLiquidityETH) * ethPrice}
+          ethVal={Number(totalLiquidityETH)}
+          isShow={isOpen}
+        />
+        <BoxInfo
+          title="Total borrowed"
+          usdVal={Number(totalBorrowsETH) * ethPrice}
+          ethVal={Number(totalBorrowsETH)}
+          isShow={isOpen}
+        />
+        <BoxInfo
+          title="Total collateral"
+          usdVal={Number(totalCollateralETH) * ethPrice}
+          ethVal={Number(totalCollateralETH)}
+          isShow={isOpen}
+        />
       </Flex>
 
       <DepositedBalance />

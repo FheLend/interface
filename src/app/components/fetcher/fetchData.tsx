@@ -46,6 +46,7 @@ function FetchPoolCore() {
     ],
   });
 
+  console.log(config)
   const reserves = get(data, "[0].result", []) as any[];
   const userAccountData = get(data, "[1].result", []) as any[];
   const { setReserves } = useReserves();

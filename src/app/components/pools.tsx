@@ -10,12 +10,14 @@ import {
 import Pool from "./pool";
 import { Show } from "@chakra-ui/react";
 import PoolCard from "./pool.card";
+import { usePathname } from "next/navigation";
 
 export default function Pools({
   poolAddresses,
 }: {
   poolAddresses: `0x${string}`[];
 }) {
+  const pathname = usePathname();
   return (
     <>
       <Show above="md">
@@ -33,6 +35,7 @@ export default function Pools({
                 <Th>Total Borrowed</Th>
                 <Th>Supply APY</Th>
                 <Th>Borrow APY</Th>
+                {pathname === "/portfolio" && <Th>Your Supplied</Th>}
               </Tr>
             </Thead>
             <Tbody>

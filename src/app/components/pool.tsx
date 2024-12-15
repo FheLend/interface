@@ -19,15 +19,19 @@ import { formatUnits } from "viem";
 import Link from "next/link";
 import { useConfig, useTokens } from "@/store/pools";
 import BorrowModal from "./borrowModal";
+import WithdrawModal from "./withdrawModal";
+import { usePathname } from "next/navigation";
 
 const RAY = 10 ** 27; // 10 to the power 27
 const SECONDS_PER_YEAR = 31536000;
 
 export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
-  const chainId = useChainId();
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { tokens } = useTokens();
   const { config } = useConfig();
+
+  const pathname = usePathname();
+  console.log(pathname);
 
   const {
     isOpen: isOpenSupply,
@@ -58,15 +62,26 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
         functionName: "getReserveData",
         args: [poolAddress],
       },
+      {
+        address: config?.pool as `0x${string}`,
+        abi: poolAbi,
+        functionName: "getUserReserveData",
+        args: [poolAddress, address],
+      },
     ],
   });
 
   const reserveData = get(data, "[0].result", []) as any[];
+  const userReserveData = get(data, "[1].result", []) as any[];
+
   const totalLiquidity = get(reserveData, "[0]", 0n);
   const availableLiquidity = get(reserveData, "[1]", 0n);
   const aTokenAddress = get(reserveData, "[11]", "") as `0x${string}`;
   const liquidityRate = get(reserveData, "[4]", 0n);
   const variableBorrowRate = get(reserveData, "[5]", 0n);
+  const depositedBalance = get(userReserveData, "[0]", 0n);
+
+  console.log(depositedBalance);
 
   function handleCloseModal(onClose: () => void) {
     refetch();
@@ -174,6 +189,34 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
         )}
         <LinkOverlay as={Link} href={`/pools/${poolAddress}`} />
       </Td>
+      {isConnected && pathname === "/portfolio" && (
+        <Td isNumeric>
+          <Flex align="center">
+            <Box mr="2">
+              {(+formatUnits(
+                depositedBalance,
+                tokens[poolAddress].decimals
+              )).toLocaleString()}{" "}
+              {tokens[poolAddress].symbol}
+            </Box>
+            <Button
+              onClick={openWithdraw}
+              size="sm"
+              bgColor="primary.900"
+              color="whiteBlue.500"
+              _hover={{ bg: "primary.800" }}
+            >
+              Withdraw
+            </Button>
+          </Flex>
+          {isOpenWithdraw && (
+            <WithdrawModal
+              aTokenAddress={aTokenAddress as `0x${string}`}
+              onClose={closeWithdraw}
+            />
+          )}
+        </Td>
+      )}
     </LinkBox>
   );
 }
