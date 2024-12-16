@@ -31,7 +31,6 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const { config } = useConfig();
 
   const pathname = usePathname();
-  console.log(pathname);
 
   const {
     isOpen: isOpenSupply,
@@ -80,8 +79,6 @@ export default function Pool({ poolAddress }: { poolAddress: `0x${string}` }) {
   const liquidityRate = get(reserveData, "[4]", 0n);
   const variableBorrowRate = get(reserveData, "[5]", 0n);
   const depositedBalance = get(userReserveData, "[0]", 0n);
-
-  console.log(depositedBalance);
 
   function handleCloseModal(onClose: () => void) {
     refetch();

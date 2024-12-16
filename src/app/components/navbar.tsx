@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Center, Flex } from "@chakra-ui/react";
+import { Box, Center, Flex, Show } from "@chakra-ui/react";
 import Image from "next/image";
 import logo from "@/images/felend.svg";
 import ConnectButton from "@/common/connect-button";
@@ -47,7 +47,7 @@ function Navbar() {
       name: "Settings",
       href: "/settings",
       comingSoon: false,
-      show: "base",
+      show: "sm",
       onlyAdmin: true,
       // address &&
       // WHITE_LIST.find((a) => a.toLowerCase() === address.toLowerCase()),
@@ -55,11 +55,12 @@ function Navbar() {
   ];
 
   return (
-    <Flex px="10" py="5" alignItems="center">
-      <Box as={Link} href="https://felend.xyz" mr="5">
-        <Image src={logo} alt="logo" />
-      </Box>
-
+    <Flex px={{ base: "3", lg: "10" }} py="5" alignItems="center">
+      <Show above="md">
+        <Box as={Link} href="https://felend.xyz" mr="5">
+          <Image src={logo} alt="logo" />
+        </Box>
+      </Show>
       {links.map((link) => {
         if (
           link.onlyAdmin &&

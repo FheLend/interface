@@ -7,6 +7,8 @@ import {
   Circle,
   Flex,
   FlexProps,
+  GridItem,
+  SimpleGrid,
   Spacer,
   Tooltip,
   useDisclosure,
@@ -51,9 +53,7 @@ function BoxInfo({
       border="1px"
       px="4"
       py="3"
-      minWidth="250px"
       borderColor="whiteAlpha.300"
-      mr="5"
     >
       {title}
       <Box color="white" fontSize="xl" my="1" fontWeight="semibold">
@@ -221,27 +221,36 @@ export default function Portfolio() {
         Track all your positions in one place
       </Box>
 
-      <Flex my="10">
-        <BoxInfo
-          title="Net worth"
-          usdVal={Number(totalLiquidityETH) * ethPrice}
-          ethVal={Number(totalLiquidityETH)}
-          isShow={isOpen}
-        />
-        <BoxInfo
-          title="Total borrowed"
-          usdVal={Number(totalBorrowsETH) * ethPrice}
-          ethVal={Number(totalBorrowsETH)}
-          isShow={isOpen}
-        />
-        <BoxInfo
-          title="Total collateral"
-          usdVal={Number(totalCollateralETH) * ethPrice}
-          ethVal={Number(totalCollateralETH)}
-          isShow={isOpen}
-        />
-      </Flex>
-
+      <SimpleGrid
+        columns={{ base: 1, sm: 2, md: 3, lg: 4, xl: 5 }}
+        my="10"
+        gap="5"
+      >
+        <GridItem>
+          <BoxInfo
+            title="Net worth"
+            usdVal={Number(totalLiquidityETH) * ethPrice}
+            ethVal={Number(totalLiquidityETH)}
+            isShow={isOpen}
+          />
+        </GridItem>
+        <GridItem>
+          <BoxInfo
+            title="Total borrowed"
+            usdVal={Number(totalBorrowsETH) * ethPrice}
+            ethVal={Number(totalBorrowsETH)}
+            isShow={isOpen}
+          />
+        </GridItem>
+        <GridItem>
+          <BoxInfo
+            title="Total collateral"
+            usdVal={Number(totalCollateralETH) * ethPrice}
+            ethVal={Number(totalCollateralETH)}
+            isShow={isOpen}
+          />
+        </GridItem>
+      </SimpleGrid>
       <DepositedBalance />
     </Box>
   );

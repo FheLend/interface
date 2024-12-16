@@ -54,11 +54,10 @@ function RowInfo(props: FlexProps) {
 }
 
 function PoolDetail({ params }: { params: { address: string } }) {
-  const chainId = useChainId();
   const poolAddress = params.address;
   const { config } = useConfig();
 
-  const { onCopy, value, setValue, hasCopied } = useClipboard("");
+  const { onCopy,  setValue, hasCopied } = useClipboard("");
 
   const { data, refetch, isLoading } = useReadContracts({
     contracts: [
@@ -125,7 +124,7 @@ function PoolDetail({ params }: { params: { address: string } }) {
   return (
     <>
       <Flex mt="10" align="center">
-        <Box as={Link} href="/dashboard" mr="2">
+        <Box as={Link} href="/lending" mr="2">
           <ChevronLeftIcon boxSize={6} />
         </Box>
         <Image src={TOKEN_LOGO[tokenSymbol]} alt="token logo" boxSize={7} />
