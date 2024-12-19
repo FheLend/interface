@@ -12,6 +12,7 @@ import {
   Grid,
   GridItem,
   Image,
+  SimpleGrid,
   Text,
   Tooltip,
   useClipboard,
@@ -171,8 +172,8 @@ function PoolDetail({ params }: { params: { address: string } }) {
       <Grid templateColumns="repeat(3, 1fr)" gap={6}>
         <GridItem colSpan={{ base: 3, lg: 2 }}>
           <Card cardTitle="Supply info" px="8">
-            <Flex mt="6" align="center">
-              <Box>
+            <SimpleGrid columns={2} spacing={6} mt="6">
+              <GridItem>
                 <Box color="whiteBlue.700" fontSize="sm" mb="3">
                   Total Supply
                 </Box>
@@ -185,19 +186,18 @@ function PoolDetail({ params }: { params: { address: string } }) {
                     {tokenSymbol}
                   </Text>
                 </Box>
-              </Box>
-              <VerticalDivider />
-              <Box>
+              </GridItem>
+              <GridItem>
                 <Box color="whiteBlue.700" fontSize="sm" mb="3">
                   APY
                 </Box>
                 <Box fontSize="lg">{(depositAPY * 100).toLocaleString()}%</Box>
-              </Box>
-            </Flex>
+              </GridItem>
+            </SimpleGrid>
           </Card>
           <Card cardTitle="Borrow info" mt="6" px="8">
-            <Flex mt="6" align="center" flexWrap="wrap">
-              <Box>
+            <SimpleGrid columns={3} spacing={6} mt="6">
+              <GridItem>
                 <Box color="whiteBlue.700" fontSize="sm" mb="3">
                   Total Borrowed
                 </Box>
@@ -210,26 +210,24 @@ function PoolDetail({ params }: { params: { address: string } }) {
                     {tokenSymbol}
                   </Text>
                 </Box>
-              </Box>
-              <VerticalDivider />
-              <Box>
+              </GridItem>
+              <GridItem>
                 <Box color="whiteBlue.700" fontSize="sm" mb="3">
                   APY, variable
                 </Box>
                 <Box fontSize="lg">
                   {(variableBorrowAPY * 100).toLocaleString()}%
                 </Box>
-              </Box>
-              <VerticalDivider />
-              <Box>
+              </GridItem>
+              <GridItem>
                 <Box color="whiteBlue.700" fontSize="sm" mb="3">
                   APY, stable
                 </Box>
                 <Box fontSize="lg">
                   {(stableBorrowAPY * 100).toLocaleString()}%
                 </Box>
-              </Box>
-            </Flex>
+              </GridItem>
+            </SimpleGrid>
           </Card>
           <Card cardTitle="Pool info" mt="6" px="8">
             <RowInfo>

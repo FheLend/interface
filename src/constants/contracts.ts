@@ -31,6 +31,13 @@ export const TOKEN_LOGO: { [name: string]: string } = {
   BNB: "https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png",
   SUI: "https://assets.coingecko.com/coins/images/26375/standard/sui-ocean-square.png",
   AAVE: "https://assets.coingecko.com/coins/images/12645/standard/aave-token-round.png",
+  AVAX: "https://assets.coingecko.com/coins/images/12559/standard/Avalanche_Circle_RedWhite_Trans.png",
+  ETH: "https://assets.coingecko.com/coins/images/279/standard/ethereum.png",
+  ETHEREUM:
+    "https://assets.coingecko.com/coins/images/279/standard/ethereum.png",
+  LINK: "https://assets.coingecko.com/coins/images/877/standard/chainlink-new-logo.png",
+  USD_Coin: "https://assets.coingecko.com/coins/images/6319/standard/usdc.png",
+  USDC: "https://assets.coingecko.com/coins/images/6319/standard/usdc.png",
 };
 
 export const GAS_LIMIT: { [chainId: number]: number } = {
